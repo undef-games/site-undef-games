@@ -44,6 +44,7 @@ The rail should feel operational and dense. It should support the landing page w
 - Landing behavior: scanlines respond to mouse position and page scroll.
 - Toy behavior: channel chips change the scan field mode, scope readout, and packet drift layer.
 - Scroll behavior: lower sections carry subtle scan toys so the page keeps feeling interactive past the hero.
+- Scroll-follow behavior: a page-wide scan trail may follow scroll position, but it must stay behind section text and below the right-hand identity rail.
 - Locked state: signal can resolve to `LOCKED`, but the scene should not add a central emblem when locked.
 - Resize behavior: canvas must remain fitted to the scene bounds without stretching, offsetting, or leaving stale render areas.
 - Background mark: a very dim, blurred, frosted Maze Gate U Cut may sit behind the landing hero content, but it must not read as the main centered logo.

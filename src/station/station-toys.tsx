@@ -91,3 +91,14 @@ export function SectionToy({ variant }: { variant: 'signal' | 'system' | 'identi
     </div>
   )
 }
+
+export function ScrollFollowField() {
+  return (
+    <div className="scroll-follow-field" aria-hidden="true">
+      {Array.from({ length: 18 }, (_, index) => (
+        <span key={index} style={{ '--trail-index': index } as CSSProperties} />
+      ))}
+      <i />
+    </div>
+  )
+}

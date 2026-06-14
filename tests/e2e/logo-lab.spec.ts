@@ -54,11 +54,20 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   const signalScene = page.getByLabel('interactive station signal')
   await expect(signalScene).toHaveAttribute('data-scroll-depth', '0')
   await expect(page.getByLabel('signal behavior')).toBeVisible()
+  await expect(page.locator('.scroll-follow-field')).toBeVisible()
 
   await page.mouse.move(420, 320)
   await page.mouse.wheel(0, 720)
 
   await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
+  await expect
+    .poll(() =>
+      page.locator('.scroll-follow-field').evaluate((field) => {
+        const follower = field.querySelector('i')
+        return follower ? getComputedStyle(follower).top : ''
+      }),
+    )
+    .not.toBe('12%')
   await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
 })
 
