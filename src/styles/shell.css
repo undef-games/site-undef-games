@@ -1,0 +1,45 @@
+body {
+  font-family: var(--font-body);
+  background: #050607;
+  color: #f4f4f0;
+}
+
+.station-shell {
+  min-height: 100%;
+  background:
+    linear-gradient(90deg, rgba(216, 255, 53, 0.08), transparent 22%),
+    radial-gradient(circle at 74% 12%, rgba(91, 203, 255, 0.08), transparent 28%),
+    #050607;
+  color: #f4f4f0;
+}
+
+.landing-page {
+  position: relative;
+  min-height: 100svh;
+  isolation: isolate;
+}
+
+.landing-page > * {
+  position: relative;
+}
+
+.landing-hero {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 0;
+}
+
+.station-kicker,
+.station-status,
+.station-copy,
+.station-actions,
+.section-kicker,
+.control-label,
+.lock-readout,
+.identity-header,
+.station-lockup small,
+.channel-bug small {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}

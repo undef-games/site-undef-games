@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 test('tunes the static station identity to signal lock', async ({ page }) => {
   await page.goto('/')
@@ -96,6 +96,38 @@ test('moves identity boxes from right to left through section scroll and reverse
   await expect.poll(() => identityBox.evaluate(getTranslateX)).toBeGreaterThan(420)
 })
 
+test('tumbles identity rectangles at distinct rates while they travel', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const identitySection = page.getByLabel('identity baseline')
+  const identityBoxes = page.locator('.landing-section--identity .section-toy span').filter({ visible: true })
+  await expect(identityBoxes).toHaveCount(4)
+
+  const sectionMetrics = await identitySection.evaluate((element) => {
+    const rect = element.getBoundingClientRect()
+    return {
+      height: rect.height,
+      top: rect.top + window.scrollY,
+      viewportHeight: window.innerHeight,
+    }
+  })
+
+  await scrollSectionToProgress(page, sectionMetrics, 0.25)
+  const earlyTransforms = await identityBoxes.evaluateAll(getBoxTransforms)
+
+  await scrollSectionToProgress(page, sectionMetrics, 0.65)
+  const laterTransforms = await identityBoxes.evaluateAll(getBoxTransforms)
+  const laterAngles = laterTransforms.map((box) => Math.round(box.rotation))
+  const uniqueAngles = new Set(laterAngles.map((angle) => Math.round(angle / 8) * 8))
+
+  expect(uniqueAngles.size).toBeGreaterThanOrEqual(3)
+  laterTransforms.forEach((box, index) => {
+    expect(box.translateX).toBeLessThan(earlyTransforms[index].translateX - 250)
+    expect(Math.abs(box.rotation - earlyTransforms[index].rotation)).toBeGreaterThan(18)
+  })
+})
+
 test('keeps pointer scan control active over the hero text', async ({ page }) => {
   await page.goto('/')
 
@@ -131,6 +163,26 @@ function getTranslateX(element: Element) {
   if (transform === 'none') return 0
   const matrix = new DOMMatrixReadOnly(transform)
   return matrix.m41
+}
+
+function getBoxTransforms(elements: Element[]) {
+  return elements.map((element) => {
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform)
+    return {
+      rotation: Math.atan2(matrix.b, matrix.a) * (180 / Math.PI),
+      translateX: matrix.m41,
+    }
+  })
+}
+
+async function scrollSectionToProgress(
+  page: Page,
+  sectionMetrics: { height: number; top: number; viewportHeight: number },
+  progress: number,
+) {
+  const targetScroll = sectionMetrics.top - (sectionMetrics.viewportHeight - progress * (sectionMetrics.viewportHeight + sectionMetrics.height))
+  await page.evaluate((scrollY) => window.scrollTo(0, scrollY), targetScroll)
+  await page.waitForTimeout(120)
 }
 
 function getCanvasFitDelta(scene: HTMLElement) {

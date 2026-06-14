@@ -1,0 +1,91 @@
+.landing-section,
+.landing-final {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  min-height: 72svh;
+  padding: 96px 92px;
+  border-top: 1px solid rgba(244, 244, 240, 0.14);
+  background:
+    linear-gradient(90deg, rgba(216, 255, 53, 0.07), transparent 30%),
+    #050607;
+}
+
+.landing-section > :not(.section-toy),
+.landing-final > * {
+  position: relative;
+  z-index: 2;
+}
+
+.landing-section--system {
+  background:
+    repeating-linear-gradient(0deg, rgba(244, 244, 240, 0.035) 0 1px, transparent 1px 18px),
+    #08090a;
+}
+
+.landing-section--identity {
+  background:
+    radial-gradient(circle at 76% 42%, rgba(216, 255, 53, 0.08), transparent 34%),
+    #050607;
+}
+
+.section-kicker,
+.landing-final p {
+  margin: 0 0 18px;
+  color: #d8ff35;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.landing-section h2,
+.landing-final h2 {
+  max-width: 920px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 74px;
+  font-weight: 950;
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.landing-section > p:not(.section-kicker) {
+  max-width: 720px;
+  margin: 28px 0 0;
+  color: rgba(244, 244, 240, 0.72);
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.landing-columns {
+  max-width: 1180px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  margin: 44px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(244, 244, 240, 0.2);
+}
+
+.landing-columns p {
+  margin: 0;
+  color: rgba(244, 244, 240, 0.74);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.landing-final {
+  min-height: 64svh;
+}
+
+.landing-final a {
+  width: fit-content;
+  margin: 34px 0 0;
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

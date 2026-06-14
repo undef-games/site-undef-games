@@ -1,0 +1,134 @@
+.section-toy {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  overflow: hidden;
+}
+
+.section-toy span {
+  position: absolute;
+  left: calc(4% + var(--scroll-depth, 0) * 12%);
+  right: 6%;
+  top: calc(10% + var(--toy-index, 0) * 6%);
+  height: 2px;
+  background: rgba(216, 255, 53, 0.26);
+  transform: translateX(calc(110vw - var(--section-progress, 0) * 220vw));
+  border-radius: 0;
+}
+
+.section-toy span:nth-child(odd) {
+  width: 34%;
+  background: rgba(244, 244, 240, 0.16);
+}
+
+.section-toy span:nth-child(3n) {
+  width: 58%;
+  transform: translateX(calc(104vw - var(--section-progress, 0) * 220vw));
+}
+
+.section-toy--system {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  align-items: end;
+  gap: 8px;
+  padding: 13% 8% 10% 60%;
+  opacity: 0.38;
+}
+
+.section-toy--system span {
+  position: static;
+  width: auto;
+  height: calc(24px + (var(--scroll-depth, 0) * 80px));
+  background: rgba(216, 255, 53, 0.16);
+  transform:
+    translateX(calc(112vw - var(--section-progress, 0) * 224vw))
+    translateY(calc(var(--scroll-depth, 0) * -22px));
+}
+
+.section-toy--system span:nth-child(odd) {
+  height: calc(54px + (var(--scroll-depth, 0) * 48px));
+}
+
+.section-toy--identity {
+  opacity: 0.28;
+}
+
+.section-toy--identity span {
+  --identity-distance: 238vw;
+  --identity-scale: 0.9;
+  --identity-spin: 320deg;
+  --identity-spin-start: -12deg;
+  --identity-start: 112vw;
+  left: auto;
+  right: calc(10% + var(--scroll-depth, 0) * 8%);
+  top: calc(10% + var(--toy-index, 0) * 6%);
+  width: 220px;
+  height: 220px;
+  border: 2px solid rgba(216, 255, 53, 0.22);
+  background: transparent;
+  filter: blur(1px);
+  transform-origin: center;
+  transform:
+    translateX(calc(var(--identity-start) - var(--section-progress, 0) * var(--identity-distance)))
+    rotate(calc(var(--identity-spin-start) + var(--section-progress, 0) * var(--identity-spin)))
+    scale(var(--identity-scale));
+}
+
+.section-toy--identity span:nth-child(n + 5) {
+  display: none;
+}
+
+.section-toy--identity span:nth-child(odd) {
+  width: 34%;
+  background: rgba(244, 244, 240, 0.16);
+}
+
+.section-toy--identity span:nth-child(3n) {
+  width: 58%;
+  transform:
+    translateX(calc(var(--identity-start) - var(--section-progress, 0) * var(--identity-distance)))
+    rotate(calc(var(--identity-spin-start) + var(--section-progress, 0) * var(--identity-spin)))
+    scale(var(--identity-scale));
+}
+
+.section-toy--identity span:nth-child(1) {
+  --identity-distance: 252vw;
+  --identity-scale: 0.94;
+  --identity-spin: -310deg;
+  --identity-spin-start: -8deg;
+  --identity-start: 118vw;
+  border-color: rgba(244, 244, 240, 0.2);
+  background: rgba(244, 244, 240, 0.19);
+}
+
+.section-toy--identity span:nth-child(2) {
+  --identity-distance: 232vw;
+  --identity-scale: 0.88;
+  --identity-spin: 430deg;
+  --identity-spin-start: 16deg;
+  --identity-start: 108vw;
+  border-color: rgba(216, 255, 53, 0.32);
+  box-shadow: 0 0 34px rgba(216, 255, 53, 0.05);
+}
+
+.section-toy--identity span:nth-child(3) {
+  --identity-distance: 264vw;
+  --identity-scale: 1;
+  --identity-spin: -235deg;
+  --identity-spin-start: -18deg;
+  --identity-start: 126vw;
+  border-color: rgba(244, 244, 240, 0.17);
+  background: rgba(244, 244, 240, 0.13);
+}
+
+.section-toy--identity span:nth-child(4) {
+  --identity-distance: 242vw;
+  --identity-scale: 0.86;
+  --identity-spin: 560deg;
+  --identity-spin-start: 28deg;
+  --identity-start: 114vw;
+  border-color: rgba(216, 255, 53, 0.26);
+  background: rgba(216, 255, 53, 0.035);
+}
