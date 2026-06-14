@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { concepts } from '../concepts/registry'
+import {
+  advanceConcept,
+  createInitialLogoPlayState,
+  getConceptPhase,
+  resetConcept,
+  submitConsoleCommand,
+} from '../logo/logo-play-state'
 import { getLogoSystem } from '../logo/logo-system'
 import { ResolvedLogoPanel } from '../logo/resolved-logo-panel'
 import { LogoLabScene } from '../scene/logo-lab-scene'
@@ -11,7 +18,8 @@ import { PromptPanel } from '../ui/prompt-panel'
 
 export function AppShell() {
   const [activeConceptId, setActiveConceptId] = useState(concepts[0].id)
-  const [phase, setPhase] = useState(0)
+  const [playState, setPlayState] = useState(createInitialLogoPlayState)
+  const [commandInput, setCommandInput] = useState('')
   const concept = concepts.find((candidate) => candidate.id === activeConceptId) ?? concepts[0]
   const system = getLogoSystem(concept)
   const skinStyle = {
@@ -19,12 +27,15 @@ export function AppShell() {
     '--concept-fg': concept.colorTokens.foreground,
     '--concept-accent': concept.colorTokens.accent,
   } as CSSProperties
-  const activePhase = system.phases[phase % system.phases.length]
-  const selectConcept = (id: string) => {
-    setActiveConceptId(id)
-    setPhase(0)
+  const phase = getConceptPhase(concept.id, playState)
+  const activePhase = system.phases[phase]
+  const selectConcept = (id: string) => setActiveConceptId(id)
+  const advanceActiveConcept = () => setPlayState((current) => advanceConcept(current, concept.id))
+  const runCommand = (command = commandInput) => {
+    setPlayState((current) => submitConsoleCommand(current, command))
+    setCommandInput('')
   }
-  const advancePhase = () => setPhase((current) => (current + 1) % system.phases.length)
+  const resetActiveConcept = () => setPlayState((current) => resetConcept(current, concept.id))
 
   return (
     <div className="app-shell" data-concept={concept.id} data-system-layout={system.layout} style={skinStyle}>
@@ -38,13 +49,21 @@ export function AppShell() {
       <main className="layout">
         <ConceptRail concepts={concepts} activeConceptId={concept.id} onSelect={selectConcept} />
         <section className="scene-frame">
-          <LogoLabScene concept={concept} phase={phase} onAdvance={advancePhase} />
+          <LogoLabScene concept={concept} playState={playState} onAdvance={advanceActiveConcept} />
         </section>
         <aside className="panel-stack">
-          <ResolvedLogoPanel concept={concept} phase={phase} />
-          <PromptPanel prompt={concept.prompt} />
-          <ControlPanel concept={concept} phase={phase} />
+          <ControlPanel
+            concept={concept}
+            playState={playState}
+            commandInput={commandInput}
+            onCommandInput={setCommandInput}
+            onAdvance={advanceActiveConcept}
+            onRunCommand={runCommand}
+            onReset={resetActiveConcept}
+          />
+          <ResolvedLogoPanel concept={concept} playState={playState} />
           <CompareTray concepts={concepts} activeConceptId={concept.id} />
+          <PromptPanel prompt={concept.prompt} />
         </aside>
       </main>
     </div>

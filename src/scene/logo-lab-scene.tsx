@@ -2,6 +2,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import type { Group } from 'three'
 import type { LogoConcept } from '../concepts/types'
+import { boardRoute, getConceptPhase, getConceptProgress, type LogoPlayState } from '../logo/logo-play-state'
 import { getLogoSystem } from '../logo/logo-system'
 import { CameraRig } from './camera-rig'
 import { SceneBackground } from './scene-background'
@@ -9,17 +10,19 @@ import { SceneLights } from './scene-lights'
 
 export function LogoLabScene({
   concept,
-  phase,
+  playState,
   onAdvance,
 }: {
   concept: LogoConcept
-  phase: number
+  playState: LogoPlayState
   onAdvance: () => void
 }) {
   const system = getLogoSystem(concept)
+  const phase = getConceptPhase(concept.id, playState)
+  const progress = getConceptProgress(concept.id, playState)
 
   return (
-    <div className="scene-canvas" aria-label="interactive logo scene" data-phase={system.phases[phase]} onClick={onAdvance}>
+    <div className="scene-canvas" aria-label="interactive logo scene" data-phase={system.phases[phase]} data-progress={progress} onClick={onAdvance}>
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
         <color attach="background" args={[concept.colorTokens.background]} />
         <SceneLights />
@@ -28,6 +31,8 @@ export function LogoLabScene({
         <PrototypeScene
           scene={system.scene}
           phase={phase}
+          progress={progress}
+          playState={playState}
           accent={concept.colorTokens.accent}
           foreground={concept.colorTokens.foreground}
         />
@@ -42,11 +47,15 @@ export function LogoLabScene({
 function PrototypeScene({
   scene,
   phase,
+  progress,
+  playState,
   accent,
   foreground,
 }: {
   scene: ReturnType<typeof getLogoSystem>['scene']
   phase: number
+  progress: number
+  playState: LogoPlayState
   accent: string
   foreground: string
 }) {
@@ -62,19 +71,19 @@ function PrototypeScene({
   return (
     <group ref={ref} rotation={[0.22, -0.35, 0]}>
       {scene === 'console' ? (
-        <ConsoleScene phase={phase} accent={accent} foreground={foreground} />
+        <ConsoleScene phase={phase} progress={progress} errors={playState.consoleHistory.filter((entry) => entry.status === 'error').length} accent={accent} foreground={foreground} />
       ) : scene === 'board' ? (
-        <BoardScene phase={phase} accent={accent} foreground={foreground} />
+        <BoardScene boardPath={playState.boardPath} accent={accent} foreground={foreground} />
       ) : (
-        <DefineScene phase={phase} accent={accent} foreground={foreground} />
+        <DefineScene phase={phase} progress={progress} accent={accent} foreground={foreground} />
       )}
     </group>
   )
 }
 
-function DefineScene({ phase, accent, foreground }: { phase: number; accent: string; foreground: string }) {
+function DefineScene({ phase, progress, accent, foreground }: { phase: number; progress: number; accent: string; foreground: string }) {
   const pieces =
-    phase === 0
+    progress === 0
       ? [
           [-1.1, 0.75, 0.18],
           [-0.3, -0.2, 0.28],
@@ -82,7 +91,7 @@ function DefineScene({ phase, accent, foreground }: { phase: number; accent: str
           [1.15, -0.75, 0.12],
           [-0.9, -0.9, 0.14],
         ]
-      : phase === 1
+      : progress < 3
         ? [
             [-0.85, 0.6, 0.2],
             [-0.25, 0.2, 0.24],
@@ -123,12 +132,30 @@ function DefineScene({ phase, accent, foreground }: { phase: number; accent: str
           </mesh>
         </>
       )}
+      {[-0.95, 0, 0.95].map((x, index) => (
+        <mesh key={index} position={[x, -1.62, 0.22]}>
+          <sphereGeometry args={[index < progress ? 0.16 : 0.08, 18, 18]} />
+          <meshStandardMaterial color={index < progress ? accent : foreground} opacity={index < progress ? 1 : 0.36} transparent={index >= progress} />
+        </mesh>
+      ))}
     </>
   )
 }
 
-function ConsoleScene({ phase, accent, foreground }: { phase: number; accent: string; foreground: string }) {
-  const lineWidths = phase === 0 ? [1.8, 1.2, 2.4] : phase === 1 ? [2.6, 2.1, 1.7] : [2.7, 2.7, 2.7]
+function ConsoleScene({
+  phase,
+  progress,
+  errors,
+  accent,
+  foreground,
+}: {
+  phase: number
+  progress: number
+  errors: number
+  accent: string
+  foreground: string
+}) {
+  const lineWidths = [1.8 + progress * 0.25, 1.2 + progress * 0.32, 1.4 + progress * 0.42]
 
   return (
     <>
@@ -139,13 +166,19 @@ function ConsoleScene({ phase, accent, foreground }: { phase: number; accent: st
       {lineWidths.map((width, index) => (
         <mesh key={index} position={[-0.3 + width / 4, 0.72 - index * 0.58, 0]}>
           <boxGeometry args={[width, 0.09, 0.09]} />
-          <meshStandardMaterial color={index === phase ? accent : foreground} emissive={index === phase ? accent : '#000000'} emissiveIntensity={0.14} />
+          <meshStandardMaterial color={index < progress ? accent : foreground} emissive={index < progress ? accent : '#000000'} emissiveIntensity={0.14} />
         </mesh>
       ))}
-      <mesh position={[-1.35, 0.72 - phase * 0.58, 0.12]}>
+      <mesh position={[-1.35, 0.72 - Math.min(progress, 2) * 0.58, 0.12]}>
         <boxGeometry args={[0.26, 0.26, 0.18]} />
         <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={0.18} />
       </mesh>
+      {errors > 0 && (
+        <mesh position={[1.45, 0.9, 0.16]} rotation={[0, 0, 0.68]}>
+          <boxGeometry args={[0.18 + errors * 0.12, 0.72, 0.12]} />
+          <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={0.24} />
+        </mesh>
+      )}
       {phase === 2 && (
         <mesh position={[1.15, -0.55, 0.2]} rotation={[0, 0, -Math.PI / 2]}>
           <coneGeometry args={[0.42, 0.68, 3]} />
@@ -156,30 +189,51 @@ function ConsoleScene({ phase, accent, foreground }: { phase: number; accent: st
   )
 }
 
-function BoardScene({ phase, accent, foreground }: { phase: number; accent: string; foreground: string }) {
+function BoardScene({ boardPath, accent, foreground }: { boardPath: number[]; accent: string; foreground: string }) {
   return (
     <>
       {Array.from({ length: 16 }).map((_, index) => {
         const col = index % 4
         const row = Math.floor(index / 4)
-        const active =
-          phase === 0 ? index === 5 : phase === 1 ? index === 6 : [2, 5, 8, 11, 14].includes(index)
+        const tile = index + 1
+        const active = boardPath.includes(tile)
+        const illegal = tile === 6 && boardPath.includes(6)
 
         return (
           <mesh
             key={index}
             position={[(col - 1.5) * 0.62, (1.5 - row) * 0.62, active ? 0.1 : 0]}
-            rotation={[0, 0, phase === 1 && index === 6 ? 0.38 : 0]}
+            rotation={[0, 0, illegal ? 0.38 : 0]}
           >
             <boxGeometry args={[0.5, 0.5, active ? 0.18 : 0.08]} />
             <meshStandardMaterial color={active ? accent : foreground} opacity={active ? 1 : 0.32} transparent={!active} />
           </mesh>
         )
       })}
-      <mesh position={phase === 0 ? [-0.31, 0.31, 0.36] : phase === 1 ? [0.31, 0.31, 0.42] : [0, -0.62, 0.44]}>
+      {boardPath.slice(1).map((tile, index) => {
+        const previous = boardRoute[index]
+        const start = boardPoint(previous)
+        const end = boardPoint(tile)
+        const mid: [number, number, number] = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2, 0.32]
+        const horizontal = start[1] === end[1]
+        return (
+          <mesh key={`${previous}-${tile}`} position={mid} rotation={[0, 0, horizontal ? 0 : Math.PI / 2]}>
+            <boxGeometry args={[0.62, 0.06, 0.08]} />
+            <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={0.14} />
+          </mesh>
+        )
+      })}
+      <mesh position={[...boardPoint(boardPath[boardPath.length - 1]), 0.44]}>
         <sphereGeometry args={[0.18, 22, 22]} />
         <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={0.14} />
       </mesh>
     </>
   )
+}
+
+function boardPoint(tile: number): [number, number] {
+  const index = tile - 1
+  const col = index % 4
+  const row = Math.floor(index / 4)
+  return [(col - 1.5) * 0.62, (1.5 - row) * 0.62]
 }
