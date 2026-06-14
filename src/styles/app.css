@@ -29,9 +29,30 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: 180px minmax(0, 1fr) 360px;
+  align-items: start;
   gap: 16px;
   padding: 20px 28px 28px;
+}
+
+.concept-rail {
+  display: grid;
+  gap: 8px;
+}
+
+.concept-rail button {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--panel-border);
+  background: rgb(255 255 255 / 4%);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+
+.concept-rail button[data-active='true'] {
+  border-color: rgb(94 234 212 / 60%);
+  background: rgb(94 234 212 / 12%);
 }
 
 .scene-frame,

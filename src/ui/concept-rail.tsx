@@ -11,16 +11,21 @@ export function ConceptRail({
 }) {
   return (
     <nav className="concept-rail" aria-label="concept rail">
-      {concepts.map((concept) => (
-        <button
-          key={concept.id}
-          type="button"
-          data-active={concept.id === activeConceptId}
-          onClick={() => onSelect(concept.id)}
-        >
-          {concept.name}
-        </button>
-      ))}
+      {concepts.map((concept) => {
+        const isActive = concept.id === activeConceptId
+
+        return (
+          <button
+            key={concept.id}
+            type="button"
+            aria-current={isActive ? 'true' : undefined}
+            data-active={isActive}
+            onClick={() => onSelect(concept.id)}
+          >
+            {concept.name}
+          </button>
+        )
+      })}
     </nav>
   )
 }
