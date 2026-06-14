@@ -1,6 +1,10 @@
+import { concepts } from '../concepts/registry'
+import { ResolvedLogoPanel } from '../logo/resolved-logo-panel'
 import { LogoLabScene } from '../scene/logo-lab-scene'
 
 export function AppShell() {
+  const concept = concepts[0]
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -11,12 +15,10 @@ export function AppShell() {
       </header>
       <main className="layout">
         <section className="scene-frame">
-          <LogoLabScene activeConceptId="prompt-cursor" />
+          <LogoLabScene activeConceptId={concept.id} />
         </section>
         <aside className="panel-stack">
-          <section className="panel">
-            <h2>Resolved logo system</h2>
-          </section>
+          <ResolvedLogoPanel concept={concept} />
           <section className="panel">
             <h2>Compare tray</h2>
           </section>
