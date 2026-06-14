@@ -62,6 +62,22 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
 })
 
+test('switches channel toys and keeps one canvas scene', async ({ page }) => {
+  await page.goto('/')
+
+  const signalScene = page.getByLabel('interactive station signal')
+  await expect(signalScene.locator('canvas')).toHaveCount(1)
+  await expect(page.getByLabel('signal scope')).toBeVisible()
+  await expect(page.getByLabel('channel toys')).toBeVisible()
+
+  await page.getByRole('button', { name: /CH 13/i }).click()
+
+  await expect(signalScene).toHaveAttribute('data-channel-mode', 'game')
+  await expect(page.getByLabel('signal scope')).toHaveAttribute('data-channel-mode', 'game')
+  await expect(page.locator('.packet-drift')).toHaveAttribute('data-channel-mode', 'game')
+  await expect(signalScene.locator('canvas')).toHaveCount(1)
+})
+
 function getCanvasFitDelta(scene: HTMLElement) {
   const canvas = scene.querySelector('canvas')
   if (!canvas) return Number.POSITIVE_INFINITY

@@ -2,12 +2,23 @@ import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
 import { getStationStatus, type StationState } from './station-state'
 
-export function StationSignalScene({ state, scrollDepth = 0 }: { state: StationState; scrollDepth?: number }) {
+export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
+
+export function StationSignalScene({
+  state,
+  scrollDepth = 0,
+  channelMode = 'baseline',
+}: {
+  state: StationState
+  scrollDepth?: number
+  channelMode?: ChannelMode
+}) {
   const status = getStationStatus(state)
-  const plan = getSignalFieldPlan(state.signal)
+  const plan = getSignalFieldPlan(state.signal, channelMode)
   const hostRef = useRef<HTMLDivElement>(null)
   const signalRef = useRef(state.signal)
   const scrollDepthRef = useRef(scrollDepth)
+  const channelModeRef = useRef(channelMode)
 
   useEffect(() => {
     signalRef.current = state.signal
@@ -16,6 +27,10 @@ export function StationSignalScene({ state, scrollDepth = 0 }: { state: StationS
   useEffect(() => {
     scrollDepthRef.current = scrollDepth
   }, [scrollDepth])
+
+  useEffect(() => {
+    channelModeRef.current = channelMode
+  }, [channelMode])
 
   useEffect(() => {
     const host = hostRef.current
@@ -47,7 +62,7 @@ export function StationSignalScene({ state, scrollDepth = 0 }: { state: StationS
       const width = Math.max(1, Math.round(rect.width))
       const height = Math.max(1, Math.round(rect.height))
       app.renderer.resize(width, height)
-      if (graphics) drawSignalField(graphics, app, signalRef.current, pointer, scrollDepthRef.current)
+      if (graphics) drawSignalField(graphics, app, signalRef.current, pointer, scrollDepthRef.current, channelModeRef.current)
     }
 
     async function mountPixi() {
@@ -78,7 +93,9 @@ export function StationSignalScene({ state, scrollDepth = 0 }: { state: StationS
       resizeObserver.observe(target)
       requestAnimationFrame(resizeToHost)
       app.ticker.add(() => {
-        if (graphics && app) drawSignalField(graphics, app, signalRef.current, pointer, scrollDepthRef.current)
+        if (graphics && app) {
+          drawSignalField(graphics, app, signalRef.current, pointer, scrollDepthRef.current, channelModeRef.current)
+        }
       })
     }
 
@@ -102,6 +119,7 @@ export function StationSignalScene({ state, scrollDepth = 0 }: { state: StationS
       data-field-shape="scan-field"
       data-renderer="pixijs"
       data-resize-mode="observer"
+      data-channel-mode={channelMode}
       data-scroll-depth={scrollDepth}
       data-signal={state.signal}
       data-status={status.label}
@@ -120,19 +138,22 @@ export type SignalFieldPlan = {
   activeScanlines: number
   hasCenterMark: boolean
   hasMast: boolean
+  mode: ChannelMode
   shape: 'scan-field'
   totalScanlines: number
 }
 
-export function getSignalFieldPlan(signal: number): SignalFieldPlan {
+export function getSignalFieldPlan(signal: number, channelMode: ChannelMode = 'baseline'): SignalFieldPlan {
   const normalizedSignal = Math.min(100, Math.max(0, Math.round(Number.isFinite(signal) ? signal : 0)))
   const clarity = normalizedSignal / 100
-  const totalScanlines = 96
+  const modeBonus = channelMode === 'noise' ? 34 : channelMode === 'game' ? 18 : channelMode === 'lock' ? 10 : 0
+  const totalScanlines = 96 + modeBonus
 
   return {
-    activeScanlines: Math.round(14 + clarity * 70),
+    activeScanlines: Math.round(14 + clarity * 70 + modeBonus * 0.45),
     hasCenterMark: false,
     hasMast: false,
+    mode: channelMode,
     shape: 'scan-field',
     totalScanlines,
   }
@@ -144,37 +165,40 @@ function drawSignalField(
   signal: number,
   pointer: { active: boolean; x: number; y: number },
   scrollDepth: number,
+  channelMode: ChannelMode,
 ) {
   const width = app.screen.width
   const height = app.screen.height
   const time = performance.now() * 0.001
   const lock = signal >= 85
   const clarity = signal / 100
-  const plan = getSignalFieldPlan(signal)
+  const plan = getSignalFieldPlan(signal, channelMode)
+  const profile = getChannelProfile(channelMode)
   const scrollEnergy = Math.min(1, Math.max(0, scrollDepth))
-  const driftX = pointer.x * width * (0.035 + scrollEnergy * 0.045)
+  const driftX = pointer.x * width * (0.035 + scrollEnergy * 0.045 + profile.pointerPush)
   const pointerY = (pointer.y + 0.5) * height
 
   graphics.clear()
   graphics.rect(0, 0, width, height).fill(0x050607)
 
   for (let index = 0; index < plan.totalScanlines; index += 1) {
-    const y = ((index * 31 + time * (54 + scrollEnergy * 120)) % (height + 90)) - 45
+    const y = ((index * profile.spacing + time * (54 + scrollEnergy * 120 + profile.speed)) % (height + 90)) - 45
     const active = index < plan.activeScanlines
     const pointerBand = pointer.active ? Math.max(0, 1 - Math.abs(y - pointerY) / Math.max(height * 0.2, 1)) : 0
+    const jitter = profile.jitter * pseudoNoise(index + 203, time * 1.4) * width
     const lineWidth = active
       ? width * (0.24 + ((index % 9) * 0.03 + clarity * 0.44 + pointerBand * 0.2 + scrollEnergy * 0.12))
       : width * (0.06 + (index % 5) * 0.028 + pointerBand * 0.08)
     const x = active
-      ? width * (0.03 + (index % 4) * 0.018) + driftX
+      ? width * (0.03 + (index % 4) * 0.018) + driftX + jitter
       : width * (0.1 + ((index * 89) % Math.max(width * 0.22, 1)) / width)
     graphics.rect(x, y, Math.min(lineWidth, width * 0.94), active ? 2.4 : 1).fill({
-      color: active ? 0xd8ff35 : 0xf4f4f0,
+      color: active ? profile.color : 0xf4f4f0,
       alpha: active ? 0.12 + clarity * 0.42 + pointerBand * 0.28 + scrollEnergy * 0.12 : 0.045 + pointerBand * 0.09,
     })
   }
 
-  for (let index = 0; index < 130; index += 1) {
+  for (let index = 0; index < 130 + profile.noise; index += 1) {
     const noise = pseudoNoise(index, time)
     const x = (noise * width + index * 31) % width
     const y = (pseudoNoise(index + 91, time * 0.7) * height + index * 17) % height
@@ -183,7 +207,31 @@ function drawSignalField(
   }
 
   const sweepY = (height * (0.12 + ((time * (0.14 + scrollEnergy * 0.26)) % 0.82))) | 0
-  graphics.rect(driftX, sweepY, width, lock ? 3 : 2).fill({ color: 0xd8ff35, alpha: 0.18 + clarity * 0.22 })
+  graphics.rect(driftX, sweepY, width, lock ? 3 : 2).fill({ color: profile.color, alpha: 0.18 + clarity * 0.22 })
+
+  if (channelMode === 'game' || channelMode === 'lock') {
+    const blockY = (height * (0.18 + ((time * 0.07 + scrollEnergy * 0.4) % 0.58))) | 0
+    for (let index = 0; index < 7; index += 1) {
+      const blockX = width * (0.12 + index * 0.105) + driftX * 0.4
+      graphics.rect(blockX, blockY + (index % 3) * 18, width * 0.045, 8).fill({
+        color: profile.color,
+        alpha: 0.12 + clarity * 0.22,
+      })
+    }
+  }
+}
+
+function getChannelProfile(channelMode: ChannelMode) {
+  switch (channelMode) {
+    case 'game':
+      return { color: 0xd8ff35, jitter: 0.018, noise: 24, pointerPush: 0.012, spacing: 27, speed: 42 }
+    case 'noise':
+      return { color: 0xf4f4f0, jitter: 0.036, noise: 82, pointerPush: 0.026, spacing: 23, speed: 98 }
+    case 'lock':
+      return { color: 0xd8ff35, jitter: 0.006, noise: 10, pointerPush: 0.006, spacing: 31, speed: 18 }
+    default:
+      return { color: 0xd8ff35, jitter: 0.01, noise: 0, pointerPush: 0, spacing: 31, speed: 0 }
+  }
 }
 
 function pseudoNoise(seed: number, time: number) {

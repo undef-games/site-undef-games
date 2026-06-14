@@ -3,10 +3,12 @@ import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
 import { StationSignalScene } from '../station/station-signal-scene'
 import { createStationState, detuneSignal, getStationStatus, resetSignal, tuneSignal } from '../station/station-state'
+import { ChannelSelector, PacketDrift, SectionToy, SignalScope, STATION_CHANNELS } from '../station/station-toys'
 
 export function AppShell() {
   const [stationState, setStationState] = useState(createStationState)
   const [scrollDepth, setScrollDepth] = useState(0)
+  const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
   const status = getStationStatus(stationState)
 
   const tune = () => setStationState((current) => tuneSignal(current, 25))
@@ -36,12 +38,13 @@ export function AppShell() {
       <main className="landing-page">
         <section className="landing-hero" aria-label="undef games landing page">
           <div className="station-broadcast" aria-label="static station identity">
-            <StationSignalScene state={stationState} scrollDepth={scrollDepth} />
+            <StationSignalScene state={stationState} scrollDepth={scrollDepth} channelMode={activeChannel.mode} />
             <StationGlyph signal={stationState.signal} className="hero-ghost-glyph" decorative />
+            <PacketDrift activeChannel={activeChannel} />
             <div className="station-overlay" aria-hidden="true" />
             <div className="station-hero">
               <p className="station-kicker">
-                <span>{status.channel}</span>
+                <span>{activeChannel.label}</span>
                 <span>Signal {stationState.signal}</span>
                 <span>{status.label}</span>
               </p>
@@ -59,11 +62,14 @@ export function AppShell() {
           </div>
           <aside className="station-sidebar" aria-label="station tools and identity">
             <StationControls state={stationState} onTune={tune} onDetune={detune} onReset={reset} />
+            <ChannelSelector activeChannel={activeChannel} channels={STATION_CHANNELS} onSelect={setActiveChannel} />
+            <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
             <StationIdentity state={stationState} />
           </aside>
         </section>
 
         <section className="landing-section landing-section--signal" id="signal" aria-label="signal behavior">
+          <SectionToy variant="signal" />
           <p className="section-kicker">Interactive field</p>
           <h2>Scanlines react to the hand and the page.</h2>
           <p>
@@ -73,6 +79,7 @@ export function AppShell() {
         </section>
 
         <section className="landing-section landing-section--system" aria-label="undef games system">
+          <SectionToy variant="system" />
           <p className="section-kicker">What it points at</p>
           <h2>Game infrastructure with a playable edge.</h2>
           <div className="landing-columns">
@@ -83,6 +90,7 @@ export function AppShell() {
         </section>
 
         <section className="landing-section landing-section--identity" id="identity" aria-label="identity baseline">
+          <SectionToy variant="identity" />
           <p className="section-kicker">Identity baseline</p>
           <h2>The mark stays quiet until the lockup needs it.</h2>
           <p>

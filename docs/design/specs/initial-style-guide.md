@@ -2,13 +2,15 @@
 
 Date: 2026-06-14
 Status: Active baseline
-Baseline tag: `station-scanfield-v0.1`
+Baseline tag: `station-scanfield-v0.2`
 
 ## Current Best Direction
 
 The strongest direction so far is the static station identity with the Maze Gate U Cut logo kept out of the main canvas. The interactive surface should read as a transmission field: sharp scanlines, sparse signal metadata, restrained terminal typography, and a clean `undef games` station lockup.
 
 This baseline replaces the previous abstract symbol explorations. It should be treated as the comparison point for future visual changes until a stronger direction is explicitly tagged.
+
+Prior saved baseline: `station-scanfield-v0.1`, the clean landing page with scan-field background, right-hand identity rail, and frosted background mark.
 
 ## Logo System
 
@@ -24,6 +26,8 @@ The right-hand side is part of the baseline, not a throwaway settings panel. Pre
 
 - signal controls for tuning, detuning, and reset
 - signal meter and station status readout
+- channel toys for `CH 00`, `CH 13`, `CH ??`, and `UG`
+- compact signal scope reacting to scroll, tuning, and selected channel
 - `Station ID` header with locked/scan state
 - primary Maze Gate U Cut lockup beside `undef games`
 - compact `UG 00` channel bug
@@ -38,6 +42,8 @@ The rail should feel operational and dense. It should support the landing page w
 - Motion language: horizontal scanlines, signal sweep, subtle noise, and pointer-influenced drift.
 - Tuning behavior: scanline density and brightness increase with signal strength.
 - Landing behavior: scanlines respond to mouse position and page scroll.
+- Toy behavior: channel chips change the scan field mode, scope readout, and packet drift layer.
+- Scroll behavior: lower sections carry subtle scan toys so the page keeps feeling interactive past the hero.
 - Locked state: signal can resolve to `LOCKED`, but the scene should not add a central emblem when locked.
 - Resize behavior: canvas must remain fitted to the scene bounds without stretching, offsetting, or leaving stale render areas.
 - Background mark: a very dim, blurred, frosted Maze Gate U Cut may sit behind the landing hero content, but it must not read as the main centered logo.
