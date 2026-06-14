@@ -1,3 +1,5 @@
+import { LogoLabScene } from '../scene/logo-lab-scene'
+
 export function AppShell() {
   return (
     <div className="app-shell">
@@ -8,7 +10,9 @@ export function AppShell() {
         </div>
       </header>
       <main className="layout">
-        <section className="scene-frame" aria-label="logo lab scene" />
+        <section className="scene-frame">
+          <LogoLabScene activeConceptId="prompt-cursor" />
+        </section>
         <aside className="panel-stack">
           <section className="panel">
             <h2>Resolved logo system</h2>
