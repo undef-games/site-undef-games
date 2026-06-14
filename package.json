@@ -10,7 +10,9 @@
     "test": "node ./scripts/run-vitest.mjs",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=undef-logos --branch=main",
+    "deploy:preview": "npm run build && wrangler pages deploy dist --project-name=undef-logos"
   },
   "dependencies": {
     "@react-three/drei": "10.7.7",
@@ -22,17 +24,21 @@
     "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@playwright/test": "1.56.0",
+    "@playwright/test": "1.60.0",
     "@testing-library/jest-dom": "6.9.1",
-    "@testing-library/react": "16.3.0",
+    "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.1",
-    "@types/node": "24.10.1",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
+    "@types/node": "25.9.3",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
-    "jsdom": "26.1.0",
+    "jsdom": "29.1.1",
     "typescript": "6.0.3",
     "vite": "8.0.16",
-    "vitest": "4.1.0"
+    "vitest": "4.1.8",
+    "wrangler": "4.100.0"
+  },
+  "overrides": {
+    "esbuild": "0.28.1"
   }
 }
