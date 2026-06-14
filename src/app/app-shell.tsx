@@ -20,6 +20,13 @@ export function AppShell() {
       const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
       const landingRange = Math.min(scrollable, window.innerHeight * 1.6)
       setScrollDepth(Math.min(1, Math.max(0, window.scrollY / Math.max(1, landingRange))))
+
+      document.querySelectorAll<HTMLElement>('.landing-section').forEach((section) => {
+        const rect = section.getBoundingClientRect()
+        const travel = window.innerHeight + rect.height
+        const sectionProgress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / Math.max(1, travel)))
+        section.style.setProperty('--section-progress', sectionProgress.toString())
+      })
     }
 
     updateScrollDepth()

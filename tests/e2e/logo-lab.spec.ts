@@ -64,9 +64,36 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   await page.mouse.wheel(0, 720)
 
   await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
-  await expect.poll(() => sectionToyLine.evaluate(getTranslateX)).toBeGreaterThan(initialTravel + 80)
-  await expect.poll(() => reverseToyLine.evaluate(getTranslateX)).toBeLessThan(initialReverseTravel - 50)
+  await expect.poll(() => sectionToyLine.evaluate(getTranslateX)).toBeLessThan(initialTravel - 100)
+  await expect.poll(() => reverseToyLine.evaluate(getTranslateX)).toBeLessThan(initialReverseTravel - 100)
   await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
+})
+
+test('moves identity boxes from right to left through section scroll and reverses', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const identitySection = page.getByLabel('identity baseline')
+  const identityBox = page.locator('.landing-section--identity .section-toy span').first()
+  await expect(identityBox).toBeVisible()
+
+  const sectionMetrics = await identitySection.evaluate((element) => {
+    const rect = element.getBoundingClientRect()
+    return {
+      height: rect.height,
+      top: rect.top + window.scrollY,
+      viewportHeight: window.innerHeight,
+    }
+  })
+
+  await page.evaluate((scrollY) => window.scrollTo(0, scrollY), sectionMetrics.top - sectionMetrics.viewportHeight)
+  await expect.poll(() => identityBox.evaluate(getTranslateX)).toBeGreaterThan(420)
+
+  await page.evaluate((scrollY) => window.scrollTo(0, scrollY), sectionMetrics.top + sectionMetrics.height)
+  await expect.poll(() => identityBox.evaluate(getTranslateX)).toBeLessThan(-420)
+
+  await page.evaluate((scrollY) => window.scrollTo(0, scrollY), sectionMetrics.top - sectionMetrics.viewportHeight)
+  await expect.poll(() => identityBox.evaluate(getTranslateX)).toBeGreaterThan(420)
 })
 
 test('keeps pointer scan control active over the hero text', async ({ page }) => {

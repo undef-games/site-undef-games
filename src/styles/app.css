@@ -501,7 +501,7 @@ body {
   top: calc(10% + var(--toy-index, 0) * 6%);
   height: 2px;
   background: rgba(216, 255, 53, 0.26);
-  transform: translateX(calc(var(--scroll-depth, 0) * 180px));
+  transform: translateX(calc(110vw - var(--section-progress, 0) * 220vw));
   border-radius: 0;
 }
 
@@ -512,7 +512,7 @@ body {
 
 .section-toy span:nth-child(3n) {
   width: 58%;
-  transform: translateX(calc(var(--scroll-depth, 0) * -120px));
+  transform: translateX(calc(104vw - var(--section-progress, 0) * 220vw));
 }
 
 .section-toy--system {
@@ -529,7 +529,9 @@ body {
   width: auto;
   height: calc(24px + (var(--scroll-depth, 0) * 80px));
   background: rgba(216, 255, 53, 0.16);
-  transform: translateY(calc(var(--scroll-depth, 0) * -22px));
+  transform:
+    translateX(calc(112vw - var(--section-progress, 0) * 224vw))
+    translateY(calc(var(--scroll-depth, 0) * -22px));
 }
 
 .section-toy--system span:nth-child(odd) {
@@ -549,7 +551,10 @@ body {
   border: 2px solid rgba(216, 255, 53, 0.22);
   background: transparent;
   filter: blur(1px);
-  transform: rotate(calc(var(--scroll-depth, 0) * 18deg)) scale(calc(0.68 + var(--scroll-depth, 0) * 0.22));
+  transform:
+    translateX(calc(110vw - var(--section-progress, 0) * 220vw))
+    rotate(calc(var(--scroll-depth, 0) * 18deg))
+    scale(calc(0.68 + var(--scroll-depth, 0) * 0.22));
 }
 
 .section-toy--identity span:nth-child(n + 5) {
@@ -563,7 +568,7 @@ body {
 
 .section-toy--identity span:nth-child(3n) {
   width: 58%;
-  transform: translateX(calc(var(--scroll-depth, 0) * -120px));
+  transform: translateX(calc(98vw - var(--section-progress, 0) * 220vw));
 }
 
 .landing-section--system {
