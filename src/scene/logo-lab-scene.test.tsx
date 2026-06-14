@@ -5,7 +5,7 @@ import { concepts } from '../concepts/registry'
 
 describe('LogoLabScene', () => {
   it('renders the canvas region label', () => {
-    render(<LogoLabScene concept={concepts[0]} />)
+    render(<LogoLabScene concept={concepts[0]} phase={0} onAdvance={() => undefined} />)
     expect(screen.getByLabelText(/interactive logo scene/i)).toHaveClass('scene-canvas')
   })
 })

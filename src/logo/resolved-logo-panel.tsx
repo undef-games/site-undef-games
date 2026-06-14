@@ -4,24 +4,25 @@ import { LogoMark } from './logo-mark'
 import { getLogoSystem } from './logo-system'
 import { LogoWordmark } from './logo-wordmark'
 
-export function ResolvedLogoPanel({ concept }: { concept: LogoConcept }) {
+export function ResolvedLogoPanel({ concept, phase = 0 }: { concept: LogoConcept; phase?: number }) {
   const system = getLogoSystem(concept)
+  const activePhase = system.phases[phase % system.phases.length]
 
   return (
     <section className="panel resolved-panel" data-system={system.id}>
       <h2>{concept.name}</h2>
       <p>{concept.prompt}</p>
-      <p className="system-descriptor">{system.descriptor}</p>
+      <p className="system-descriptor">{system.descriptor} / {activePhase}</p>
       <h3>Primary</h3>
       <div className="logo-variant logo-variant-primary">
         <div className="logo-lockup" data-layout={system.layout}>
-          <LogoMark concept={concept} accessibleLabel={`${concept.name} logo mark`} />
-          <LogoWordmark concept={concept} />
+          <LogoMark concept={concept} phase={phase} accessibleLabel={`${concept.name} logo mark`} />
+          <LogoWordmark concept={concept} phase={phase} />
         </div>
       </div>
       <h3>Symbol</h3>
       <div className="logo-variant logo-variant-symbol">
-        <LogoMark concept={concept} decorative />
+        <LogoMark concept={concept} phase={phase} decorative />
       </div>
       <h3>Compact</h3>
       <div className="logo-variant logo-variant-compact">

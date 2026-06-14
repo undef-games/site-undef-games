@@ -126,17 +126,16 @@ body {
   background: color-mix(in srgb, var(--concept-bg) 58%, var(--concept-accent) 8%);
 }
 
-.logo-lockup[data-layout='stacked'] {
+.logo-lockup[data-layout='console'] {
   align-items: flex-start;
   flex-direction: column;
 }
 
-.logo-lockup[data-layout='badge'] {
-  border-radius: 999px;
-  padding: 18px 24px;
+.logo-lockup[data-layout='resolve'] {
+  border-radius: 18px 4px 18px 4px;
 }
 
-.logo-lockup[data-layout='field'] {
+.logo-lockup[data-layout='board'] {
   background-image:
     linear-gradient(color-mix(in srgb, var(--concept-fg) 10%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--concept-fg) 10%, transparent) 1px, transparent 1px);
@@ -175,20 +174,12 @@ body {
   text-transform: uppercase;
 }
 
-.logo-wordmark[data-concept='warp-gate'],
-.logo-wordmark[data-concept='system-mutations'] {
+.logo-wordmark[data-concept='command-console'] {
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
-.logo-wordmark[data-concept='brutalist-glitch'] {
-  font-size: 28px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.logo-wordmark[data-concept='dice-pixel-dialogue'],
-.logo-wordmark[data-concept='party-energy'] {
+.logo-wordmark[data-concept='rule-board'] {
   font-weight: 800;
 }
 
@@ -205,30 +196,67 @@ body {
   font-weight: 800;
 }
 
-.logo-compact[data-layout='badge'] {
-  border-radius: 999px;
+.logo-compact[data-layout='resolve'] {
+  border-radius: 16px 4px 16px 4px;
 }
 
-.logo-compact[data-layout='field'] {
+.logo-compact[data-layout='board'] {
   box-shadow: inset 0 0 0 10px color-mix(in srgb, var(--concept-bg) 65%, transparent);
 }
 
-.app-shell[data-system-layout='badge'] .scene-frame {
-  border-radius: 28px;
+.scene-canvas {
+  position: relative;
+  cursor: crosshair;
 }
 
-.app-shell[data-system-layout='field'] .scene-frame {
+.scene-status {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--concept-fg) 18%, transparent);
+  background: color-mix(in srgb, var(--concept-bg) 70%, transparent);
+  color: var(--concept-accent);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.app-shell[data-system-layout='board'] .scene-frame {
   background-image:
     linear-gradient(color-mix(in srgb, var(--concept-fg) 8%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--concept-fg) 8%, transparent) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
-.app-shell[data-concept='brutalist-glitch'],
-.app-shell[data-concept='tile-anomaly'],
-.app-shell[data-concept='undefined-to-play'],
-.app-shell[data-concept='pixel-to-vector'] {
-  color-scheme: light;
+.phase-track {
+  display: flex;
+  gap: 8px;
+}
+
+.phase-track span,
+.prototype-list span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  min-height: 24px;
+  border: 1px solid color-mix(in srgb, var(--concept-fg) 16%, transparent);
+  color: color-mix(in srgb, var(--concept-fg) 64%, transparent);
+}
+
+.phase-track span[data-active='true'],
+.prototype-list span[data-active='true'] {
+  border-color: var(--concept-accent);
+  color: var(--concept-accent);
+}
+
+.prototype-list {
+  display: grid;
+  gap: 8px;
+}
+
+.prototype-list span {
+  justify-content: start;
+  padding: 6px 8px;
 }
 
 @media (max-width: 980px) {

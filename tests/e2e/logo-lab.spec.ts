@@ -5,7 +5,8 @@ test('renders the logo lab shell', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /undef logos/i })).toBeVisible()
   await expect(page.getByLabel('interactive logo scene')).toBeVisible()
 
-  const warpGate = page.getByRole('button', { name: 'Warp Gate' })
-  await warpGate.click()
-  await expect(warpGate).toHaveAttribute('aria-current', 'true')
+  const commandConsole = page.getByRole('button', { name: 'Command Console' })
+  await commandConsole.click()
+  await expect(commandConsole).toHaveAttribute('aria-current', 'true')
+  await expect(page.getByText('> build undef.games')).toBeVisible()
 })

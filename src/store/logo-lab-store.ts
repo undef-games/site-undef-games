@@ -18,7 +18,7 @@ export type LogoLabState = {
 export function createLogoLabStore() {
   return createStore<LogoLabState>()(
     subscribeWithSelector((set) => ({
-      activeConceptId: 'prompt-cursor',
+      activeConceptId: 'define-the-game',
       hoveredConceptId: null,
       pinnedConceptIds: [],
       displayMode: 'landing',

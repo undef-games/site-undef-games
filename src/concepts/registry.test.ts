@@ -3,26 +3,16 @@ import { conceptLanes } from './lanes'
 import { concepts } from './registry'
 
 const requiredIds = [
-  'prompt-cursor',
-  'warp-gate',
-  'wireframe-map',
-  'brutalist-glitch',
-  'ug-monogram',
-  'undefined-to-play',
-  'modular-nodes',
-  'tile-anomaly',
-  'emergence-chaos',
-  'system-mutations',
-  'dice-pixel-dialogue',
-  'party-energy',
-  'pixel-to-vector',
+  'define-the-game',
+  'command-console',
+  'rule-board',
 ]
 
 const hexColorPattern = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
 
 describe('concepts', () => {
-  it('contains 13 concept entries', () => {
-    expect(concepts).toHaveLength(13)
+  it('contains 3 prototype entries', () => {
+    expect(concepts).toHaveLength(3)
   })
 
   it('contains exactly the required ids with no duplicates', () => {

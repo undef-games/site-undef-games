@@ -11,6 +11,7 @@ import { PromptPanel } from '../ui/prompt-panel'
 
 export function AppShell() {
   const [activeConceptId, setActiveConceptId] = useState(concepts[0].id)
+  const [phase, setPhase] = useState(0)
   const concept = concepts.find((candidate) => candidate.id === activeConceptId) ?? concepts[0]
   const system = getLogoSystem(concept)
   const skinStyle = {
@@ -18,6 +19,12 @@ export function AppShell() {
     '--concept-fg': concept.colorTokens.foreground,
     '--concept-accent': concept.colorTokens.accent,
   } as CSSProperties
+  const activePhase = system.phases[phase % system.phases.length]
+  const selectConcept = (id: string) => {
+    setActiveConceptId(id)
+    setPhase(0)
+  }
+  const advancePhase = () => setPhase((current) => (current + 1) % system.phases.length)
 
   return (
     <div className="app-shell" data-concept={concept.id} data-system-layout={system.layout} style={skinStyle}>
@@ -25,19 +32,19 @@ export function AppShell() {
         <div>
           <p className="eyebrow">undef games</p>
           <h1>undef logos</h1>
-          <p className="active-system">{concept.name} / {system.descriptor}</p>
+          <p className="active-system">{concept.name} / {activePhase}</p>
         </div>
       </header>
       <main className="layout">
-        <ConceptRail concepts={concepts} activeConceptId={concept.id} onSelect={setActiveConceptId} />
+        <ConceptRail concepts={concepts} activeConceptId={concept.id} onSelect={selectConcept} />
         <section className="scene-frame">
-          <LogoLabScene concept={concept} />
+          <LogoLabScene concept={concept} phase={phase} onAdvance={advancePhase} />
         </section>
         <aside className="panel-stack">
-          <ResolvedLogoPanel concept={concept} />
+          <ResolvedLogoPanel concept={concept} phase={phase} />
           <PromptPanel prompt={concept.prompt} />
-          <ControlPanel />
-          <CompareTray />
+          <ControlPanel concept={concept} phase={phase} />
+          <CompareTray concepts={concepts} activeConceptId={concept.id} />
         </aside>
       </main>
     </div>

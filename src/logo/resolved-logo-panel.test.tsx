@@ -43,8 +43,8 @@ describe('ResolvedLogoPanel', () => {
   it('changes wordmark and compact output by concept system', () => {
     render(<ResolvedLogoPanel concept={concepts[1]} />)
 
-    expect(screen.getByText('[ undef games ]')).toBeInTheDocument()
-    expect(screen.getByText('GATE')).toBeInTheDocument()
-    expect(screen.getAllByText('portal bracket system')).toHaveLength(2)
+    expect(screen.getByText('> build undef.games')).toBeInTheDocument()
+    expect(screen.getByText('>_')).toBeInTheDocument()
+    expect(screen.getByText(/compile a game identity/i)).toBeInTheDocument()
   })
 })

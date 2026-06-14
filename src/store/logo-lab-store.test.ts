@@ -5,7 +5,7 @@ describe('logo lab store', () => {
   it('starts with logo lab defaults', () => {
     const store = createLogoLabStore()
 
-    expect(store.getState().activeConceptId).toBe('prompt-cursor')
+    expect(store.getState().activeConceptId).toBe('define-the-game')
     expect(store.getState().hoveredConceptId).toBeNull()
     expect(store.getState().pinnedConceptIds).toEqual([])
     expect(store.getState().displayMode).toBe('landing')
@@ -13,9 +13,9 @@ describe('logo lab store', () => {
 
   it('pins a concept id once', () => {
     const store = createLogoLabStore()
-    store.getState().pinConcept('prompt-cursor')
-    store.getState().pinConcept('prompt-cursor')
-    expect(store.getState().pinnedConceptIds).toEqual(['prompt-cursor'])
+    store.getState().pinConcept('define-the-game')
+    store.getState().pinConcept('define-the-game')
+    expect(store.getState().pinnedConceptIds).toEqual(['define-the-game'])
   })
 
   it('does not notify pinned concept subscribers for duplicate pins', () => {
@@ -29,11 +29,11 @@ describe('logo lab store', () => {
       },
     )
 
-    store.getState().pinConcept('prompt-cursor')
+    store.getState().pinConcept('define-the-game')
     expect(observedCount).toBe(1)
 
     observedCount = 0
-    store.getState().pinConcept('prompt-cursor')
+    store.getState().pinConcept('define-the-game')
 
     expect(observedCount).toBe(0)
   })
