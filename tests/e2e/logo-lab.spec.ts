@@ -52,23 +52,32 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   await page.goto('/')
 
   const signalScene = page.getByLabel('interactive station signal')
+  const sectionToyLine = page.locator('.landing-section--signal .section-toy span').first()
   await expect(signalScene).toHaveAttribute('data-scroll-depth', '0')
   await expect(page.getByLabel('signal behavior')).toBeVisible()
-  await expect(page.locator('.scroll-follow-field')).toBeVisible()
+  await expect(sectionToyLine).toBeVisible()
+  const initialTravel = await sectionToyLine.evaluate(getTranslateX)
 
   await page.mouse.move(420, 320)
   await page.mouse.wheel(0, 720)
 
   await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
-  await expect
-    .poll(() =>
-      page.locator('.scroll-follow-field').evaluate((field) => {
-        const follower = field.querySelector('i')
-        return follower ? getComputedStyle(follower).top : ''
-      }),
-    )
-    .not.toBe('12%')
+  await expect.poll(() => sectionToyLine.evaluate(getTranslateX)).toBeLessThan(initialTravel - 250)
   await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
+})
+
+test('keeps pointer scan control active over the hero text', async ({ page }) => {
+  await page.goto('/')
+
+  const signalScene = page.getByLabel('interactive station signal')
+  const heading = page.getByRole('heading', { name: /undef games/i })
+  const box = await heading.boundingBox()
+  expect(box).not.toBeNull()
+
+  await page.mouse.move(box!.x + box!.width * 0.42, box!.y + box!.height * 0.52)
+
+  await expect(signalScene).toHaveAttribute('data-pointer-active', 'true')
+  await expect.poll(async () => Number(await signalScene.getAttribute('data-pointer-y'))).not.toBe(0)
 })
 
 test('switches channel toys and keeps one canvas scene', async ({ page }) => {
@@ -86,6 +95,13 @@ test('switches channel toys and keeps one canvas scene', async ({ page }) => {
   await expect(page.locator('.packet-drift')).toHaveAttribute('data-channel-mode', 'game')
   await expect(signalScene.locator('canvas')).toHaveCount(1)
 })
+
+function getTranslateX(element: Element) {
+  const transform = getComputedStyle(element).transform
+  if (transform === 'none') return 0
+  const matrix = new DOMMatrixReadOnly(transform)
+  return matrix.m41
+}
 
 function getCanvasFitDelta(scene: HTMLElement) {
   const canvas = scene.querySelector('canvas')

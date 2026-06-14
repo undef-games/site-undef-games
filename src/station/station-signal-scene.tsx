@@ -50,10 +50,13 @@ export function StationSignalScene({
       pointer.active = relativeX >= -0.08 && relativeX <= 1.08 && relativeY >= -0.08 && relativeY <= 1.08
       pointer.x = Math.min(1, Math.max(0, relativeX)) - 0.5
       pointer.y = Math.min(1, Math.max(0, relativeY)) - 0.5
+      target.dataset.pointerActive = String(pointer.active)
+      target.dataset.pointerY = pointer.y.toFixed(3)
     }
 
     const onPointerLeave = () => {
       pointer.active = false
+      target.dataset.pointerActive = 'false'
     }
 
     const resizeToHost = () => {
@@ -120,6 +123,7 @@ export function StationSignalScene({
       data-renderer="pixijs"
       data-resize-mode="observer"
       data-channel-mode={channelMode}
+      data-pointer-active="false"
       data-scroll-depth={scrollDepth}
       data-signal={state.signal}
       data-status={status.label}
@@ -204,6 +208,14 @@ function drawSignalField(
     const y = (pseudoNoise(index + 91, time * 0.7) * height + index * 17) % height
     const size = 1 + ((index + Math.floor(time * 6)) % 3)
     graphics.rect(x, y, size, 1).fill({ color: 0xf4f4f0, alpha: 0.03 + (1 - clarity) * 0.18 + scrollEnergy * 0.04 })
+  }
+
+  if (pointer.active) {
+    graphics.rect(0, pointerY - 34, width, 68).fill({ color: profile.color, alpha: 0.025 + clarity * 0.03 })
+    graphics.rect(driftX - width * 0.08, pointerY, width * 1.08, 2).fill({
+      color: profile.color,
+      alpha: 0.16 + clarity * 0.16,
+    })
   }
 
   const sweepY = (height * (0.12 + ((time * (0.14 + scrollEnergy * 0.26)) % 0.82))) | 0

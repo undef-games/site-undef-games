@@ -83,22 +83,35 @@ export function PacketDrift({ activeChannel }: { activeChannel: StationChannel }
 }
 
 export function SectionToy({ variant }: { variant: 'signal' | 'system' | 'identity' }) {
+  const count = variant === 'system' ? 18 : 12
+
   return (
     <div className={`section-toy section-toy--${variant}`} aria-hidden="true">
-      {Array.from({ length: variant === 'system' ? 16 : 12 }, (_, index) => (
-        <span key={index} style={{ '--toy-index': index } as CSSProperties} />
-      ))}
-    </div>
-  )
-}
+      {Array.from({ length: count }, (_, index) => {
+        const row = index % 7
+        const width = 48 + (index % 5) * 34
+        const height = index % 4 === 0 ? 8 : index % 3 === 0 ? 5 : 2
+        const start = 82 + (index % 6) * 11
+        const speed = 112 + (index % 4) * 17
+        const drift = index % 2 === 0 ? -1 : 1
 
-export function ScrollFollowField() {
-  return (
-    <div className="scroll-follow-field" aria-hidden="true">
-      {Array.from({ length: 18 }, (_, index) => (
-        <span key={index} style={{ '--trail-index': index } as CSSProperties} />
-      ))}
-      <i />
+        return (
+          <span
+            key={index}
+            style={
+              {
+                '--toy-drift': drift,
+                '--toy-height': `${height}px`,
+                '--toy-index': index,
+                '--toy-row': row,
+                '--toy-speed': `${speed}vw`,
+                '--toy-start': `${start}vw`,
+                '--toy-width': `${width}px`,
+              } as CSSProperties
+            }
+          />
+        )
+      })}
     </div>
   )
 }

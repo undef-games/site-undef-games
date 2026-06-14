@@ -3,7 +3,7 @@ import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
 import { StationSignalScene } from '../station/station-signal-scene'
 import { createStationState, detuneSignal, getStationStatus, resetSignal, tuneSignal } from '../station/station-state'
-import { ChannelSelector, PacketDrift, ScrollFollowField, SectionToy, SignalScope, STATION_CHANNELS } from '../station/station-toys'
+import { ChannelSelector, PacketDrift, SectionToy, SignalScope, STATION_CHANNELS } from '../station/station-toys'
 
 export function AppShell() {
   const [stationState, setStationState] = useState(createStationState)
@@ -35,7 +35,6 @@ export function AppShell() {
   return (
     <div className="station-shell" data-status={status.label.toLowerCase().replaceAll(' ', '-')} style={landingStyle}>
       <main className="landing-page">
-        <ScrollFollowField />
         <section className="landing-hero" aria-label="undef games landing page">
           <div className="station-broadcast" aria-label="static station identity">
             <StationSignalScene state={stationState} scrollDepth={scrollDepth} channelMode={activeChannel.mode} />
