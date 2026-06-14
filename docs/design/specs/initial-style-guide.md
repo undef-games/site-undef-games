@@ -42,6 +42,8 @@ The rail should feel operational and dense. It should support the landing page w
 - Motion language: horizontal scanlines, signal sweep, subtle noise, and pointer-influenced drift.
 - Tuning behavior: scanline density and brightness increase with signal strength.
 - Landing behavior: scanlines respond to mouse position and page scroll.
+- Page scanline behavior: the scanline effect should read as one continuous background field traversing the entire page from top to bottom. Scrolling should reveal/move through that field continuously, with text, panels, rectangles, and other layers dimming or masking it as they overlap.
+- Rejected scanline interpretation: do not treat "follow the location" as aligning a current scanline band to the center of the browser viewport. That viewport-centered targeting effect is useful as a known contrast, but it is not the intended scanline behavior.
 - Toy behavior: channel chips change the scan field mode, scope readout, and packet drift layer.
 - Scroll behavior: lower sections carry subtle scan toys so the page keeps feeling interactive past the hero.
 - Header scan behavior: section/header scan fragments may tumble left with scroll, but they must keep fixed fragment sizes and stay behind section text.
