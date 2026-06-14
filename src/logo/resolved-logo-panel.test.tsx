@@ -26,7 +26,7 @@ describe('ResolvedLogoPanel', () => {
   })
 
   it('keeps the logo mark accessible by default', () => {
-    render(<LogoMark accent={concepts[0].colorTokens.accent} />)
+    render(<LogoMark concept={concepts[0]} />)
 
     expect(screen.getByRole('img', { name: /logo mark/i })).toBeInTheDocument()
   })
@@ -38,5 +38,13 @@ describe('ResolvedLogoPanel', () => {
 
     expect(screen.getByRole('img', { name: `${concept.name} logo mark` })).toBeInTheDocument()
     expect(screen.getAllByRole('img')).toHaveLength(1)
+  })
+
+  it('changes wordmark and compact output by concept system', () => {
+    render(<ResolvedLogoPanel concept={concepts[1]} />)
+
+    expect(screen.getByText('[ undef games ]')).toBeInTheDocument()
+    expect(screen.getByText('GATE')).toBeInTheDocument()
+    expect(screen.getAllByText('portal bracket system')).toHaveLength(2)
   })
 })
