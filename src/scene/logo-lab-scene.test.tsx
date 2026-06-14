@@ -5,6 +5,6 @@ import { LogoLabScene } from './logo-lab-scene'
 describe('LogoLabScene', () => {
   it('renders the canvas region label', () => {
     render(<LogoLabScene activeConceptId="prompt-cursor" />)
-    expect(screen.getByLabelText(/interactive logo scene/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/interactive logo scene/i)).toHaveClass('scene-canvas')
   })
 })

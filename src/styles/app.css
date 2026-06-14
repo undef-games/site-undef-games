@@ -42,7 +42,16 @@ body {
 }
 
 .scene-frame {
-  min-height: 70vh;
+  height: min(720px, 70vh);
+  min-height: 460px;
+  overflow: hidden;
+}
+
+.scene-canvas,
+.scene-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .panel-stack {
