@@ -18,7 +18,8 @@ export function AppShell() {
   useEffect(() => {
     const updateScrollDepth = () => {
       const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
-      setScrollDepth(Math.min(1, Math.max(0, window.scrollY / scrollable)))
+      const landingRange = Math.min(scrollable, window.innerHeight * 1.6)
+      setScrollDepth(Math.min(1, Math.max(0, window.scrollY / Math.max(1, landingRange))))
     }
 
     updateScrollDepth()

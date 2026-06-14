@@ -198,7 +198,7 @@ function drawSignalField(
       : width * (0.1 + ((index * 89) % Math.max(width * 0.22, 1)) / width)
     graphics.rect(x, y, Math.min(lineWidth, width * 0.94), active ? 2.4 : 1).fill({
       color: active ? profile.color : 0xf4f4f0,
-      alpha: active ? 0.12 + clarity * 0.42 + pointerBand * 0.28 + scrollEnergy * 0.12 : 0.045 + pointerBand * 0.09,
+      alpha: active ? 0.075 + clarity * 0.28 + pointerBand * 0.22 + scrollEnergy * 0.08 : 0.028 + pointerBand * 0.06,
     })
   }
 
@@ -207,7 +207,7 @@ function drawSignalField(
     const x = (noise * width + index * 31) % width
     const y = (pseudoNoise(index + 91, time * 0.7) * height + index * 17) % height
     const size = 1 + ((index + Math.floor(time * 6)) % 3)
-    graphics.rect(x, y, size, 1).fill({ color: 0xf4f4f0, alpha: 0.03 + (1 - clarity) * 0.18 + scrollEnergy * 0.04 })
+    graphics.rect(x, y, size, 1).fill({ color: 0xf4f4f0, alpha: 0.024 + (1 - clarity) * 0.13 + scrollEnergy * 0.03 })
   }
 
   if (pointer.active) {

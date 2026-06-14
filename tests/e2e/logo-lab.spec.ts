@@ -53,16 +53,19 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
 
   const signalScene = page.getByLabel('interactive station signal')
   const sectionToyLine = page.locator('.landing-section--signal .section-toy span').first()
+  const reverseToyLine = page.locator('.landing-section--signal .section-toy span').nth(2)
   await expect(signalScene).toHaveAttribute('data-scroll-depth', '0')
   await expect(page.getByLabel('signal behavior')).toBeVisible()
   await expect(sectionToyLine).toBeVisible()
   const initialTravel = await sectionToyLine.evaluate(getTranslateX)
+  const initialReverseTravel = await reverseToyLine.evaluate(getTranslateX)
 
   await page.mouse.move(420, 320)
   await page.mouse.wheel(0, 720)
 
   await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
-  await expect.poll(() => sectionToyLine.evaluate(getTranslateX)).toBeLessThan(initialTravel - 250)
+  await expect.poll(() => sectionToyLine.evaluate(getTranslateX)).toBeGreaterThan(initialTravel + 80)
+  await expect.poll(() => reverseToyLine.evaluate(getTranslateX)).toBeLessThan(initialReverseTravel - 50)
   await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
 })
 
