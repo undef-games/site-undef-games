@@ -1,36 +1,86 @@
 import { expect, test } from '@playwright/test'
 
-test('renders the logo lab shell', async ({ page }) => {
+test('tunes the static station identity to signal lock', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: /undef logos/i })).toBeVisible()
-  await expect(page.getByLabel('interactive logo scene')).toBeVisible()
 
-  await page.getByRole('button', { name: /define world/i }).click()
-  await page.getByRole('button', { name: /define move/i }).click()
-  await page.getByRole('button', { name: /define win/i }).click()
-  await expect(page.getByText(/Define the Game \/ playable/i)).toBeVisible()
+  await expect(page.getByRole('heading', { name: /undef games/i })).toBeVisible()
+  const signalScene = page.getByLabel('interactive station signal')
+  await expect(signalScene).toBeVisible()
+  await expect(signalScene).toHaveAttribute('data-renderer', 'pixijs')
+  await expect(signalScene.locator('canvas')).toHaveCount(1)
+  await expect.poll(() => signalScene.locator('canvas').evaluate(hasPaintedWebGlPixels)).toBe(true)
+  const initialScanlines = Number(await signalScene.getAttribute('data-active-scanlines'))
+  await expect(page.getByText(/NO SIGNAL/i).first()).toBeVisible()
 
-  const commandConsole = page.getByRole('button', { name: 'Command Console' })
-  await commandConsole.click()
-  await expect(commandConsole).toHaveAttribute('aria-current', 'true')
-  await page.getByLabel(/command input/i).fill('define world')
-  await page.getByRole('button', { name: /run command/i }).click()
-  await expect(page.getByText(/ok: define world/i)).toBeVisible()
-  await expect(page.getByText('> build undef.games')).toBeVisible()
+  for (let index = 0; index < 4; index += 1) {
+    await page.getByRole('button', { name: /tune signal/i }).click()
+  }
 
-  await page.getByRole('button', { name: 'Rule Board' }).click()
-  await page.getByRole('button', { name: /make illegal move/i }).click()
-  await page.getByRole('button', { name: /route to tile 10/i }).click()
-  await page.getByRole('button', { name: /route to tile 14/i }).click()
-  await expect(page.getByText(/Rule Board \/ route locked/i)).toBeVisible()
-  await expect(page.getByText(/5 -> 6 -> 10 -> 14/i)).toBeVisible()
+  const lockedScanlines = Number(await signalScene.getAttribute('data-active-scanlines'))
+  expect(lockedScanlines).toBeGreaterThan(initialScanlines)
+  await expect(page.getByText(/LOCKED/i).first()).toBeVisible()
+  await expect(page.getByText(/^LIVE$/i)).toHaveCount(0)
+  await expect(page.getByLabel(/signal 100/i)).toBeVisible()
+  await expect(page.getByLabel(/station lockup/i)).toBeVisible()
 })
 
-test('keeps the playable surface usable on mobile', async ({ page }) => {
+test('keeps the station surface usable on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
-  await expect(page.getByLabel('interactive logo scene')).toBeVisible()
-  await expect(page.getByRole('button', { name: /define world/i })).toBeVisible()
+
+  await expect(page.getByLabel('interactive station signal')).toBeVisible()
+  await expect(page.getByRole('button', { name: /tune signal/i })).toBeVisible()
+
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
   expect(overflow).toBe(false)
 })
+
+test('keeps the Pixi canvas fitted after viewport resize', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const signalScene = page.getByLabel('interactive station signal')
+  await expect(signalScene.locator('canvas')).toHaveCount(1)
+  await expect.poll(() => signalScene.locator('canvas').evaluate(hasPaintedWebGlPixels)).toBe(true)
+
+  await page.setViewportSize({ width: 920, height: 760 })
+  await expect.poll(() => signalScene.evaluate(getCanvasFitDelta)).toBeLessThanOrEqual(2)
+})
+
+test('updates the landing scan field while scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const signalScene = page.getByLabel('interactive station signal')
+  await expect(signalScene).toHaveAttribute('data-scroll-depth', '0')
+  await expect(page.getByLabel('signal behavior')).toBeVisible()
+
+  await page.mouse.move(420, 320)
+  await page.mouse.wheel(0, 720)
+
+  await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
+  await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
+})
+
+function getCanvasFitDelta(scene: HTMLElement) {
+  const canvas = scene.querySelector('canvas')
+  if (!canvas) return Number.POSITIVE_INFINITY
+
+  const sceneRect = scene.getBoundingClientRect()
+  const canvasRect = canvas.getBoundingClientRect()
+  return Math.max(Math.abs(sceneRect.width - canvasRect.width), Math.abs(sceneRect.height - canvasRect.height))
+}
+
+function hasPaintedWebGlPixels(canvas: HTMLCanvasElement) {
+  const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl')
+  if (!gl) return false
+
+  const width = gl.drawingBufferWidth
+  const height = gl.drawingBufferHeight
+  const pixels = new Uint8Array(4 * 9)
+  const sampleX = Math.max(0, Math.floor(width / 2) - 1)
+  const sampleY = Math.max(0, Math.floor(height / 2) - 1)
+  gl.readPixels(sampleX, sampleY, 3, 3, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+
+  return pixels.some((channel) => channel > 0)
+}

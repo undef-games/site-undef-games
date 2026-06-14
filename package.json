@@ -10,17 +10,15 @@
     "test": "node ./scripts/run-vitest.mjs",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
-    "e2e": "playwright test",
+    "e2e": "npm run build && playwright test",
     "deploy": "npm run build && wrangler pages deploy dist --project-name=undef-logos --branch=main",
     "deploy:preview": "npm run build && wrangler pages deploy dist --project-name=undef-logos"
   },
   "dependencies": {
-    "@react-three/drei": "10.7.7",
-    "@react-three/fiber": "9.6.1",
     "framer-motion": "12.40.0",
+    "pixi.js": "8.19.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
-    "three": "0.184.0",
     "zustand": "5.0.14"
   },
   "devDependencies": {
