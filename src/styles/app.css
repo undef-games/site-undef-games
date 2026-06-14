@@ -1,0 +1,55 @@
+body {
+  font-family: var(--font-body);
+  background: radial-gradient(circle at top, #13203d, var(--bg) 42%);
+  color: var(--text);
+}
+
+.app-shell {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.topbar {
+  padding: 24px 28px 0;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 32px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 16px;
+  padding: 20px 28px 28px;
+}
+
+.scene-frame,
+.panel {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+}
+
+.scene-frame {
+  min-height: 70vh;
+}
+
+.panel-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.panel {
+  padding: 16px;
+}
