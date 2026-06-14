@@ -1,0 +1,38 @@
+{
+  "name": "undef-logos",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "node ./scripts/run-vitest.mjs",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@react-three/drei": "10.7.7",
+    "@react-three/fiber": "9.6.1",
+    "framer-motion": "12.40.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "three": "0.184.0",
+    "zustand": "5.0.14"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.0",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "@vitejs/plugin-react": "6.0.2",
+    "jsdom": "26.1.0",
+    "typescript": "6.0.3",
+    "vite": "8.0.16",
+    "vitest": "4.1.0"
+  }
+}
