@@ -128,6 +128,39 @@ test('tumbles identity rectangles at distinct rates while they travel', async ({
   })
 })
 
+test('pulses identity rectangle fill border and glow out of phase', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const identityBoxes = page.locator('.landing-section--identity .section-toy span').filter({ visible: true })
+  await expect(identityBoxes).toHaveCount(4)
+
+  const pulseStyles = await identityBoxes.evaluateAll((elements) =>
+    elements.map((element) => {
+      const style = getComputedStyle(element)
+      return {
+        delays: style.animationDelay.split(',').map((value) => value.trim()),
+        durations: style.animationDuration.split(',').map((value) => value.trim()),
+        names: style.animationName.split(',').map((value) => value.trim()),
+      }
+    }),
+  )
+
+  pulseStyles.forEach((style) => {
+    expect(style.names).toEqual(['identity-fill-pulse', 'identity-border-pulse', 'identity-glow-pulse'])
+    expect(style.durations).toHaveLength(3)
+    expect(style.delays).toHaveLength(3)
+  })
+
+  const fillDurations = new Set(pulseStyles.map((style) => style.durations[0]))
+  const borderDurations = new Set(pulseStyles.map((style) => style.durations[1]))
+  const glowDelays = new Set(pulseStyles.map((style) => style.delays[2]))
+
+  expect(fillDurations.size).toBeGreaterThanOrEqual(3)
+  expect(borderDurations.size).toBeGreaterThanOrEqual(3)
+  expect(glowDelays.size).toBe(4)
+})
+
 test('keeps pointer scan control active over the hero text', async ({ page }) => {
   await page.goto('/')
 
