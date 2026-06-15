@@ -2,8 +2,12 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it } from 'vitest'
 import { AppShell } from './app-shell'
+import { createDefaultThemeState, STORAGE_KEY } from '../store/persistence'
 
-afterEach(() => cleanup())
+afterEach(() => {
+  cleanup()
+  window.localStorage.clear()
+})
 
 describe('AppShell', () => {
   it('renders the static station identity surface', () => {
@@ -42,6 +46,59 @@ describe('AppShell', () => {
     expect(screen.queryByLabelText(/effects controls/i)).not.toBeInTheDocument()
   })
 
+  it('hydrates the production site surface from the saved lab theme', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...createDefaultThemeState(),
+        activeTone: 'light',
+        scanlineLayers: { graph: true, crt: true, glitch: false },
+        tones: {
+          ...createDefaultThemeState().tones,
+          light: {
+            presetId: 'custom',
+            settings: {
+              ...createDefaultThemeState().tones.light.settings,
+              paletteBg: '#ffffff',
+              paletteSignal: '#123456',
+            },
+          },
+        },
+      }),
+    )
+
+    render(<AppShell surface="site" />)
+
+    const shell = screen.getByRole('main').parentElement!
+    expect(shell).toHaveAttribute('data-tone', 'light')
+    expect(shell).toHaveAttribute('data-scan-graph', 'true')
+    expect(shell).toHaveAttribute('data-scan-crt', 'true')
+  })
+
+  it('saves separate dark and light theme choices and clears them with reset theme', async () => {
+    const user = userEvent.setup()
+    render(<AppShell />)
+
+    await user.selectOptions(screen.getByLabelText(/dark theme preset/i), 'cyan-ice')
+    await user.selectOptions(screen.getByLabelText(/light theme preset/i), 'paper-terminal')
+    await user.click(screen.getByRole('button', { name: /light mode/i }))
+
+    expect(JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')).toMatchObject({
+      activeTone: 'light',
+      tones: {
+        dark: { presetId: 'cyan-ice' },
+        light: { presetId: 'paper-terminal' },
+      },
+      version: 1,
+    })
+
+    await user.click(screen.getByRole('button', { name: /reset theme/i }))
+
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull()
+    expect(screen.getByLabelText(/dark theme preset/i)).toHaveValue('current')
+    expect(screen.getByLabelText(/light theme preset/i)).toHaveValue('paper-terminal')
+  })
+
   it('keeps the identity rail focused on the selected mark instead of exploration boards', () => {
     render(<AppShell />)
 
@@ -74,7 +131,7 @@ describe('AppShell', () => {
     expect(screen.getAllByText(/NO SIGNAL/i).length).toBeGreaterThan(0)
 
     await user.click(screen.getByRole('button', { name: /tune signal/i }))
-    await user.click(screen.getByRole('button', { name: /reset/i }))
+    await user.click(screen.getByRole('button', { name: /^reset$/i }))
     expect(screen.getByLabelText(/signal 0/i)).toBeInTheDocument()
   })
 

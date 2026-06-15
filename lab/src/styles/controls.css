@@ -59,8 +59,17 @@
   color: var(--fx-text-on-dark, #f4f4f0);
 }
 
+.station-shell[data-tone='light'] .theme-mode-control button,
+.station-shell[data-tone='light'] .reset-theme-button {
+  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
+  color: var(--fx-text-on-dark, #f4f4f0);
+}
+
 .station-shell[data-tone='light'] .control-buttons button:hover,
+.station-shell[data-tone='light'] .theme-mode-control button:hover,
+.station-shell[data-tone='light'] .theme-mode-control button[aria-pressed='true'],
 .station-shell[data-tone='light'] .preset-select-control select:focus,
+.station-shell[data-tone='light'] .reset-theme-button:hover,
 .station-shell[data-tone='light'] .section-effect-control select:focus {
   color: var(--fx-text-on-dark, #f4f4f0);
 }
@@ -201,6 +210,47 @@
 
 .effects-controls {
   gap: 16px;
+}
+
+.theme-mode-control,
+.theme-preset-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.theme-mode-control {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.theme-mode-control button,
+.reset-theme-button {
+  min-height: 38px;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
+  border-radius: 0;
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.72);
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.78);
+  font: 900 11px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.theme-mode-control button {
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  text-align: start;
+}
+
+.theme-mode-control button span {
+  color: var(--fx-signal, #d8ff35);
+  font-size: 10px;
+}
+
+.theme-mode-control button[aria-pressed='true'],
+.theme-mode-control button:hover,
+.reset-theme-button:hover {
+  border-color: var(--fx-signal, #d8ff35);
+  color: var(--fx-signal, #d8ff35);
 }
 
 .preset-select-control,

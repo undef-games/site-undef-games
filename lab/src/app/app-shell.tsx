@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { EffectsControls } from '../station/effects-controls'
-import type { ScanlineLayerId, ScanlineLayers } from '../station/effects-controls'
 import {
-  BASELINE_EFFECTS,
   EFFECTS_PRESETS,
   createEffectsStyle,
-  getEffectsTone,
   type EffectsPresetId,
   type EffectsSettings,
+  type EffectsTone,
 } from '../station/effects-config'
 import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
@@ -20,9 +18,17 @@ import {
   SignalScope,
   STATION_CHANNELS,
   type SectionEffectId,
-  type SectionEffects,
   type SectionToyEffect,
 } from '../station/station-toys'
+import {
+  clearThemeState,
+  createDefaultThemeState,
+  getActiveThemeSettings,
+  readThemeState,
+  writeThemeState,
+  type ScanlineLayerId,
+  type ThemeState,
+} from '../store/persistence'
 
 const PRODUCT_LINKS = [
   {
@@ -48,21 +54,6 @@ const PRODUCT_LINKS = [
   },
 ]
 
-const DEFAULT_SECTION_EFFECTS: SectionEffects = {
-  dice: 'bars',
-  identity: 'tumble',
-  projects: 'tumble',
-  signal: 'bars',
-  taybols: 'bars',
-  warp: 'tumble',
-}
-
-const DEFAULT_SCANLINE_LAYERS: ScanlineLayers = {
-  graph: false,
-  crt: false,
-  glitch: false,
-}
-
 export type AppShellSurface = 'lab' | 'site'
 
 export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
@@ -70,31 +61,74 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const [stationState, setStationState] = useState(() => createStationState({ signal: isSiteSurface ? 50 : 0 }))
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
-  const [effectsSettings, setEffectsSettings] = useState<EffectsSettings>(BASELINE_EFFECTS)
-  const [activePresetId, setActivePresetId] = useState<EffectsPresetId | 'custom'>('current')
-  const [sectionEffects, setSectionEffects] = useState<SectionEffects>(DEFAULT_SECTION_EFFECTS)
-  const [scanlineLayers, setScanlineLayers] = useState<ScanlineLayers>(DEFAULT_SCANLINE_LAYERS)
+  const [themeState, setThemeState] = useState<ThemeState>(() => readThemeState() ?? createDefaultThemeState())
+  const effectsSettings = getActiveThemeSettings(themeState)
+  const activePresetId = themeState.tones[themeState.activeTone].presetId
+  const darkPresetId = themeState.tones.dark.presetId
+  const lightPresetId = themeState.tones.light.presetId
+  const sectionEffects = themeState.sectionEffects
+  const scanlineLayers = themeState.scanlineLayers
   const effectsSettingsRef = useRef(effectsSettings)
   const status = getStationStatus(stationState)
 
   const tune = () => setStationState((current) => tuneSignal(current, 25))
   const detune = () => setStationState((current) => detuneSignal(current, 25))
   const reset = () => setStationState(resetSignal)
-  const applyEffectsPreset = (presetId: EffectsPresetId) => {
-    const preset = EFFECTS_PRESETS.find((candidate) => candidate.id === presetId)
+
+  const updateThemeState = (updater: (current: ThemeState) => ThemeState) => {
+    setThemeState((current) => {
+      const next = updater(current)
+      if (!isSiteSurface) {
+        writeThemeState(next)
+      }
+      return next
+    })
+  }
+
+  const applyEffectsPreset = (tone: EffectsTone, presetId: EffectsPresetId) => {
+    const preset = EFFECTS_PRESETS.find((candidate) => candidate.id === presetId && candidate.tone === tone)
     if (!preset) return
-    setEffectsSettings({ ...preset.settings })
-    setActivePresetId(presetId)
+    updateThemeState((current) => ({
+      ...current,
+      tones: {
+        ...current.tones,
+        [tone]: {
+          presetId,
+          settings: { ...preset.settings },
+        },
+      },
+    }))
+  }
+  const updateActiveTone = (tone: EffectsTone) => {
+    updateThemeState((current) => ({ ...current, activeTone: tone }))
   }
   const updateEffect = (key: keyof EffectsSettings, value: number | string) => {
-    setEffectsSettings((current) => ({ ...current, [key]: value }))
-    setActivePresetId('custom')
+    updateThemeState((current) => ({
+      ...current,
+      tones: {
+        ...current.tones,
+        [current.activeTone]: {
+          presetId: 'custom',
+          settings: { ...current.tones[current.activeTone].settings, [key]: value },
+        },
+      },
+    }))
   }
   const updateSectionEffect = (sectionId: SectionEffectId, effect: SectionToyEffect) => {
-    setSectionEffects((current) => ({ ...current, [sectionId]: effect }))
+    updateThemeState((current) => ({
+      ...current,
+      sectionEffects: { ...current.sectionEffects, [sectionId]: effect },
+    }))
   }
   const updateScanlineLayer = (layerId: ScanlineLayerId, active: boolean) => {
-    setScanlineLayers((current) => ({ ...current, [layerId]: active }))
+    updateThemeState((current) => ({
+      ...current,
+      scanlineLayers: { ...current.scanlineLayers, [layerId]: active },
+    }))
+  }
+  const resetTheme = () => {
+    clearThemeState()
+    setThemeState(createDefaultThemeState())
   }
 
   useEffect(() => {
@@ -149,10 +183,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   }, [])
 
   const landingStyle = createEffectsStyle(effectsSettings, scrollDepth)
-  const activeTone =
-    activePresetId === 'custom'
-      ? getEffectsTone(effectsSettings)
-      : (EFFECTS_PRESETS.find((preset) => preset.id === activePresetId)?.tone ?? getEffectsTone(effectsSettings))
+  const activeTone = themeState.activeTone
 
   return (
     <div
@@ -206,11 +237,16 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
               <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
               <EffectsControls
                 activePresetId={activePresetId}
+                activeTone={themeState.activeTone}
+                darkPresetId={darkPresetId}
+                lightPresetId={lightPresetId}
                 scanlineLayers={scanlineLayers}
                 settings={effectsSettings}
                 sectionEffects={sectionEffects}
                 onChange={updateEffect}
+                onActiveTone={updateActiveTone}
                 onPreset={applyEffectsPreset}
+                onResetTheme={resetTheme}
                 onScanlineLayerChange={updateScanlineLayer}
                 onSectionEffect={updateSectionEffect}
               />

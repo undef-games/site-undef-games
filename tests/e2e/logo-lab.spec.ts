@@ -239,31 +239,23 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   const rail = page.getByLabel('station tools and identity')
   const effects = page.getByLabel('effects controls')
-  const presetSelect = effects.getByLabel('Effect preset')
+  const darkPresetSelect = effects.getByLabel('Dark theme preset')
+  const lightPresetSelect = effects.getByLabel('Light theme preset')
   const signalBackground = effects.getByLabel('Signal background')
   await expect(rail).toBeVisible()
   await expect(effects).toBeVisible()
-  await expect(presetSelect).toHaveValue('current')
-  await expect.poll(() => presetSelect.locator('option').count()).toBeGreaterThanOrEqual(30)
-  const presetGroups = await presetSelect.locator('optgroup').evaluateAll((groups) =>
-    groups.map((group) => {
-      const presetGroup = group as HTMLOptGroupElement
-      return {
-        label: presetGroup.label,
-        options: Array.from(presetGroup.querySelectorAll('option')).map((option) => option.textContent?.trim() ?? ''),
-      }
-    }),
+  await expect(darkPresetSelect).toHaveValue('current')
+  await expect(lightPresetSelect).toHaveValue('paper-terminal')
+  await expect.poll(() => darkPresetSelect.locator('option').count()).toBeGreaterThanOrEqual(20)
+  await expect.poll(() => lightPresetSelect.locator('option').count()).toBeGreaterThanOrEqual(12)
+  const darkPresetLabels = await darkPresetSelect.locator('option').evaluateAll((options) =>
+    options.map((option) => option.textContent?.trim() ?? ''),
   )
-  expect(presetGroups.map((group) => group.label)).toEqual(['🌙 Dark presets', '☀️ Light presets'])
-  presetGroups.forEach((group) => {
-    const icon = group.label.startsWith('🌙') ? '🌙' : '☀️'
-    const labels = group.options.map((label) => label.replace(/^\S+\s/u, ''))
-    expect(group.options.every((label) => label.startsWith(icon))).toBe(true)
-    expect(labels).toEqual([...labels].sort((left, right) => left.localeCompare(right)))
-  })
-  const lightPresetLabels = presetGroups
-    .find((group) => group.label === '☀️ Light presets')!
-    .options.map((label) => label.replace(/^☀️\s/u, ''))
+  const lightPresetLabels = await lightPresetSelect.locator('option').evaluateAll((options) =>
+    options.map((option) => option.textContent?.trim() ?? ''),
+  )
+  expect(darkPresetLabels).toEqual([...darkPresetLabels].sort((left, right) => left.localeCompare(right)))
+  expect(lightPresetLabels).toEqual([...lightPresetLabels].sort((left, right) => left.localeCompare(right)))
   expect(lightPresetLabels).toEqual(
     expect.arrayContaining([
       'Airport display',
@@ -303,7 +295,8 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
     .poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-scroll-impact').trim()))
     .toBe('0.35')
 
-  await presetSelect.selectOption('paper-terminal')
+  await lightPresetSelect.selectOption('paper-terminal')
+  await effects.getByRole('button', { name: /light mode/i }).click()
   await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-text-on-light').trim())).toBe('#11130d')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-text-on-dark').trim())).toBe('#f4f4f0')
@@ -317,7 +310,8 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   await expect.poll(() => graphLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.afterOpacity)).toBe('0')
   await expect.poll(() => graphLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.backgroundLuminance)).toBeGreaterThan(0.68)
 
-  await presetSelect.selectOption('cyan-ice')
+  await darkPresetSelect.selectOption('cyan-ice')
+  await effects.getByRole('button', { name: /dark mode/i }).click()
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-signal').trim())).toBe('#39e8ff')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-support-1').trim())).toBe('#9df7ff')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-support-2').trim())).toBe('#8fb9ff')
@@ -355,6 +349,44 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   await effects.getByLabel('Rectangle spin', { exact: true }).fill('1.35')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-rectangle-spin').trim())).toBe('1.35')
+})
+
+test('persists separate lab themes and hydrates the production surface', async ({ page }) => {
+  await page.goto('/lab/')
+  await page.evaluate(() => window.localStorage.clear())
+  await page.reload()
+
+  const effects = page.getByLabel('effects controls')
+  await effects.getByLabel('Dark theme preset').selectOption('cyan-ice')
+  await effects.getByLabel('Light theme preset').selectOption('paper-terminal')
+  await effects.getByRole('button', { name: /light mode/i }).click()
+
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
+  await expect
+    .poll(() => page.evaluate(() => JSON.parse(window.localStorage.getItem('undef-logos-theme') ?? '{}')))
+    .toMatchObject({
+      activeTone: 'light',
+      tones: {
+        dark: { presetId: 'cyan-ice' },
+        light: { presetId: 'paper-terminal' },
+      },
+      version: 1,
+    })
+
+  await page.goto('/')
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-surface', 'site')
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
+  await expect(page.getByLabel('effects controls')).toHaveCount(0)
+
+  await page.goto('/lab/')
+  await expect(page.getByLabel('Dark theme preset')).toHaveValue('cyan-ice')
+  await expect(page.getByLabel('Light theme preset')).toHaveValue('paper-terminal')
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
+
+  await page.getByRole('button', { name: /reset theme/i }).click()
+  await expect.poll(() => page.evaluate(() => window.localStorage.getItem('undef-logos-theme'))).toBeNull()
+  await page.goto('/')
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'dark')
 })
 
 test('switches section background effects independently', async ({ page }) => {
@@ -440,12 +472,13 @@ test('keeps scanline layer checks readable on high-key light presets', async ({ 
   await page.goto('/lab/')
 
   const effects = page.getByLabel('effects controls')
-  const presetSelect = effects.getByLabel('Effect preset')
+  const presetSelect = effects.getByLabel('Light theme preset')
   const crtLayer = effects.getByText('CRT monitor layer').locator('..')
   const crtLayerIndicator = crtLayer.locator('.scanline-check')
 
   for (const presetId of ['whiteout', 'copy-machine']) {
     await presetSelect.selectOption(presetId)
+    await effects.getByRole('button', { name: /light mode/i }).click()
     await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
 
     const uncheckedRow = await crtLayer.evaluate(readControlContrast)
@@ -469,7 +502,8 @@ test('keeps all section effects visibly distinct on whiteout carrier', async ({ 
   await page.goto('/lab/')
 
   const effects = page.getByLabel('effects controls')
-  await effects.getByLabel('Effect preset').selectOption('whiteout')
+  await effects.getByLabel('Light theme preset').selectOption('whiteout')
+  await effects.getByRole('button', { name: /light mode/i }).click()
   const signalToy = page.locator('.landing-section--signal .section-toy')
   const firstSpan = page.locator('.landing-section--signal .section-toy span').first()
   const effectProfiles: string[] = []
@@ -492,7 +526,8 @@ test('keeps rectangle toys visible and smoothed under light presets', async ({ p
   await page.goto('/lab/')
 
   const effects = page.getByLabel('effects controls')
-  await effects.getByLabel('Effect preset').selectOption('whiteout')
+  await effects.getByLabel('Light theme preset').selectOption('whiteout')
+  await effects.getByRole('button', { name: /light mode/i }).click()
 
   const identitySection = page.getByLabel('identity baseline')
   const identityToy = page.locator('.landing-section--identity .section-toy')
