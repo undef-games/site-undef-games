@@ -79,19 +79,19 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   await page.goto('/')
 
   const signalScene = page.getByLabel('interactive station signal')
-  const sectionToyLine = page.locator('.landing-section--signal .section-toy span').first()
-  const reverseToyLine = page.locator('.landing-section--signal .section-toy span').nth(2)
+  const forwardToyLine = page.locator('.landing-section--signal .section-toy span').first()
+  const reverseToyLine = page.locator('.landing-section--signal .section-toy span').nth(1)
   await expect(signalScene).toHaveAttribute('data-scroll-depth', '0')
   await expect(page.getByLabel('signal behavior')).toBeVisible()
-  await expect(sectionToyLine).toBeVisible()
-  const initialTravel = await sectionToyLine.evaluate(getTranslateX)
+  await expect(forwardToyLine).toBeVisible()
+  const initialForwardTravel = await forwardToyLine.evaluate(getTranslateX)
   const initialReverseTravel = await reverseToyLine.evaluate(getTranslateX)
 
   await page.mouse.move(420, 320)
   await page.mouse.wheel(0, 720)
 
   await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
-  await expect.poll(() => sectionToyLine.evaluate(getTranslateX)).toBeLessThan(initialTravel - 100)
+  await expect.poll(() => forwardToyLine.evaluate(getTranslateX)).toBeGreaterThan(initialForwardTravel + 100)
   await expect.poll(() => reverseToyLine.evaluate(getTranslateX)).toBeLessThan(initialReverseTravel - 100)
   await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
 })
@@ -363,11 +363,80 @@ test('keeps rectangle toys visible and smoothed under light presets', async ({ p
   expect(easedFrame).toBeLessThan(firstFrame - 24)
 })
 
+test('tumbles skinny bars and varies row-rectangle travel directions', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const signalSection = page.getByLabel('signal behavior')
+  const signalMetrics = await signalSection.evaluate(readSectionMetrics)
+  const firstSkinnyBar = page.locator('.landing-section--signal .section-toy span').first()
+  const secondSkinnyBar = page.locator('.landing-section--signal .section-toy span').nth(1)
+
+  await scrollSectionToProgress(page, signalMetrics, 0.12)
+  const earlyFirstBar = await firstSkinnyBar.evaluate(readToyMotion)
+  const earlySecondBar = await secondSkinnyBar.evaluate(readToyMotion)
+
+  await scrollSectionToProgress(page, signalMetrics, 0.72)
+  await page.waitForTimeout(220)
+  const lateFirstBar = await firstSkinnyBar.evaluate(readToyMotion)
+  const lateSecondBar = await secondSkinnyBar.evaluate(readToyMotion)
+
+  expect(Math.abs(lateFirstBar.rotation - earlyFirstBar.rotation)).toBeGreaterThan(40)
+  expect(Math.abs(lateSecondBar.rotation - earlySecondBar.rotation)).toBeGreaterThan(40)
+  expect(lateFirstBar.translateX).toBeGreaterThan(earlyFirstBar.translateX + 40)
+  expect(lateSecondBar.translateX).toBeLessThan(earlySecondBar.translateX - 40)
+
+  const diceSection = page.getByLabel('Undef Dice')
+  const diceMetrics = await diceSection.evaluate(readSectionMetrics)
+  const firstRowRect = page.locator('.landing-section--dice .section-toy span').first()
+  const secondRowRect = page.locator('.landing-section--dice .section-toy span').nth(1)
+
+  await scrollSectionToProgress(page, diceMetrics, 0.16)
+  const earlyFirstRowRect = await firstRowRect.evaluate(readToyMotion)
+  const earlySecondRowRect = await secondRowRect.evaluate(readToyMotion)
+
+  await scrollSectionToProgress(page, diceMetrics, 0.76)
+  await page.waitForTimeout(220)
+  const lateFirstRowRect = await firstRowRect.evaluate(readToyMotion)
+  const lateSecondRowRect = await secondRowRect.evaluate(readToyMotion)
+
+  expect(lateFirstRowRect.translateY).toBeLessThan(earlyFirstRowRect.translateY - 24)
+  expect(lateSecondRowRect.translateY).toBeGreaterThan(earlySecondRowRect.translateY + 24)
+  expect(Math.abs(lateFirstRowRect.rotation - earlyFirstRowRect.rotation)).toBeGreaterThan(18)
+})
+
 function getTranslateX(element: Element) {
   const transform = getComputedStyle(element).transform
   if (transform === 'none') return 0
   const matrix = new DOMMatrixReadOnly(transform)
   return matrix.m41
+}
+
+function readToyMotion(element: Element) {
+  const transform = getComputedStyle(element).transform
+  if (transform === 'none') {
+    return {
+      rotation: 0,
+      translateX: 0,
+      translateY: 0,
+    }
+  }
+
+  const matrix = new DOMMatrixReadOnly(transform)
+  return {
+    rotation: Math.atan2(matrix.b, matrix.a) * (180 / Math.PI),
+    translateX: matrix.m41,
+    translateY: matrix.m42,
+  }
+}
+
+function readSectionMetrics(element: Element) {
+  const rect = element.getBoundingClientRect()
+  return {
+    height: rect.height,
+    top: rect.top + window.scrollY,
+    viewportHeight: window.innerHeight,
+  }
 }
 
 function getBoxTransforms(elements: Element[]) {

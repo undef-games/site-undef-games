@@ -16,11 +16,12 @@
   background: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.58);
   box-shadow: 0 0 calc(18px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-1-rgb, 216 255 53) / 0.26);
   transform:
-    translateX(calc(var(--toy-start, 90vw) - var(--section-progress, 0) * var(--toy-speed, 190vw)))
-    translateY(calc(var(--toy-drift, 1) * var(--section-progress, 0) * 38px))
-    rotate(calc(var(--toy-drift, 1) * var(--section-progress, 0) * 28deg));
+    translateX(calc(var(--toy-x-start, 90vw) + var(--section-progress, 0) * var(--toy-x-travel, -190vw)))
+    translateY(calc(var(--toy-y-start, 0px) + var(--section-progress, 0) * var(--toy-y-travel, 38px)))
+    rotate(calc(var(--toy-spin-start, 0deg) + var(--section-progress, 0) * var(--toy-spin, 120deg)));
   transform-origin: center;
   border-radius: 0;
+  will-change: transform, background-color, box-shadow;
 }
 
 .section-toy:not(.section-toy--identity) span:nth-child(odd) {
@@ -47,9 +48,9 @@
   background: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.44);
   box-shadow: 0 0 calc(20px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-1-rgb, 216 255 53) / 0.2);
   transform:
-    translateX(calc(var(--section-progress, 0) * -76vw * var(--fx-rectangle-travel, 1)))
-    translateY(calc(var(--toy-drift, 1) * var(--section-progress, 0) * -34px))
-    rotate(calc(var(--toy-drift, 1) * var(--section-progress, 0) * 10deg));
+    translateX(calc(var(--toy-x-start, 88vw) + var(--section-progress, 0) * var(--toy-x-travel, -160vw) * var(--fx-rectangle-travel, 1)))
+    translateY(calc(var(--toy-y-start, 0px) + var(--section-progress, 0) * var(--toy-y-travel, -86px)))
+    rotate(calc(var(--toy-spin-start, 0deg) + var(--section-progress, 0) * var(--toy-spin, 72deg) * var(--fx-rectangle-spin, 1)));
 }
 
 .section-toy--system span:nth-child(odd) {

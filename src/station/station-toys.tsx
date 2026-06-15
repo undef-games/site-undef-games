@@ -95,9 +95,14 @@ export function SectionToy({ effect, variant }: { effect: SectionToyEffect; vari
         const row = index % 7
         const width = 48 + (index % 5) * 34
         const height = index % 4 === 0 ? 8 : index % 3 === 0 ? 5 : 2
-        const start = 82 + (index % 6) * 11
-        const speed = start + 122 + (index % 4) * 18
+        const travelsLeftToRight = index % 5 === 0 || index % 7 === 3
+        const start = travelsLeftToRight ? -34 - (index % 4) * 12 : 84 + (index % 6) * 12
+        const travel = (150 + (index % 5) * 22) * (travelsLeftToRight ? 1 : -1)
         const drift = index % 2 === 0 ? -1 : 1
+        const verticalStart = variant === 'system' ? (index % 3) * 18 : 0
+        const verticalTravel = variant === 'system' ? (index % 2 === 0 ? -92 : 78) - row * 6 : drift * (34 + (index % 4) * 9)
+        const spinStart = (index % 6) * 11 * drift
+        const spin = (variant === 'system' ? 48 + (index % 5) * 18 : 96 + (index % 6) * 28) * drift
 
         return (
           <span
@@ -108,9 +113,13 @@ export function SectionToy({ effect, variant }: { effect: SectionToyEffect; vari
                 '--toy-height': `${height}px`,
                 '--toy-index': index,
                 '--toy-row': row,
-                '--toy-speed': `${speed}vw`,
-                '--toy-start': `${start}vw`,
+                '--toy-spin': `${spin}deg`,
+                '--toy-spin-start': `${spinStart}deg`,
+                '--toy-x-start': `${start}vw`,
+                '--toy-x-travel': `${travel}vw`,
                 '--toy-width': `${width}px`,
+                '--toy-y-start': `${verticalStart}px`,
+                '--toy-y-travel': `${verticalTravel}px`,
               } as CSSProperties
             }
           />
