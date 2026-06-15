@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "make build",
-    "deploy": "make deploy",
+    "build": "npm --prefix lab run build",
+    "deploy": "npm run build && wrangler pages deploy lab/dist --project-name=undef-logos --branch=main",
     "e2e": "playwright test",
     "test:lab": "npm --prefix lab run test:run",
     "typecheck:lab": "npm --prefix lab run typecheck"
