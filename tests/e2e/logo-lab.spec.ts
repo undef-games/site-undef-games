@@ -312,6 +312,11 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   await expect
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(244, 244, 240)')
+  const crtLayerIndicator = effects.getByText('CRT scanline layer').locator('..').locator('.scanline-check')
+  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual)).toMatchObject({
+    afterOpacity: '0',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+  })
 
   await presetSelect.selectOption('cyan-ice')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-signal').trim())).toBe('#39e8ff')
@@ -336,6 +341,10 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   await effects.getByLabel('CRT scanline layer').check()
   await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-crt', 'true')
+  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual)).toMatchObject({
+    afterOpacity: '1',
+    backgroundColor: 'rgb(57, 232, 255)',
+  })
   await effects.getByLabel('Glitch scanline layer').check()
   await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-glitch', 'true')
 
@@ -596,6 +605,16 @@ function readControlColors(element: Element) {
     backgroundColor: style.backgroundColor,
     borderColor: style.borderTopColor,
     color: style.color,
+  }
+}
+
+function readScanlineCheckVisual(element: Element) {
+  const style = getComputedStyle(element)
+  const afterStyle = getComputedStyle(element, '::after')
+  return {
+    afterOpacity: afterStyle.opacity,
+    backgroundColor: style.backgroundColor,
+    borderColor: style.borderTopColor,
   }
 }
 

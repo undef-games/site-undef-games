@@ -309,6 +309,7 @@
 }
 
 .scanline-layer-control {
+  position: relative;
   min-height: 34px;
   display: grid;
   grid-template-columns: 16px minmax(0, 1fr);
@@ -323,21 +324,50 @@
 }
 
 .scanline-layer-control input {
-  width: 16px;
-  height: 16px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
   margin: 0;
-  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.24);
-  border-radius: 0;
-  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.86);
-  appearance: none;
+  opacity: 0;
 }
 
-.scanline-layer-control input:checked {
+.scanline-check {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.46);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(var(--fx-bg-rgb, 5 6 7) / 0.36);
+}
+
+.scanline-check::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid var(--fx-bg, #050607);
+  border-width: 0 2px 2px 0;
+  opacity: 0;
+  transform: rotate(45deg);
+}
+
+.scanline-layer-control input:focus-visible + .scanline-check {
+  outline: 2px solid rgb(var(--fx-signal-rgb, 216 255 53) / 0.42);
+  outline-offset: 2px;
+}
+
+.scanline-layer-control input:checked + .scanline-check {
   border-color: var(--fx-signal, #d8ff35);
-  background:
-    linear-gradient(90deg, transparent 35%, var(--fx-signal, #d8ff35) 35% 65%, transparent 65%),
-    linear-gradient(0deg, transparent 35%, var(--fx-signal, #d8ff35) 35% 65%, transparent 65%),
-    rgb(var(--fx-signal-rgb, 216 255 53) / 0.16);
+  background: var(--fx-signal, #d8ff35);
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--fx-bg-rgb, 5 6 7) / 0.22),
+    0 0 12px rgb(var(--fx-signal-rgb, 216 255 53) / 0.22);
+}
+
+.scanline-layer-control input:checked + .scanline-check::after {
+  opacity: 1;
 }
 
 .station-shell[data-tone='light'] .scanline-layer-control {
@@ -345,8 +375,18 @@
   color: var(--fx-text-on-dark, #f4f4f0);
 }
 
-.station-shell[data-tone='light'] .scanline-layer-control input {
-  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.88);
+.station-shell[data-tone='light'] .scanline-check {
+  border-color: rgb(var(--fx-bg-rgb, 244 240 223) / 0.48);
+  box-shadow: inset 0 0 0 1px rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.3);
+}
+
+.station-shell[data-tone='light'] .scanline-layer-control input:checked + .scanline-check {
+  border-color: var(--fx-signal, #d8ff35);
+  background: var(--fx-signal, #d8ff35);
+}
+
+.station-shell[data-tone='light'] .scanline-layer-control input:checked + .scanline-check::after {
+  border-color: var(--fx-text-on-light, #11130d);
 }
 
 .effect-group {

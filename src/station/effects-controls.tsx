@@ -188,7 +188,8 @@ export function EffectsControls({
               checked={scanlineLayers[option.id]}
               onChange={(event) => onScanlineLayerChange(option.id, event.currentTarget.checked)}
             />
-            <span>{option.label}</span>
+            <span className="scanline-check" aria-hidden="true" />
+            <span className="scanline-layer-label">{option.label}</span>
           </label>
         ))}
       </div>
