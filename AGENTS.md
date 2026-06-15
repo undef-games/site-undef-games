@@ -99,7 +99,8 @@ Use this deployment sequence:
 2. Deploy preview or staging with `make deploy-preview`.
 3. Verify the preview URL, including `/` and `/lab/`.
 4. Deploy production from `main` with `make deploy`.
-5. Verify `https://logos.undef.games/` and `https://logos.undef.games/lab/`.
+5. Verify `https://logos.undef.games/`, `https://logos.undef.games/lab/`,
+   `https://undef.games/`, and `https://undef.games/lab/`.
 
 Do not commit `.terraform/`. Do commit `terraform/.terraform.lock.hcl` when
 provider selections change.
