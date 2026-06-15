@@ -197,12 +197,18 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   const rail = page.getByLabel('station tools and identity')
   const effects = page.getByLabel('effects controls')
+  const presetSelect = effects.getByLabel('Effect preset')
   await expect(rail).toBeVisible()
   await expect(effects).toBeVisible()
-  await expect(effects.getByRole('button', { name: /current baseline/i })).toHaveAttribute('aria-pressed', 'true')
+  await expect(presetSelect).toHaveValue('current')
+  await expect.poll(() => presetSelect.locator('option').count()).toBeGreaterThanOrEqual(30)
 
   await expect(effects.getByLabel('Scan opacity', { exact: true })).toHaveValue('1')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.055')
+
+  await presetSelect.selectOption('cyan-ice')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-signal').trim())).toBe('#39e8ff')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-spacing').trim())).toBe('15.6px')
 
   await effects.getByLabel('Scan opacity', { exact: true }).fill('1.4')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.077')

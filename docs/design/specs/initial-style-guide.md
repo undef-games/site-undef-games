@@ -39,7 +39,7 @@ The right-hand side is part of the baseline, not a throwaway settings panel. Pre
 
 The rail should feel operational and dense. It should support the landing page without becoming a generic sidebar card stack.
 
-The first effects preset, `Current baseline`, is the canonical baseline. Its values are multiplier defaults and should preserve the current look exactly: dark page, bright signal green, dim page scanlines, Pixi scan field, frosted background mark, and visible tumbling identity rectangles. Other presets are for exploration only.
+The first effects preset, `Current baseline`, is the canonical baseline. Its values are multiplier defaults and should preserve the current look exactly: dark page, bright signal green, dim page scanlines, Pixi scan field, frosted background mark, and visible tumbling identity rectangles. Other presets are for exploration only. Keep the preset list in a dropdown so the rail can support 30+ visually distinct directions without turning into a button grid.
 
 ## Interactive Surface
 

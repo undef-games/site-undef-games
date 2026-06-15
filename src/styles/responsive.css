@@ -72,7 +72,6 @@
     padding: 18px;
   }
 
-  .preset-buttons,
   .palette-controls {
     grid-template-columns: 1fr;
   }

@@ -80,13 +80,21 @@ export function EffectsControls({
         <span>{activePresetId === 'custom' ? 'custom' : 'preset'}</span>
       </div>
 
-      <div className="preset-buttons" aria-label="effect presets">
-        {EFFECTS_PRESETS.map((preset) => (
-          <button key={preset.id} type="button" aria-pressed={activePresetId === preset.id} onClick={() => onPreset(preset.id)}>
-            {preset.label}
-          </button>
-        ))}
-      </div>
+      <label className="preset-select-control">
+        <span>Preset</span>
+        <select
+          aria-label="Effect preset"
+          value={activePresetId === 'custom' ? 'custom' : activePresetId}
+          onChange={(event) => onPreset(event.currentTarget.value)}
+        >
+          {activePresetId === 'custom' ? <option value="custom">Custom</option> : null}
+          {EFFECTS_PRESETS.map((preset) => (
+            <option key={preset.id} value={preset.id}>
+              {preset.label}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <div className="palette-controls" aria-label="palette controls">
         {PALETTE_CONTROLS.map((control) => (
