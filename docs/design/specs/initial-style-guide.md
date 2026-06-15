@@ -50,6 +50,7 @@ The first effects preset, `Current baseline`, is the canonical baseline. Its val
 - Landing behavior: scanlines respond to mouse position and page scroll.
 - Page scanline behavior: the scanline effect should read as one continuous background field traversing the entire page from top to bottom. Scrolling should reveal/move through that field continuously, with text, panels, rectangles, and other layers dimming or masking it as they overlap.
 - Rejected scanline interpretation: do not treat "follow the location" as aligning a current scanline band to the center of the browser viewport. That viewport-centered targeting effect is useful as a known contrast, but it is not the intended scanline behavior.
+- Optional scanline layers: `Graph paper layer` preserves the old two-axis grid/checker overlay that was formerly labeled CRT. It is useful as a saved contrast state, but it should not be described as CRT. `CRT monitor layer` should read like a monitor surface: horizontal scanlines, mild phosphor/vignette character, and no strong graph-paper vertical grid. `Glitch scanline layer` remains a separate accent layer that can be combined with either of the others.
 - Toy behavior: channel chips change the scan field mode, scope readout, and packet drift layer.
 - Scroll behavior: lower sections carry subtle scan toys so the page keeps feeling interactive past the hero.
 - Header scan behavior: section/header scan fragments may tumble left with scroll, but they must keep fixed fragment sizes and stay behind section text.

@@ -45,15 +45,14 @@
   z-index: 1;
 }
 
-.station-overlay::before,
-.station-overlay::after {
+.station-overlay-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  opacity: 0;
 }
 
-.station-shell[data-scan-crt='true'] .station-overlay::before {
-  content: '';
+.station-overlay-layer--graph {
   background:
     repeating-linear-gradient(
       0deg,
@@ -66,11 +65,51 @@
       transparent 2px 8px
     );
   mix-blend-mode: screen;
+}
+
+.station-shell[data-scan-graph='true'] .station-overlay-layer--graph {
   opacity: 0.52;
 }
 
-.station-shell[data-scan-glitch='true'] .station-overlay::after {
+.station-overlay-layer--crt {
+  background:
+    radial-gradient(ellipse at 50% 48%, transparent 0 54%, rgb(var(--fx-bg-rgb, 5 6 7) / 0.36) 100%),
+    repeating-linear-gradient(
+      0deg,
+      rgb(var(--fx-muted-rgb, 244 244 240) / calc(var(--fx-scan-opacity, 0.055) * 1.25)) 0 1px,
+      transparent 1px calc(var(--fx-scan-spacing, 12px) * 0.58)
+    ),
+    linear-gradient(
+      90deg,
+      rgb(var(--fx-support-1-rgb, 216 255 53) / 0.055),
+      transparent 20% 80%,
+      rgb(var(--fx-support-2-rgb, 216 255 53) / 0.05)
+    );
+  filter: contrast(1.08) saturate(1.1);
+  mix-blend-mode: screen;
+  transform: translate3d(0, calc(var(--scroll-depth, 0) * -18px), 0);
+}
+
+.station-overlay-layer--crt::after {
   content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 0 62%, rgb(var(--fx-muted-rgb, 244 244 240) / 0.055) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 2px,
+      rgb(var(--fx-signal-rgb, 216 255 53) / 0.035) 2px 3px,
+      transparent 3px 5px
+    );
+  opacity: 0.72;
+}
+
+.station-shell[data-scan-crt='true'] .station-overlay-layer--crt {
+  opacity: 0.58;
+}
+
+.station-overlay-layer--glitch {
   background:
     linear-gradient(
       90deg,
@@ -87,8 +126,11 @@
       transparent 38px 76px
     );
   mix-blend-mode: screen;
-  opacity: 0.48;
   transform: translate3d(calc(var(--scroll-depth, 0) * -42px), 0, 0);
+}
+
+.station-shell[data-scan-glitch='true'] .station-overlay-layer--glitch {
+  opacity: 0.48;
 }
 
 .station-shell[data-tone='light'] .station-overlay {
@@ -107,6 +149,43 @@
     linear-gradient(180deg, transparent 0 68%, rgb(var(--fx-bg-rgb, 244 240 223) / calc(0.44 * var(--fx-occlusion-strength, 1))));
   mix-blend-mode: multiply;
   opacity: 0.5;
+}
+
+.station-shell[data-tone='light'] .station-overlay-layer--graph {
+  mix-blend-mode: multiply;
+}
+
+.station-shell[data-tone='light'][data-scan-graph='true'] .station-overlay-layer--graph {
+  opacity: 0.42;
+}
+
+.station-shell[data-tone='light'] .station-overlay-layer--crt {
+  background:
+    radial-gradient(ellipse at 50% 48%, transparent 0 54%, rgb(var(--fx-text-on-light-rgb, 5 6 7) / 0.18) 100%),
+    repeating-linear-gradient(
+      0deg,
+      rgb(var(--fx-text-on-light-rgb, 5 6 7) / calc(var(--fx-scan-opacity, 0.055) * 0.92)) 0 1px,
+      transparent 1px calc(var(--fx-scan-spacing, 12px) * 0.58)
+    ),
+    linear-gradient(
+      90deg,
+      rgb(var(--fx-support-1-rgb, 216 255 53) / 0.08),
+      transparent 20% 80%,
+      rgb(var(--fx-support-2-rgb, 216 255 53) / 0.075)
+    );
+  mix-blend-mode: multiply;
+}
+
+.station-shell[data-tone='light'][data-scan-crt='true'] .station-overlay-layer--crt {
+  opacity: 0.44;
+}
+
+.station-shell[data-tone='light'] .station-overlay-layer--glitch {
+  mix-blend-mode: multiply;
+}
+
+.station-shell[data-tone='light'][data-scan-glitch='true'] .station-overlay-layer--glitch {
+  opacity: 0.36;
 }
 
 .hero-ghost-glyph {

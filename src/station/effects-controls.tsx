@@ -3,7 +3,7 @@ import { EFFECTS_PRESETS } from './effects-config'
 import type { SectionEffectId, SectionEffects, SectionToyEffect } from './station-toys'
 
 type EffectsControlKey = keyof EffectsSettings
-export type ScanlineLayerId = 'crt' | 'glitch'
+export type ScanlineLayerId = 'graph' | 'crt' | 'glitch'
 export type ScanlineLayers = Record<ScanlineLayerId, boolean>
 
 type NumberControl = {
@@ -90,7 +90,8 @@ const SECTION_EFFECT_OPTIONS: { label: string; value: SectionToyEffect }[] = [
 ]
 
 const SCANLINE_LAYER_OPTIONS: { id: ScanlineLayerId; label: string }[] = [
-  { id: 'crt', label: 'CRT scanline layer' },
+  { id: 'graph', label: 'Graph paper layer' },
+  { id: 'crt', label: 'CRT monitor layer' },
   { id: 'glitch', label: 'Glitch scanline layer' },
 ]
 

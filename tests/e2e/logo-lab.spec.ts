@@ -296,7 +296,8 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
     'Stacked rungs',
     'Signal slabs',
   ])
-  await expect(effects.getByLabel('CRT scanline layer')).not.toBeChecked()
+  await expect(effects.getByLabel('Graph paper layer')).not.toBeChecked()
+  await expect(effects.getByLabel('CRT monitor layer')).not.toBeChecked()
   await expect(effects.getByLabel('Glitch scanline layer')).not.toBeChecked()
   await expect
     .poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-scroll-impact').trim()))
@@ -312,9 +313,9 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   await expect
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(244, 244, 240)')
-  const crtLayerIndicator = effects.getByText('CRT scanline layer').locator('..').locator('.scanline-check')
-  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.afterOpacity)).toBe('0')
-  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.backgroundLuminance)).toBeGreaterThan(0.68)
+  const graphLayerIndicator = effects.getByText('Graph paper layer').locator('..').locator('.scanline-check')
+  await expect.poll(() => graphLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.afterOpacity)).toBe('0')
+  await expect.poll(() => graphLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.backgroundLuminance)).toBeGreaterThan(0.68)
 
   await presetSelect.selectOption('cyan-ice')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-signal').trim())).toBe('#39e8ff')
@@ -337,12 +338,18 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   await effects.getByLabel('Rectangle wobble', { exact: true }).fill('1.25')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-rectangle-wobble').trim())).toBe('1.25')
 
-  await effects.getByLabel('CRT scanline layer').check()
-  await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-crt', 'true')
-  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual)).toMatchObject({
+  await effects.getByLabel('Graph paper layer').check()
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-graph', 'true')
+  await expect.poll(() => page.locator('.station-overlay-layer--graph').evaluate((element) => getComputedStyle(element).opacity)).toBe('0.52')
+  await expect.poll(() => graphLayerIndicator.evaluate(readScanlineCheckVisual)).toMatchObject({
     afterOpacity: '1',
     backgroundColor: 'rgb(57, 232, 255)',
   })
+  await effects.getByLabel('CRT monitor layer').check()
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-crt', 'true')
+  await expect
+    .poll(() => page.locator('.station-overlay-layer--crt').evaluate((element) => getComputedStyle(element).backgroundImage))
+    .toContain('radial-gradient')
   await effects.getByLabel('Glitch scanline layer').check()
   await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-glitch', 'true')
 
@@ -434,7 +441,7 @@ test('keeps scanline layer checks readable on high-key light presets', async ({ 
 
   const effects = page.getByLabel('effects controls')
   const presetSelect = effects.getByLabel('Effect preset')
-  const crtLayer = effects.getByText('CRT scanline layer').locator('..')
+  const crtLayer = effects.getByText('CRT monitor layer').locator('..')
   const crtLayerIndicator = crtLayer.locator('.scanline-check')
 
   for (const presetId of ['whiteout', 'copy-machine']) {
@@ -448,12 +455,12 @@ test('keeps scanline layer checks readable on high-key light presets', async ({ 
     expect(uncheckedBox.backgroundLuminance).toBeGreaterThan(0.68)
     expect(uncheckedBox.afterOpacity).toBe('0')
 
-    await effects.getByLabel('CRT scanline layer').check()
+    await effects.getByLabel('CRT monitor layer').check()
     const checkedBox = await crtLayerIndicator.evaluate(readScanlineCheckVisual)
     expect(checkedBox.backgroundLuminance).toBeGreaterThan(0.68)
     expect(checkedBox.afterOpacity).toBe('1')
     expect(checkedBox.afterLuminance).toBeLessThan(0.22)
-    await effects.getByLabel('CRT scanline layer').uncheck()
+    await effects.getByLabel('CRT monitor layer').uncheck()
   }
 })
 

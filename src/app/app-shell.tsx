@@ -58,6 +58,7 @@ const DEFAULT_SECTION_EFFECTS: SectionEffects = {
 }
 
 const DEFAULT_SCANLINE_LAYERS: ScanlineLayers = {
+  graph: false,
   crt: false,
   glitch: false,
 }
@@ -153,6 +154,7 @@ export function AppShell() {
   return (
     <div
       className="station-shell"
+      data-scan-graph={scanlineLayers.graph}
       data-scan-crt={scanlineLayers.crt}
       data-scan-glitch={scanlineLayers.glitch}
       data-status={status.label.toLowerCase().replaceAll(' ', '-')}
@@ -170,7 +172,11 @@ export function AppShell() {
             />
             <StationGlyph signal={stationState.signal} className="hero-ghost-glyph" decorative />
             <PacketDrift activeChannel={activeChannel} />
-            <div className="station-overlay" aria-hidden="true" />
+            <div className="station-overlay" aria-hidden="true">
+              <span className="station-overlay-layer station-overlay-layer--graph" />
+              <span className="station-overlay-layer station-overlay-layer--crt" />
+              <span className="station-overlay-layer station-overlay-layer--glitch" />
+            </div>
             <div className="station-hero">
               <p className="station-kicker">
                 <span>{activeChannel.label}</span>
