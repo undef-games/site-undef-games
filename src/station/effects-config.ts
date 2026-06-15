@@ -36,6 +36,7 @@ export type EffectsSettings = {
   rectangleFill: number
   rectangleBorder: number
   rectangleGlow: number
+  rectangleWobble: number
 }
 
 export type EffectsPreset = {
@@ -78,6 +79,7 @@ export const BASELINE_EFFECTS: EffectsSettings = {
   rectangleFill: 1,
   rectangleBorder: 1,
   rectangleGlow: 1,
+  rectangleWobble: 0.45,
 }
 
 const preset = (id: EffectsPresetId, label: string, settings: Partial<EffectsSettings>, tone?: EffectsTone): EffectsPreset => {
@@ -856,6 +858,7 @@ export function createEffectsStyle(settings: EffectsSettings, scrollDepth: numbe
     '--fx-rectangle-fill': settings.rectangleFill,
     '--fx-rectangle-border': settings.rectangleBorder,
     '--fx-rectangle-glow': settings.rectangleGlow,
+    '--fx-rectangle-wobble': settings.rectangleWobble,
     '--fx-rectangle-pulse-factor': formatNumber(1 / Math.max(0.1, settings.rectanglePulse)),
     '--scroll-depth': scrollDepth,
   } as CSSProperties

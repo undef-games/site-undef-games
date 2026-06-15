@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { EffectsControls } from '../station/effects-controls'
+import type { ScanlineLayerId, ScanlineLayers } from '../station/effects-controls'
 import {
   BASELINE_EFFECTS,
   EFFECTS_PRESETS,
@@ -56,6 +57,11 @@ const DEFAULT_SECTION_EFFECTS: SectionEffects = {
   warp: 'tumble',
 }
 
+const DEFAULT_SCANLINE_LAYERS: ScanlineLayers = {
+  crt: false,
+  glitch: false,
+}
+
 export function AppShell() {
   const [stationState, setStationState] = useState(createStationState)
   const [scrollDepth, setScrollDepth] = useState(0)
@@ -63,6 +69,7 @@ export function AppShell() {
   const [effectsSettings, setEffectsSettings] = useState<EffectsSettings>(BASELINE_EFFECTS)
   const [activePresetId, setActivePresetId] = useState<EffectsPresetId | 'custom'>('current')
   const [sectionEffects, setSectionEffects] = useState<SectionEffects>(DEFAULT_SECTION_EFFECTS)
+  const [scanlineLayers, setScanlineLayers] = useState<ScanlineLayers>(DEFAULT_SCANLINE_LAYERS)
   const effectsSettingsRef = useRef(effectsSettings)
   const status = getStationStatus(stationState)
 
@@ -81,6 +88,9 @@ export function AppShell() {
   }
   const updateSectionEffect = (sectionId: SectionEffectId, effect: SectionToyEffect) => {
     setSectionEffects((current) => ({ ...current, [sectionId]: effect }))
+  }
+  const updateScanlineLayer = (layerId: ScanlineLayerId, active: boolean) => {
+    setScanlineLayers((current) => ({ ...current, [layerId]: active }))
   }
 
   useEffect(() => {
@@ -143,6 +153,8 @@ export function AppShell() {
   return (
     <div
       className="station-shell"
+      data-scan-crt={scanlineLayers.crt}
+      data-scan-glitch={scanlineLayers.glitch}
       data-status={status.label.toLowerCase().replaceAll(' ', '-')}
       data-tone={activeTone}
       style={landingStyle}
@@ -183,10 +195,12 @@ export function AppShell() {
             <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
             <EffectsControls
               activePresetId={activePresetId}
+              scanlineLayers={scanlineLayers}
               settings={effectsSettings}
               sectionEffects={sectionEffects}
               onChange={updateEffect}
               onPreset={applyEffectsPreset}
+              onScanlineLayerChange={updateScanlineLayer}
               onSectionEffect={updateSectionEffect}
             />
             <StationIdentity state={stationState} />

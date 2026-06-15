@@ -299,6 +299,56 @@
   font-size: 10px;
 }
 
+.scanline-layer-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.scanline-layer-controls .control-label {
+  margin-bottom: 0;
+}
+
+.scanline-layer-control {
+  min-height: 34px;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.18);
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.72);
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.76);
+  font: 900 10px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.scanline-layer-control input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.24);
+  border-radius: 0;
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.86);
+  appearance: none;
+}
+
+.scanline-layer-control input:checked {
+  border-color: var(--fx-signal, #d8ff35);
+  background:
+    linear-gradient(90deg, transparent 35%, var(--fx-signal, #d8ff35) 35% 65%, transparent 65%),
+    linear-gradient(0deg, transparent 35%, var(--fx-signal, #d8ff35) 35% 65%, transparent 65%),
+    rgb(var(--fx-signal-rgb, 216 255 53) / 0.16);
+}
+
+.station-shell[data-tone='light'] .scanline-layer-control {
+  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
+  color: var(--fx-text-on-dark, #f4f4f0);
+}
+
+.station-shell[data-tone='light'] .scanline-layer-control input {
+  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.88);
+}
+
 .effect-group {
   display: grid;
   gap: 10px;

@@ -3,6 +3,8 @@ import { EFFECTS_PRESETS } from './effects-config'
 import type { SectionEffectId, SectionEffects, SectionToyEffect } from './station-toys'
 
 type EffectsControlKey = keyof EffectsSettings
+export type ScanlineLayerId = 'crt' | 'glitch'
+export type ScanlineLayers = Record<ScanlineLayerId, boolean>
 
 type NumberControl = {
   key: EffectsControlKey
@@ -52,6 +54,7 @@ const EFFECT_GROUPS: { controls: NumberControl[]; label: string }[] = [
       { key: 'rectangleFill', label: 'Rectangle fill', min: 0, max: 2, step: 0.05 },
       { key: 'rectangleBorder', label: 'Rectangle border', min: 0, max: 2, step: 0.05 },
       { key: 'rectangleGlow', label: 'Rectangle glow', min: 0, max: 2, step: 0.05 },
+      { key: 'rectangleWobble', label: 'Rectangle wobble', min: 0, max: 2, step: 0.05 },
     ],
   },
 ]
@@ -77,11 +80,18 @@ const PRESET_GROUPS: { icon: string; label: string; tone: EffectsTone }[] = [
 const SECTION_EFFECT_OPTIONS: { label: string; value: SectionToyEffect }[] = [
   { label: 'Skinny bars', value: 'bars' },
   { label: 'Tumble rectangles', value: 'tumble' },
+  { label: 'Classic CRT', value: 'crt' },
+  { label: 'Bouncing notes', value: 'notes' },
   { label: 'Pixel scatter', value: 'scatter' },
   { label: 'Offset frames', value: 'frames' },
   { label: 'Signal rails', value: 'rails' },
   { label: 'Stacked rungs', value: 'rungs' },
-  { label: 'Legacy slab', value: 'slab' },
+  { label: 'Signal slabs', value: 'slab' },
+]
+
+const SCANLINE_LAYER_OPTIONS: { id: ScanlineLayerId; label: string }[] = [
+  { id: 'crt', label: 'CRT scanline layer' },
+  { id: 'glitch', label: 'Glitch scanline layer' },
 ]
 
 const SECTION_EFFECT_CONTROLS: { id: SectionEffectId; label: string }[] = [
@@ -95,14 +105,18 @@ const SECTION_EFFECT_CONTROLS: { id: SectionEffectId; label: string }[] = [
 
 export function EffectsControls({
   activePresetId,
+  onScanlineLayerChange,
   sectionEffects,
+  scanlineLayers,
   settings,
   onChange,
   onPreset,
   onSectionEffect,
 }: {
   activePresetId: EffectsPresetId | 'custom'
+  onScanlineLayerChange: (layerId: ScanlineLayerId, active: boolean) => void
   sectionEffects: SectionEffects
+  scanlineLayers: ScanlineLayers
   settings: EffectsSettings
   onChange: (key: EffectsControlKey, value: string | number) => void
   onPreset: (presetId: EffectsPresetId) => void
@@ -160,6 +174,21 @@ export function EffectsControls({
                 </option>
               ))}
             </select>
+          </label>
+        ))}
+      </div>
+
+      <div className="scanline-layer-controls" aria-label="scanline layer controls">
+        <p className="control-label">Scanline layers</p>
+        {SCANLINE_LAYER_OPTIONS.map((option) => (
+          <label key={option.id} className="scanline-layer-control">
+            <input
+              type="checkbox"
+              aria-label={option.label}
+              checked={scanlineLayers[option.id]}
+              onChange={(event) => onScanlineLayerChange(option.id, event.currentTarget.checked)}
+            />
+            <span>{option.label}</span>
           </label>
         ))}
       </div>

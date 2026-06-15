@@ -136,6 +136,57 @@
   background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.34);
 }
 
+.section-toy--effect-crt {
+  opacity: 0.78;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(var(--fx-muted-rgb, 244 244 240) / 0.12) 0 1px,
+      transparent 1px calc(var(--fx-scan-spacing, 12px) * 0.72)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(var(--fx-support-1-rgb, 216 255 53) / 0.06) 0 3px,
+      transparent 3px 11px
+    );
+  mix-blend-mode: screen;
+}
+
+.section-toy.section-toy--effect-crt span:nth-child(n) {
+  width: calc(180px + var(--toy-row, 0) * 42px);
+  height: 2px;
+  top: calc(8% + var(--toy-row, 0) * 9%);
+  background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.3);
+  box-shadow:
+    0 0 calc(8px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-1-rgb, 216 255 53) / 0.18),
+    0 10px 0 rgb(var(--fx-support-2-rgb, 216 255 53) / 0.1);
+}
+
+.section-toy.section-toy--effect-crt span:nth-child(3n) {
+  height: 7px;
+  background: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.16);
+}
+
+.section-toy--effect-notes {
+  opacity: max(0.44, calc(0.5 * var(--fx-rectangle-opacity, 1)));
+}
+
+.section-toy.section-toy--effect-notes span:nth-child(n) {
+  width: var(--toy-effect-note-width, 14px);
+  height: var(--toy-effect-note-height, 74px);
+  top: var(--toy-effect-note-top, 9%);
+  border: 1px solid rgb(var(--fx-support-2-rgb, 216 255 53) / 0.42);
+  background: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.38);
+  box-shadow:
+    0 0 calc(16px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-1-rgb, 216 255 53) / 0.22),
+    18px 0 0 rgb(var(--fx-muted-rgb, 244 244 240) / 0.12);
+  animation: note-bounce var(--toy-effect-note-duration, 2.2s) ease-in-out calc(var(--toy-index, 0) * -0.17s) infinite alternate;
+}
+
+.section-toy.section-toy--effect-notes span:nth-child(odd) {
+  background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.28);
+}
+
 .section-toy--effect-tumble,
 .section-toy--effect-slab {
   opacity: max(0.38, calc(0.38 * var(--fx-rectangle-opacity, 1)));
@@ -374,5 +425,17 @@
     box-shadow: 0 0 var(--identity-glow-high-size) rgb(var(--identity-glow-rgb) / var(--identity-glow-high-alpha));
     filter: blur(var(--identity-blur-high)) brightness(1);
     opacity: var(--identity-alpha-high);
+  }
+}
+
+@keyframes note-bounce {
+  from {
+    margin-top: calc(var(--toy-effect-note-bounce, 34px) * -0.28);
+    rotate: calc(var(--fx-rectangle-wobble, 0.45) * -8deg);
+  }
+
+  to {
+    margin-top: var(--toy-effect-note-bounce, 34px);
+    rotate: calc(var(--fx-rectangle-wobble, 0.45) * 8deg);
   }
 }

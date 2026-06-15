@@ -240,6 +240,7 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   const rail = page.getByLabel('station tools and identity')
   const effects = page.getByLabel('effects controls')
   const presetSelect = effects.getByLabel('Effect preset')
+  const signalBackground = effects.getByLabel('Signal background')
   await expect(rail).toBeVisible()
   await expect(effects).toBeVisible()
   await expect(presetSelect).toHaveValue('current')
@@ -283,6 +284,20 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.055')
   await expect(effects.getByLabel('Scan scroll impact', { exact: true })).toHaveValue('0.35')
   await expect(effects.getByLabel('Scroll inertia', { exact: true })).toHaveValue('0.16')
+  await expect(effects.getByLabel('Rectangle wobble', { exact: true })).toHaveValue('0.45')
+  await expect(signalBackground.locator('option')).toContainText([
+    'Skinny bars',
+    'Tumble rectangles',
+    'Classic CRT',
+    'Bouncing notes',
+    'Pixel scatter',
+    'Offset frames',
+    'Signal rails',
+    'Stacked rungs',
+    'Signal slabs',
+  ])
+  await expect(effects.getByLabel('CRT scanline layer')).not.toBeChecked()
+  await expect(effects.getByLabel('Glitch scanline layer')).not.toBeChecked()
   await expect
     .poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-scroll-impact').trim()))
     .toBe('0.35')
@@ -315,6 +330,14 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   await effects.getByLabel('Scroll inertia', { exact: true }).fill('0.08')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scroll-inertia').trim())).toBe('0.08')
+
+  await effects.getByLabel('Rectangle wobble', { exact: true }).fill('1.25')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-rectangle-wobble').trim())).toBe('1.25')
+
+  await effects.getByLabel('CRT scanline layer').check()
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-crt', 'true')
+  await effects.getByLabel('Glitch scanline layer').check()
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-scan-glitch', 'true')
 
   await effects.getByLabel('Rectangle spin', { exact: true }).fill('1.35')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-rectangle-spin').trim())).toBe('1.35')
@@ -353,6 +376,22 @@ test('switches section background effects independently', async ({ page }) => {
   await effects.getByLabel('Signal background').selectOption('scatter')
   await expect(signalToy).toHaveClass(/section-toy--effect-scatter/)
   await expect.poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(getToyRectArea)).toBeLessThan(1600)
+
+  await effects.getByLabel('Signal background').selectOption('crt')
+  await expect(signalToy).toHaveClass(/section-toy--effect-crt/)
+  await expect
+    .poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyVisuals))
+    .toMatchObject({
+      backgroundColor: 'rgba(244, 244, 240, 0.3)',
+    })
+
+  await effects.getByLabel('Signal background').selectOption('notes')
+  await expect(signalToy).toHaveClass(/section-toy--effect-notes/)
+  const noteRect = await page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyRect)
+  expect(noteRect.height).toBeGreaterThanOrEqual(74)
+  expect(noteRect.height).toBeLessThanOrEqual(82)
+  expect(noteRect.width).toBeGreaterThanOrEqual(14)
+  expect(noteRect.width).toBeLessThanOrEqual(22)
 
   await effects.getByLabel('Projects background').selectOption('frames')
   await expect(projectsToy).toHaveClass(/section-toy--effect-frames/)

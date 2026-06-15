@@ -45,6 +45,52 @@
   z-index: 1;
 }
 
+.station-overlay::before,
+.station-overlay::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.station-shell[data-scan-crt='true'] .station-overlay::before {
+  content: '';
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(var(--fx-muted-rgb, 244 244 240) / calc(var(--fx-scan-opacity, 0.055) * 0.9)) 0 1px,
+      transparent 1px calc(var(--fx-scan-spacing, 12px) * 0.5)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(var(--fx-support-1-rgb, 216 255 53) / 0.07) 0 2px,
+      transparent 2px 8px
+    );
+  mix-blend-mode: screen;
+  opacity: 0.52;
+}
+
+.station-shell[data-scan-glitch='true'] .station-overlay::after {
+  content: '';
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 11%,
+      rgb(var(--fx-support-2-rgb, 216 255 53) / 0.16) 11% 13%,
+      transparent 13% 36%,
+      rgb(var(--fx-muted-rgb, 244 244 240) / 0.12) 36% 38%,
+      transparent 38% 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 34px,
+      rgb(var(--fx-support-1-rgb, 216 255 53) / 0.18) 34px 38px,
+      transparent 38px 76px
+    );
+  mix-blend-mode: screen;
+  opacity: 0.48;
+  transform: translate3d(calc(var(--scroll-depth, 0) * -42px), 0, 0);
+}
+
 .station-shell[data-tone='light'] .station-overlay {
   background:
     linear-gradient(

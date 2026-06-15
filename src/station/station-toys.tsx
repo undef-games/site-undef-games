@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import type { ChannelMode } from './station-signal-scene'
 
-export type SectionToyEffect = 'bars' | 'frames' | 'rails' | 'rungs' | 'scatter' | 'slab' | 'tumble'
+export type SectionToyEffect = 'bars' | 'crt' | 'frames' | 'notes' | 'rails' | 'rungs' | 'scatter' | 'slab' | 'tumble'
 export type SectionEffectId = 'dice' | 'identity' | 'projects' | 'signal' | 'taybols' | 'warp'
 export type SectionEffects = Record<SectionEffectId, SectionToyEffect>
 
@@ -114,6 +114,11 @@ export function SectionToy({ effect, variant }: { effect: SectionToyEffect; vari
         const rungWidth = 9 + (index % 4) * 5
         const rungHeight = 62 + (index % 5) * 18
         const rungTop = 8 + (index % 5) * 12
+        const noteWidth = 14 + (index % 3) * 5
+        const noteHeight = 74 + (index % 5) * 18
+        const noteTop = 9 + (index % 6) * 11
+        const noteBounce = index % 2 === 0 ? -38 - (index % 4) * 8 : 32 + (index % 4) * 9
+        const noteDuration = 1.9 + (index % 5) * 0.28
 
         return (
           <span
@@ -124,6 +129,11 @@ export function SectionToy({ effect, variant }: { effect: SectionToyEffect; vari
                 '--toy-effect-frame-height': `${frameHeight}px`,
                 '--toy-effect-frame-top': `${frameTop}%`,
                 '--toy-effect-frame-width': `${frameWidth}px`,
+                '--toy-effect-note-bounce': `${noteBounce}px`,
+                '--toy-effect-note-duration': `${noteDuration}s`,
+                '--toy-effect-note-height': `${noteHeight}px`,
+                '--toy-effect-note-top': `${noteTop}%`,
+                '--toy-effect-note-width': `${noteWidth}px`,
                 '--toy-effect-rail-top': `${railTop}%`,
                 '--toy-effect-rail-width': `${railWidth}px`,
                 '--toy-effect-rung-height': `${rungHeight}px`,
