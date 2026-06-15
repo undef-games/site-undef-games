@@ -1,7 +1,16 @@
 # undef-logos
 
-Interactive logo lab for `undef games`.
+Production landing page for `undef games`, built with Hugo and the private
+local `themes/scanlines` theme. The interactive Vite, React, and PixiJS logo
+lab lives in `lab/` and is mounted at `/lab/` in the built site.
 
-Current canonical design spec:
+Useful commands:
 
-- `docs/design/specs/2026-06-13-undef-logos-design.md`
+- `make install-root` and `make install-lab`
+- `make build`
+- `make serve`
+- `make test`, `make typecheck`, and `make e2e`
+- `make deploy-preview` and `make deploy`
+
+Terraform configuration in `terraform/` manages the Cloudflare Pages project,
+custom domains, and DNS. Wrangler deploys the built `public/` artifact.

@@ -1,115 +1,175 @@
 # undef-logos Agent Guide
 
-## Project
+## Project Purpose
 
-`undef-logos` is the interactive logo and landing-page lab for `undef games`.
-It is a Vite + React app using PixiJS for the main signal field and CSS for the
-right rail, product sections, section toys, and scanline overlays.
+`undef-logos` is the production landing page for `undef games` plus a mounted
+interactive logo lab. The site at `/` is a Hugo build. The lab at `/lab/` is a
+Vite, React, and PixiJS application that ships inside the same Cloudflare Pages
+artifact.
 
-The current canonical design notes live in:
+The production Hugo site uses the private local theme at `themes/scanlines`.
+Keep that theme local to this repository. Do not make it a public dependency,
+move it to a package registry, or replace it with a remote theme without an
+explicit product decision.
 
-- `docs/design/specs/initial-style-guide.md`
+The current canonical migration notes are in:
+
+- `docs/design/specs/2026-06-15-hugo-scanlines-migration.md`
+- `docs/design/plans/2026-06-15-hugo-scanlines-migration.md`
 - `docs/design/specs/2026-06-13-undef-logos-design.md`
 - `docs/design/specs/2026-06-14-static-station-id.md`
+- `docs/design/specs/2026-06-14-playable-logo-instruments.md`
+- `docs/design/specs/initial-style-guide.md`
 
-Treat `initial-style-guide.md` as the active baseline before making visual
-changes.
+Treat the migration spec and the initial style guide as the baseline before
+making visual or structural changes.
 
-## Commands
+## Layout
 
-Run commands from this directory:
+- `hugo.toml` configures the Hugo production site, including `theme =
+  "scanlines"` and the lab route parameter `/lab/`.
+- `content/_index.md` is the Hugo home page content entry.
+- `data/site/home.json` provides structured home-page copy and product data.
+- `themes/scanlines/` contains the private Hugo theme layouts, CSS, and
+  JavaScript for the production landing page at `/`.
+- `lab/` contains the Vite, React, PixiJS logo lab. Keep the lab in this
+  subdirectory; do not move it back to the repository root.
+- `tests/e2e/` contains Playwright coverage for the Hugo landing page and the
+  mounted lab.
+- `terraform/` contains Cloudflare Pages, domain, and DNS infrastructure.
+- `scripts/stamp_build.sh` writes build metadata to `data/build.json` during
+  builds.
 
-- `npm run dev` starts local Vite development.
-- `npm run build` runs TypeScript project build and Vite production build.
-- `npm run typecheck` runs TypeScript checks without emitting files.
-- `npm run test:run` runs Vitest once.
-- `npm run e2e` builds and runs Playwright tests.
-- `npm run deploy` builds and deploys `dist` to Cloudflare Pages project
-  `undef-logos` on branch `main`.
+## Core Commands
 
-Playwright starts a local preview server. If a sandbox blocks binding to
-`127.0.0.1:4173`, rerun the Playwright command with the normal local-server
-approval path instead of changing app ports or tests.
+Run these from the repository root unless noted otherwise.
 
-## Source Layout
+- `make install-root` installs root tooling with `npm ci`.
+- `make install-lab` installs lab dependencies with `npm --prefix lab ci`.
+- `make build` builds the complete deployable artifact.
+- `make serve` runs Hugo locally at `http://127.0.0.1:1780`.
+- `make test` runs the lab unit test suite.
+- `make typecheck` runs lab TypeScript checks.
+- `make e2e` builds the site and runs Playwright tests.
+- `make deploy-preview` builds and deploys a staging preview to Cloudflare
+  Pages using branch `staging`.
+- `make deploy` builds and deploys production to Cloudflare Pages using branch
+  `main`.
 
-- `src/app/app-shell.tsx` owns the landing-page structure, right rail state,
-  preset state, scanline-layer state, and section ordering.
-- `src/station/effects-config.ts` owns effect presets, CSS variable creation,
-  light/dark tone detection, and baseline effect values.
-- `src/station/effects-controls.tsx` owns the right-rail effects UI.
-- `src/station/station-signal-scene.tsx` owns the PixiJS signal-field renderer.
-- `src/station/station-toys.tsx` owns channel controls, scope visuals, product
-  section background toys, and section effect variants.
-- `src/station/station-identity.tsx` owns the Maze Gate U Cut mark and identity
-  lockups.
-- `src/styles/*.css` are split by purpose. Keep new styles in the closest
-  purpose-specific file instead of expanding unrelated CSS files.
-- `tests/e2e/logo-lab.spec.ts` is the main rendered-behavior regression suite.
+Root `npm` scripts are thin wrappers around these Make targets. Prefer the Make
+targets in documentation and automation so future agents see the full Hugo plus
+lab workflow.
 
-## Design Baseline
+## Build Artifact Shape
 
-- The saved mark is the Maze Gate U Cut.
-- The mark belongs in the lockup/identity rail and as a dim frosted background
-  presence only. Do not put a hard logo symbol in the center of the hero canvas.
-- The first preset, `Current baseline`, must preserve the current baseline look.
-  Other presets may explore, but they must not silently change the baseline.
-- The right rail is part of the design system. Keep it dense, operational, and
-  readable. It is not a generic floating settings card.
-- Product examples should remain concrete: WARP, Undef Dice, and Taybols.
-- Section background toys should stay behind text, remain bright enough to read
-  as intentional, and keep fixed fragment sizes while moving.
+The build has two separate producers and one final artifact:
 
-## Scanline And Overlay Rules
+1. `make build-hugo` runs the Hugo build and writes `public/`.
+2. `make build-lab` runs the Vite lab build and writes `lab/dist/`.
+3. `make build-lab` then copies `lab/dist/.` into `public/lab/`.
 
-- The page scanline field should read as one continuous background field through
-  the whole page. Do not recenter a scanline band on the browser viewport.
-- `Graph paper layer` is the saved old two-axis grid/checker overlay. It should
-  not be renamed back to CRT.
-- `CRT monitor layer` should look like a monitor surface: horizontal scanlines,
-  subtle vignette/phosphor behavior, and no strong graph-paper vertical grid.
-- `Glitch scanline layer` is an accent layer and must remain independently
-  combinable with Graph paper and CRT.
-- Scanline layer controls must remain readable on both light and dark presets.
+Cloudflare Pages receives `public/` as the deploy directory. The expected final
+artifact has the Hugo landing page at the root and the lab files under
+`public/lab/`.
+
+Do not commit generated build output:
+
+- `public/`
+- `lab/dist/`
+- `data/build.json`
+
+## Terraform And Deployment
+
+Terraform lives in `terraform/` and manages Cloudflare infrastructure for the
+Pages project, custom domains, and DNS records:
+
+- Pages project: `undef-logos`
+- Primary logos domain: `logos.undef.games`
+- Apex domain: `undef.games`
+- Production branch: `main`
+- Pages build command metadata: `make build`
+- Pages output metadata: `public`
+
+Terraform does not deploy site artifacts. Artifact deployment is done by
+Wrangler through `make deploy-preview` and `make deploy`.
+
+Use this deployment sequence:
+
+1. Apply or validate Terraform first when infrastructure has changed.
+2. Deploy preview or staging with `make deploy-preview`.
+3. Verify the preview URL, including `/` and `/lab/`.
+4. Deploy production from `main` with `make deploy`.
+5. Verify `https://logos.undef.games/` and `https://logos.undef.games/lab/`.
+
+Do not commit `.terraform/`. Do commit `terraform/.terraform.lock.hcl` when
+provider selections change.
+
+## Editing Guardrails
+
+- Own only the files needed for the current task. This repository may have
+  parallel work in progress.
+- Do not revert changes made by others. Inspect unexpected diffs before
+  deciding whether they are related to your task.
+- Do not make the private `themes/scanlines` theme public.
+- Do not move the lab back to the repository root.
+- Do not commit generated `public/`, `lab/dist/`, `.terraform/`, or
+  `data/build.json`.
+- Do commit `terraform/.terraform.lock.hcl` when Terraform provider locks are
+  intentionally updated.
+- Keep Hugo templates, theme CSS/JS, lab source, Terraform, package files,
+  tests, and deployment config untouched unless the task explicitly asks for
+  those changes.
+
+## Visual And UX Guardrails
+
+- The production site should keep the scanlines background as a defining visual
+  field.
+- Logo presence should remain dim, frosted, and atmospheric outside intentional
+  identity lockups. Avoid placing a hard logo symbol in the center of the hero.
+- The lab keeps its right-rail control model. Controls should stay dense,
+  operational, and readable rather than becoming generic floating cards.
+- Presets, effects, logo instruments, and interactive experimentation are
+  lab-controlled. Do not duplicate lab-only controls into Hugo templates.
+- Product examples should remain concrete and tied to `undef games`.
+- Scanline, graph-paper, CRT, and glitch effects should remain independently
+  understandable and independently controllable where the lab exposes them.
 
 ## Testing Expectations
 
-For visual or interaction changes, run the narrowest relevant Playwright test
-first, then run broader checks before claiming the work is complete.
-
-Minimum checks for most UI changes:
-
-- `npm run typecheck`
-- `npm run test:run`
-- relevant `npx playwright test ...` focused test
-
-Run full `npm run e2e` before deployment or when changing shared interaction,
-layout, presets, scanline layers, section toys, or Pixi behavior.
-
-When updating labels, controls, CSS variables, or baseline colors, update the
-E2E assertions that protect those decisions. Avoid weakening tests just to make
-visual changes pass.
-
-## Deployment
-
-Deploy from `main` with:
+Before pushing or deploying documentation-only changes, run at least:
 
 ```sh
-npm run deploy
+git diff --check
 ```
 
-After deployment, verify `https://logos.undef.games` loads the new build. If the
-Cloudflare command reports a preview URL and a custom-domain deployment, include
-the custom domain in the final status.
+For source, layout, styling, interaction, or deployment workflow changes, run
+the narrowest relevant checks first, then broaden before claiming completion:
 
-## Git
+```sh
+make typecheck
+make test
+make e2e
+```
 
-Keep changes scoped to this repo. Do not edit neighboring worktrees unless the
-user explicitly redirects you. Before committing or deploying, check:
+Run the full `make e2e` before deployment or when changing shared layout,
+routes, Hugo templates, scanline behavior, lab mounting, presets, section toys,
+or Pixi behavior. When changing labels, controls, CSS variables, baseline
+colors, routes, or artifact paths, update the tests that protect those
+decisions instead of weakening assertions.
+
+If Playwright local server binding is blocked by the sandbox, request the
+normal local-server approval path. Do not change app ports or tests to work
+around sandbox limits.
+
+## Git Checklist
+
+Before committing:
 
 ```sh
 git status --short
+git diff --check
 ```
 
-Do not revert unrelated user changes. If unexpected files appear, inspect them
-before deciding whether they belong to the current task.
+Confirm the diff contains only intentional files. If the task is documentation
+only and the diff is limited to `AGENTS.md` and/or `README.md`, a build is not
+needed.
