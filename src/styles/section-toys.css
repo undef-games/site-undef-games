@@ -60,6 +60,82 @@
   box-shadow: 0 0 calc(18px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-3-rgb, 216 255 53) / 0.2);
 }
 
+.section-toy--effect-scatter {
+  opacity: 0.66;
+}
+
+.section-toy--effect-scatter span {
+  width: calc(14px + (var(--toy-index, 0) % 5) * 8px);
+  height: calc(14px + (var(--toy-index, 0) % 4) * 6px);
+  top: calc(12% + (var(--toy-index, 0) % 8) * 8%);
+  border: 1px solid rgb(var(--fx-support-2-rgb, 216 255 53) / 0.38);
+  background: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.24);
+  box-shadow: 0 0 calc(14px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-1-rgb, 216 255 53) / 0.18);
+}
+
+.section-toy--effect-scatter span:nth-child(3n) {
+  border-color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.32);
+  background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.18);
+}
+
+.section-toy--effect-frames {
+  opacity: 0.48;
+}
+
+.section-toy--effect-frames span {
+  width: calc(120px + (var(--toy-index, 0) % 4) * 64px);
+  height: calc(78px + (var(--toy-index, 0) % 3) * 46px);
+  top: calc(7% + (var(--toy-index, 0) % 6) * 11%);
+  border: 2px solid rgb(var(--fx-support-1-rgb, 216 255 53) / 0.3);
+  background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.055);
+  box-shadow:
+    inset 0 0 30px rgb(var(--fx-support-1-rgb, 216 255 53) / 0.055),
+    0 0 calc(26px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-2-rgb, 216 255 53) / 0.12);
+}
+
+.section-toy--effect-frames span:nth-child(4n) {
+  width: 42%;
+  border-color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.22);
+}
+
+.section-toy--effect-rails {
+  opacity: 0.7;
+}
+
+.section-toy--effect-rails span {
+  width: calc(210px + (var(--toy-index, 0) % 5) * 72px);
+  height: 3px;
+  top: calc(10% + (var(--toy-index, 0) % 9) * 8%);
+  background: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.58);
+  box-shadow:
+    0 8px 0 rgb(var(--fx-muted-rgb, 244 244 240) / 0.12),
+    0 0 calc(18px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-1-rgb, 216 255 53) / 0.24);
+}
+
+.section-toy--effect-rails span:nth-child(2n) {
+  height: 2px;
+  background: rgb(var(--fx-support-2-rgb, 216 255 53) / 0.44);
+}
+
+.section-toy--effect-rungs {
+  opacity: 0.72;
+}
+
+.section-toy--effect-rungs span {
+  width: calc(9px + (var(--toy-index, 0) % 4) * 5px);
+  height: calc(62px + (var(--toy-index, 0) % 5) * 18px);
+  top: calc(8% + (var(--toy-index, 0) % 5) * 12%);
+  background: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.46);
+  box-shadow:
+    24px 0 0 rgb(var(--fx-support-2-rgb, 216 255 53) / 0.2),
+    48px 0 0 rgb(var(--fx-muted-rgb, 244 244 240) / 0.14),
+    0 0 calc(18px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-1-rgb, 216 255 53) / 0.2);
+}
+
+.section-toy--effect-rungs span:nth-child(odd) {
+  background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.34);
+}
+
 .section-toy--effect-tumble,
 .section-toy--effect-slab {
   opacity: max(0.38, calc(0.38 * var(--fx-rectangle-opacity, 1)));

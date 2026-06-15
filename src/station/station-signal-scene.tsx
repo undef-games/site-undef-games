@@ -205,7 +205,7 @@ function drawSignalField(
   const clarity = signal / 100
   const plan = getSignalFieldPlan(signal, channelMode)
   const profile = getChannelProfile(channelMode)
-  const scrollEnergy = Math.min(1, Math.max(0, scrollDepth)) * effects.scrollBoost
+  const scrollEnergy = Math.min(1, Math.max(0, scrollDepth)) * effects.scrollBoost * effects.scanScrollImpact
   const signalColor = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSignal)
   const support1Color = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSupport1)
   const support2Color = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSupport2)

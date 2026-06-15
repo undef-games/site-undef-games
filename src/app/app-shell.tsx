@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { EffectsControls } from '../station/effects-controls'
 import {
   BASELINE_EFFECTS,
@@ -63,6 +63,7 @@ export function AppShell() {
   const [effectsSettings, setEffectsSettings] = useState<EffectsSettings>(BASELINE_EFFECTS)
   const [activePresetId, setActivePresetId] = useState<EffectsPresetId | 'custom'>('current')
   const [sectionEffects, setSectionEffects] = useState<SectionEffects>(DEFAULT_SECTION_EFFECTS)
+  const effectsSettingsRef = useRef(effectsSettings)
   const status = getStationStatus(stationState)
 
   const tune = () => setStationState((current) => tuneSignal(current, 25))
@@ -83,6 +84,10 @@ export function AppShell() {
   }
 
   useEffect(() => {
+    effectsSettingsRef.current = effectsSettings
+  }, [effectsSettings])
+
+  useEffect(() => {
     let animationFrame = 0
     let currentScrollDepth = 0
     let targetScrollDepth = 0
@@ -95,7 +100,8 @@ export function AppShell() {
     }
 
     const animateScrollEffects = () => {
-      currentScrollDepth += (targetScrollDepth - currentScrollDepth) * 0.16
+      const inertia = Math.min(0.5, Math.max(0.02, effectsSettingsRef.current.scrollInertia))
+      currentScrollDepth += (targetScrollDepth - currentScrollDepth) * inertia
       if (Math.abs(targetScrollDepth - currentScrollDepth) < 0.001) {
         currentScrollDepth = targetScrollDepth
       }
@@ -106,7 +112,7 @@ export function AppShell() {
         const travel = window.innerHeight + rect.height
         const targetSectionProgress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / Math.max(1, travel)))
         const currentSectionProgress = sectionProgress.get(section) ?? targetSectionProgress
-        let nextSectionProgress = currentSectionProgress + (targetSectionProgress - currentSectionProgress) * 0.16
+        let nextSectionProgress = currentSectionProgress + (targetSectionProgress - currentSectionProgress) * inertia
         if (Math.abs(targetSectionProgress - nextSectionProgress) < 0.001) {
           nextSectionProgress = targetSectionProgress
         }

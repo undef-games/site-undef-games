@@ -281,6 +281,11 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   await expect(effects.getByLabel('Scan opacity', { exact: true })).toHaveValue('1')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.055')
+  await expect(effects.getByLabel('Scan scroll impact', { exact: true })).toHaveValue('0.35')
+  await expect(effects.getByLabel('Scroll inertia', { exact: true })).toHaveValue('0.16')
+  await expect
+    .poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-scroll-impact').trim()))
+    .toBe('0.35')
 
   await presetSelect.selectOption('paper-terminal')
   await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
@@ -302,6 +307,14 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   await effects.getByLabel('Scan opacity', { exact: true }).fill('1.4')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.077')
+
+  await effects.getByLabel('Scan scroll impact', { exact: true }).fill('0.15')
+  await expect
+    .poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-scroll-impact').trim()))
+    .toBe('0.15')
+
+  await effects.getByLabel('Scroll inertia', { exact: true }).fill('0.08')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scroll-inertia').trim())).toBe('0.08')
 
   await effects.getByLabel('Rectangle spin', { exact: true }).fill('1.35')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-rectangle-spin').trim())).toBe('1.35')
@@ -336,6 +349,19 @@ test('switches section background effects independently', async ({ page }) => {
   await effects.getByLabel('Signal background').selectOption('tumble')
   await expect(signalToy).toHaveClass(/section-toy--effect-tumble/)
   await expect.poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(getToyRectArea)).toBeGreaterThan(30000)
+
+  await effects.getByLabel('Signal background').selectOption('scatter')
+  await expect(signalToy).toHaveClass(/section-toy--effect-scatter/)
+  await expect.poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(getToyRectArea)).toBeLessThan(1600)
+
+  await effects.getByLabel('Projects background').selectOption('frames')
+  await expect(projectsToy).toHaveClass(/section-toy--effect-frames/)
+
+  await effects.getByLabel('WARP background').selectOption('rails')
+  await expect(warpToy).toHaveClass(/section-toy--effect-rails/)
+
+  await effects.getByLabel('Dice background').selectOption('rungs')
+  await expect(page.locator('.landing-section--dice .section-toy')).toHaveClass(/section-toy--effect-rungs/)
 
   await effects.getByLabel('Identity background').selectOption('slab')
   await expect(identityToy).toHaveClass(/section-toy--effect-slab/)

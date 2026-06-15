@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import type { ChannelMode } from './station-signal-scene'
 
-export type SectionToyEffect = 'bars' | 'slab' | 'tumble'
+export type SectionToyEffect = 'bars' | 'frames' | 'rails' | 'rungs' | 'scatter' | 'slab' | 'tumble'
 export type SectionEffectId = 'dice' | 'identity' | 'projects' | 'signal' | 'taybols' | 'warp'
 export type SectionEffects = Record<SectionEffectId, SectionToyEffect>
 

@@ -19,6 +19,7 @@ const EFFECT_GROUPS: { controls: NumberControl[]; label: string }[] = [
       { key: 'scanOpacity', label: 'Scan opacity', min: 0, max: 2, step: 0.05 },
       { key: 'scanSpacing', label: 'Scan spacing', min: 0.5, max: 2, step: 0.05 },
       { key: 'scanSpeed', label: 'Scan speed', min: 0, max: 2, step: 0.05 },
+      { key: 'scanScrollImpact', label: 'Scan scroll impact', min: 0, max: 2, step: 0.05 },
       { key: 'sweepStrength', label: 'Sweep strength', min: 0, max: 2, step: 0.05 },
     ],
   },
@@ -29,6 +30,7 @@ const EFFECT_GROUPS: { controls: NumberControl[]; label: string }[] = [
       { key: 'jitterAmount', label: 'Jitter amount', min: 0, max: 2, step: 0.05 },
       { key: 'pointerWake', label: 'Pointer wake', min: 0, max: 2, step: 0.05 },
       { key: 'scrollBoost', label: 'Scroll boost', min: 0, max: 2, step: 0.05 },
+      { key: 'scrollInertia', label: 'Scroll inertia', min: 0.02, max: 0.5, step: 0.01 },
     ],
   },
   {
@@ -75,6 +77,10 @@ const PRESET_GROUPS: { icon: string; label: string; tone: EffectsTone }[] = [
 const SECTION_EFFECT_OPTIONS: { label: string; value: SectionToyEffect }[] = [
   { label: 'Skinny bars', value: 'bars' },
   { label: 'Tumble rectangles', value: 'tumble' },
+  { label: 'Pixel scatter', value: 'scatter' },
+  { label: 'Offset frames', value: 'frames' },
+  { label: 'Signal rails', value: 'rails' },
+  { label: 'Stacked rungs', value: 'rungs' },
   { label: 'Legacy slab', value: 'slab' },
 ]
 

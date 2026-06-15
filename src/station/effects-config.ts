@@ -17,6 +17,7 @@ export type EffectsSettings = {
   paletteSupport3: string
   scanOpacity: number
   scanSpacing: number
+  scanScrollImpact: number
   scanSpeed: number
   sweepStrength: number
   noiseAmount: number
@@ -26,6 +27,7 @@ export type EffectsSettings = {
   driftAmount: number
   pointerWake: number
   scrollBoost: number
+  scrollInertia: number
   occlusionStrength: number
   rectangleOpacity: number
   rectangleTravel: number
@@ -57,6 +59,7 @@ export const BASELINE_EFFECTS: EffectsSettings = {
   paletteSupport3: '#d8ff35',
   scanOpacity: 1,
   scanSpacing: 1,
+  scanScrollImpact: 0.35,
   scanSpeed: 1,
   sweepStrength: 1,
   noiseAmount: 1,
@@ -66,6 +69,7 @@ export const BASELINE_EFFECTS: EffectsSettings = {
   driftAmount: 1,
   pointerWake: 1,
   scrollBoost: 1,
+  scrollInertia: 0.16,
   occlusionStrength: 1,
   rectangleOpacity: 1,
   rectangleTravel: 1,
@@ -831,6 +835,7 @@ export function createEffectsStyle(settings: EffectsSettings, scrollDepth: numbe
     '--fx-support-3': settings.paletteSupport3,
     '--fx-support-3-rgb': support3Rgb,
     '--fx-scan-opacity': formatNumber(0.055 * settings.scanOpacity),
+    '--fx-scan-scroll-impact': settings.scanScrollImpact,
     '--fx-scan-spacing': `${formatNumber(12 * settings.scanSpacing)}px`,
     '--fx-section-scan-opacity': formatNumber(0.035 * settings.scanOpacity),
     '--fx-scan-speed': settings.scanSpeed,
@@ -842,6 +847,7 @@ export function createEffectsStyle(settings: EffectsSettings, scrollDepth: numbe
     '--fx-drift-amount': settings.driftAmount,
     '--fx-pointer-wake': settings.pointerWake,
     '--fx-scroll-boost': settings.scrollBoost,
+    '--fx-scroll-inertia': settings.scrollInertia,
     '--fx-occlusion-strength': settings.occlusionStrength,
     '--fx-rectangle-opacity': settings.rectangleOpacity,
     '--fx-rectangle-travel': settings.rectangleTravel,
