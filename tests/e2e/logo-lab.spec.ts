@@ -296,10 +296,13 @@ test('switches section background effects independently', async ({ page }) => {
   const effects = page.getByLabel('effects controls')
   const signalToy = page.locator('.landing-section--signal .section-toy')
   const projectsToy = page.locator('.landing-section--products .section-toy')
+  const warpToy = page.locator('.landing-section--warp .section-toy')
   const identityToy = page.locator('.landing-section--identity .section-toy')
   await expect(signalToy).toHaveClass(/section-toy--effect-bars/)
+  await expect(projectsToy).toHaveClass(/section-toy--effect-tumble/)
+  await expect(warpToy).toHaveClass(/section-toy--effect-tumble/)
   await expect.poll(() => signalToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.7)
-  await expect.poll(() => projectsToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.7)
+  await expect.poll(() => projectsToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.38)
   await expect
     .poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyVisuals))
     .toMatchObject({
@@ -321,6 +324,43 @@ test('switches section background effects independently', async ({ page }) => {
   await expect
     .poll(() => page.locator('.landing-section--identity .section-toy span').first().evaluate((element) => element.getBoundingClientRect().width))
     .toBeGreaterThan(250)
+})
+
+test('keeps rectangle toys visible and smoothed under light presets', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const effects = page.getByLabel('effects controls')
+  await effects.getByLabel('Effect preset').selectOption('whiteout')
+
+  const identitySection = page.getByLabel('identity baseline')
+  const identityToy = page.locator('.landing-section--identity .section-toy')
+  const identityBox = page.locator('.landing-section--identity .section-toy span').first()
+  const sectionMetrics = await identitySection.evaluate((element) => {
+    const rect = element.getBoundingClientRect()
+    return {
+      height: rect.height,
+      top: rect.top + window.scrollY,
+      viewportHeight: window.innerHeight,
+    }
+  })
+
+  await page.evaluate((scrollY) => window.scrollTo(0, scrollY), sectionMetrics.top - sectionMetrics.viewportHeight * 0.6)
+  await expect(identityToy).toHaveClass(/section-toy--effect-tumble/)
+  await expect
+    .poll(() => identitySection.evaluate((element) => getComputedStyle(element).backgroundImage))
+    .not.toBe('none')
+  await expect.poll(() => identityToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.38)
+  await expect.poll(() => identityBox.evaluate(getToyRectArea)).toBeGreaterThan(30000)
+
+  const beforeScroll = await identityBox.evaluate(getTranslateX)
+  await page.mouse.wheel(0, 600)
+  const firstFrame = await identityBox.evaluate(getTranslateX)
+  await page.waitForTimeout(220)
+  const easedFrame = await identityBox.evaluate(getTranslateX)
+
+  expect(firstFrame).toBeLessThan(beforeScroll)
+  expect(easedFrame).toBeLessThan(firstFrame - 24)
 })
 
 function getTranslateX(element: Element) {

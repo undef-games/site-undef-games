@@ -50,10 +50,10 @@ const PRODUCT_LINKS = [
 const DEFAULT_SECTION_EFFECTS: SectionEffects = {
   dice: 'bars',
   identity: 'tumble',
-  projects: 'bars',
+  projects: 'tumble',
   signal: 'bars',
   taybols: 'bars',
-  warp: 'bars',
+  warp: 'tumble',
 }
 
 export function AppShell() {
@@ -83,25 +83,48 @@ export function AppShell() {
   }
 
   useEffect(() => {
-    const updateScrollDepth = () => {
+    let animationFrame = 0
+    let currentScrollDepth = 0
+    let targetScrollDepth = 0
+    const sectionProgress = new WeakMap<HTMLElement, number>()
+
+    const updateTargets = () => {
       const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
       const landingRange = Math.min(scrollable, window.innerHeight * 1.6)
-      setScrollDepth(Math.min(1, Math.max(0, window.scrollY / Math.max(1, landingRange))))
+      targetScrollDepth = Math.min(1, Math.max(0, window.scrollY / Math.max(1, landingRange)))
+    }
+
+    const animateScrollEffects = () => {
+      currentScrollDepth += (targetScrollDepth - currentScrollDepth) * 0.16
+      if (Math.abs(targetScrollDepth - currentScrollDepth) < 0.001) {
+        currentScrollDepth = targetScrollDepth
+      }
+      setScrollDepth((current) => (Math.abs(current - currentScrollDepth) > 0.001 ? currentScrollDepth : current))
 
       document.querySelectorAll<HTMLElement>('.landing-section').forEach((section) => {
         const rect = section.getBoundingClientRect()
         const travel = window.innerHeight + rect.height
-        const sectionProgress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / Math.max(1, travel)))
-        section.style.setProperty('--section-progress', sectionProgress.toString())
+        const targetSectionProgress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / Math.max(1, travel)))
+        const currentSectionProgress = sectionProgress.get(section) ?? targetSectionProgress
+        let nextSectionProgress = currentSectionProgress + (targetSectionProgress - currentSectionProgress) * 0.16
+        if (Math.abs(targetSectionProgress - nextSectionProgress) < 0.001) {
+          nextSectionProgress = targetSectionProgress
+        }
+        sectionProgress.set(section, nextSectionProgress)
+        section.style.setProperty('--section-progress', nextSectionProgress.toFixed(4))
       })
+
+      animationFrame = window.requestAnimationFrame(animateScrollEffects)
     }
 
-    updateScrollDepth()
-    window.addEventListener('scroll', updateScrollDepth, { passive: true })
-    window.addEventListener('resize', updateScrollDepth)
+    updateTargets()
+    animateScrollEffects()
+    window.addEventListener('scroll', updateTargets, { passive: true })
+    window.addEventListener('resize', updateTargets)
     return () => {
-      window.removeEventListener('scroll', updateScrollDepth)
-      window.removeEventListener('resize', updateScrollDepth)
+      window.cancelAnimationFrame(animationFrame)
+      window.removeEventListener('scroll', updateTargets)
+      window.removeEventListener('resize', updateTargets)
     }
   }, [])
 

@@ -10,7 +10,7 @@
   .station-broadcast {
     min-height: 82svh;
     border-right: 0;
-    border-bottom: 1px solid rgba(var(--fx-muted-rgb, 244 244 240), 0.14);
+    border-bottom: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.14);
   }
 
   .station-sidebar {

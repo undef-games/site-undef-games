@@ -61,7 +61,7 @@
 
 .section-toy--effect-tumble,
 .section-toy--effect-slab {
-  opacity: calc(0.38 * var(--fx-rectangle-opacity, 1));
+  opacity: max(0.38, calc(0.38 * var(--fx-rectangle-opacity, 1)));
 }
 
 .section-toy--effect-tumble span,
