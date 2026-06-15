@@ -356,12 +356,24 @@ test('switches section background effects independently', async ({ page }) => {
 
   await effects.getByLabel('Projects background').selectOption('frames')
   await expect(projectsToy).toHaveClass(/section-toy--effect-frames/)
+  await expect.poll(() => page.locator('.landing-section--products .section-toy span').first().evaluate(readToyRect)).toMatchObject({
+    height: 78,
+    width: 120,
+  })
 
   await effects.getByLabel('WARP background').selectOption('rails')
   await expect(warpToy).toHaveClass(/section-toy--effect-rails/)
+  await expect.poll(() => page.locator('.landing-section--warp .section-toy span').first().evaluate(readToyRect)).toMatchObject({
+    height: 3,
+    width: 210,
+  })
 
   await effects.getByLabel('Dice background').selectOption('rungs')
   await expect(page.locator('.landing-section--dice .section-toy')).toHaveClass(/section-toy--effect-rungs/)
+  await expect.poll(() => page.locator('.landing-section--dice .section-toy span').first().evaluate(readToyRect)).toMatchObject({
+    height: 62,
+    width: 9,
+  })
 
   await effects.getByLabel('Identity background').selectOption('slab')
   await expect(identityToy).toHaveClass(/section-toy--effect-slab/)
@@ -529,6 +541,14 @@ function hasPaintedWebGlPixels(canvas: HTMLCanvasElement) {
 function getToyRectArea(element: Element) {
   const rect = element.getBoundingClientRect()
   return rect.width * rect.height
+}
+
+function readToyRect(element: Element) {
+  const rect = element.getBoundingClientRect()
+  return {
+    height: Math.round(rect.height),
+    width: Math.round(rect.width),
+  }
 }
 
 function readControlColors(element: Element) {

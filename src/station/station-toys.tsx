@@ -103,6 +103,17 @@ export function SectionToy({ effect, variant }: { effect: SectionToyEffect; vari
         const verticalTravel = variant === 'system' ? (index % 2 === 0 ? -92 : 78) - row * 6 : drift * (34 + (index % 4) * 9)
         const spinStart = (index % 6) * 11 * drift
         const spin = (variant === 'system' ? 48 + (index % 5) * 18 : 96 + (index % 6) * 28) * drift
+        const scatterWidth = 14 + (index % 5) * 8
+        const scatterHeight = 14 + (index % 4) * 6
+        const scatterTop = 12 + (index % 8) * 8
+        const frameWidth = 120 + (index % 4) * 64
+        const frameHeight = 78 + (index % 3) * 46
+        const frameTop = 7 + (index % 6) * 11
+        const railWidth = 210 + (index % 5) * 72
+        const railTop = 10 + (index % 9) * 8
+        const rungWidth = 9 + (index % 4) * 5
+        const rungHeight = 62 + (index % 5) * 18
+        const rungTop = 8 + (index % 5) * 12
 
         return (
           <span
@@ -110,11 +121,23 @@ export function SectionToy({ effect, variant }: { effect: SectionToyEffect; vari
             style={
               {
                 '--toy-drift': drift,
+                '--toy-effect-frame-height': `${frameHeight}px`,
+                '--toy-effect-frame-top': `${frameTop}%`,
+                '--toy-effect-frame-width': `${frameWidth}px`,
+                '--toy-effect-rail-top': `${railTop}%`,
+                '--toy-effect-rail-width': `${railWidth}px`,
+                '--toy-effect-rung-height': `${rungHeight}px`,
+                '--toy-effect-rung-top': `${rungTop}%`,
+                '--toy-effect-rung-width': `${rungWidth}px`,
+                '--toy-effect-scatter-height': `${scatterHeight}px`,
+                '--toy-effect-scatter-top': `${scatterTop}%`,
+                '--toy-effect-scatter-width': `${scatterWidth}px`,
                 '--toy-height': `${height}px`,
                 '--toy-index': index,
                 '--toy-row': row,
                 '--toy-spin': `${spin}deg`,
                 '--toy-spin-start': `${spinStart}deg`,
+                '--toy-system-bottom': `${14 + (index % 4) * 4}%`,
                 '--toy-x-start': `${start}vw`,
                 '--toy-x-travel': `${travel}vw`,
                 '--toy-width': `${width}px`,
