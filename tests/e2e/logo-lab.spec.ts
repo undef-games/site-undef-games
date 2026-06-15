@@ -14,15 +14,15 @@ test('tunes the static station identity to signal lock', async ({ page }) => {
   await expect
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgb(244, 244, 240)',
-      borderColor: 'rgba(244, 244, 240, 0.72)',
+      backgroundColor: 'rgba(244, 244, 240, 0.64)',
+      borderColor: 'rgba(244, 244, 240, 0.58)',
       color: 'rgb(5, 6, 7)',
     })
   await expect
     .poll(() => page.getByRole('button', { name: /CH 13/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgb(244, 244, 240)',
-      borderColor: 'rgba(244, 244, 240, 0.72)',
+      backgroundColor: 'rgba(244, 244, 240, 0.64)',
+      borderColor: 'rgba(244, 244, 240, 0.58)',
       color: 'rgb(5, 6, 7)',
     })
 
@@ -288,8 +288,21 @@ test('switches section background effects independently', async ({ page }) => {
 
   const effects = page.getByLabel('effects controls')
   const signalToy = page.locator('.landing-section--signal .section-toy')
+  const projectsToy = page.locator('.landing-section--products .section-toy')
   const identityToy = page.locator('.landing-section--identity .section-toy')
   await expect(signalToy).toHaveClass(/section-toy--effect-bars/)
+  await expect.poll(() => signalToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.7)
+  await expect.poll(() => projectsToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.7)
+  await expect
+    .poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyVisuals))
+    .toMatchObject({
+      backgroundColor: 'rgba(244, 244, 240, 0.4)',
+    })
+  await expect
+    .poll(() => page.locator('.landing-section--signal .section-toy span').nth(1).evaluate(readToyVisuals))
+    .toMatchObject({
+      backgroundColor: 'rgba(216, 255, 53, 0.58)',
+    })
   await expect(identityToy).toHaveClass(/section-toy--effect-tumble/)
 
   await effects.getByLabel('Signal background').selectOption('tumble')
@@ -364,5 +377,13 @@ function readControlColors(element: Element) {
     backgroundColor: style.backgroundColor,
     borderColor: style.borderTopColor,
     color: style.color,
+  }
+}
+
+function readToyVisuals(element: Element) {
+  const style = getComputedStyle(element)
+  return {
+    backgroundColor: style.backgroundColor,
+    boxShadow: style.boxShadow,
   }
 }

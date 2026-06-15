@@ -34,15 +34,15 @@
 .control-buttons button {
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.72);
-  background: var(--fx-muted, #f4f4f0);
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.58);
+  background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.64);
   color: var(--fx-bg, #050607);
   font: inherit;
 }
 
 .control-buttons button:hover {
   border-color: var(--fx-signal, #d8ff35);
-  background: var(--fx-signal, #d8ff35);
+  background: rgb(var(--fx-signal-rgb, 216 255 53) / 0.8);
   color: var(--fx-bg, #050607);
 }
 
@@ -94,8 +94,8 @@
   align-content: center;
   gap: 4px;
   padding: 9px 10px;
-  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.72);
-  background: var(--fx-muted, #f4f4f0);
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.58);
+  background: rgb(var(--fx-muted-rgb, 244 244 240) / 0.64);
   color: var(--fx-bg, #050607);
   font: inherit;
   text-align: left;
@@ -103,7 +103,7 @@
 
 .channel-buttons button[aria-pressed='true'] {
   border-color: var(--fx-signal, #d8ff35);
-  background: var(--fx-signal, #d8ff35);
+  background: rgb(var(--fx-signal-rgb, 216 255 53) / 0.8);
   color: var(--fx-bg, #050607);
 }
 
