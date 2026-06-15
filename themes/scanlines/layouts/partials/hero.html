@@ -1,0 +1,25 @@
+{{ $hero := site.Data.site.home.hero }}
+<section class="scan-hero" aria-label="undef games landing page">
+  <div class="scan-field" aria-hidden="true">
+    <span class="scan-field__glyph">∪</span>
+    <span class="scan-field__line scan-field__line--one"></span>
+    <span class="scan-field__line scan-field__line--two"></span>
+  </div>
+  <div class="scan-hero__content">
+    <p class="scan-kicker">{{ $hero.kicker }}</p>
+    <h1>{{ $hero.title }}</h1>
+    <p class="scan-copy">{{ $hero.copy }}</p>
+    <div class="scan-actions">
+      <a class="scan-button scan-button--primary" href="{{ $hero.primary_href }}">{{ $hero.primary_label }}</a>
+      <a class="scan-button" href="{{ $hero.secondary_href }}">{{ $hero.secondary_label }}</a>
+    </div>
+  </div>
+  <aside class="scan-rail" aria-label="station identity">
+    <p class="scan-rail__label">Station ID</p>
+    <div class="scan-lockup">
+      <span class="scan-mark" aria-hidden="true">∪</span>
+      <strong>undef<br>games</strong>
+    </div>
+    <a class="scan-rail__lab" href="/lab/">Open interactive lab</a>
+  </aside>
+</section>

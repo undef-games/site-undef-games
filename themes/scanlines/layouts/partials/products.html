@@ -1,0 +1,14 @@
+{{ $products := site.Data.site.home.products }}
+<section class="scan-section" id="projects" aria-label="undef games projects">
+  <p class="scan-kicker">Live routes</p>
+  <h2>Actual projects on the network.</h2>
+  <div class="scan-products">
+    {{ range $products }}
+      <a class="scan-product" href="{{ .href }}">
+        <span>{{ .tag }}</span>
+        <strong>{{ .label }}</strong>
+        <small>{{ .description }}</small>
+      </a>
+    {{ end }}
+  </div>
+</section>

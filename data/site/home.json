@@ -1,0 +1,36 @@
+{
+  "hero": {
+    "kicker": "CH 00 / SIGNAL FIELD",
+    "title": "undef games",
+    "copy": "Systems, toys, and game-shaped experiments tuned out of undefined space.",
+    "primary_label": "Open lab",
+    "primary_href": "/lab/",
+    "secondary_label": "View projects",
+    "secondary_href": "#projects"
+  },
+  "products": [
+    {
+      "tag": "warp",
+      "label": "TradeWars: WARP Agent Runtime Platform",
+      "href": "https://warp.undef.games",
+      "description": "Agent runtime platform for TradeWars automation, tools, and live operators."
+    },
+    {
+      "tag": "dice",
+      "label": "Undef Dice",
+      "href": "https://undefdice.com",
+      "description": "Fast dice, table helpers, and lightweight play tools for groups."
+    },
+    {
+      "tag": "taybols",
+      "label": "Taybols",
+      "href": "https://taybols.undef.games",
+      "description": "Table-shaped experiments, generators, and odd little game utilities."
+    }
+  ],
+  "identity": {
+    "kicker": "Identity baseline",
+    "title": "The mark stays quiet until the lockup needs it.",
+    "copy": "The Maze Gate U Cut is the saved mark. The landing page uses it as a dim background presence and an identity lockup, not as a hard centered emblem."
+  }
+}

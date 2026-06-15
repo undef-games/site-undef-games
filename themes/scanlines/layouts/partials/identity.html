@@ -1,0 +1,9 @@
+{{ $identity := site.Data.site.home.identity }}
+<section class="scan-section scan-section--identity" aria-label="identity baseline">
+  <div class="scan-toy" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <p class="scan-kicker">{{ $identity.kicker }}</p>
+  <h2>{{ $identity.title }}</h2>
+  <p>{{ $identity.copy }}</p>
+</section>
