@@ -2,7 +2,7 @@
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  border-right: 1px solid rgba(244, 244, 240, 0.14);
+  border-right: 1px solid rgba(var(--fx-muted-rgb, 244 244 240), 0.14);
   isolation: isolate;
 }
 
@@ -28,9 +28,18 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(216, 255, 53, 0.42) 0 5%, rgba(216, 255, 53, 0.08) 5% 13%, transparent 24%),
-    repeating-linear-gradient(0deg, rgba(244, 244, 240, 0.055) 0 1px, transparent 1px 12px),
-    linear-gradient(180deg, transparent 0 68%, rgba(5, 6, 7, 0.88));
+    linear-gradient(
+      90deg,
+      rgba(var(--fx-signal-rgb, 216 255 53), calc(0.42 * var(--fx-glow-strength, 1))) 0 5%,
+      rgba(var(--fx-signal-rgb, 216 255 53), calc(0.08 * var(--fx-glow-strength, 1))) 5% 13%,
+      transparent 24%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(var(--fx-muted-rgb, 244 244 240), var(--fx-scan-opacity, 0.055)) 0 1px,
+      transparent 1px var(--fx-scan-spacing, 12px)
+    ),
+    linear-gradient(180deg, transparent 0 68%, rgba(5, 6, 7, calc(0.88 * var(--fx-occlusion-strength, 1))));
   mix-blend-mode: screen;
   opacity: 0.64;
   z-index: 1;
@@ -43,9 +52,9 @@
   height: 920px;
   right: calc(-260px + var(--scroll-depth, 0) * 96px);
   top: calc(48% + var(--scroll-depth, 0) * 5%);
-  color: #d8ff35;
+  color: var(--fx-signal, #d8ff35);
   opacity: calc(0.11 + var(--scroll-depth, 0) * 0.05);
-  filter: blur(calc(22px - var(--scroll-depth, 0) * 8px)) saturate(62%);
+  filter: blur(calc((22px - var(--scroll-depth, 0) * 8px) * var(--fx-frost-blur, 1))) saturate(62%);
   transform: translateY(-50%) rotate(calc(var(--scroll-depth, 0) * 5deg));
   pointer-events: none;
   mix-blend-mode: screen;
@@ -68,7 +77,7 @@
   position: absolute;
   left: calc(8% + var(--packet-index) * 12%);
   top: calc(18% + var(--packet-row) * 21%);
-  color: rgba(244, 244, 240, 0.42);
+  color: rgba(var(--fx-muted-rgb, 244 244 240), 0.42);
   opacity: calc(0.18 + var(--scroll-depth, 0) * 0.34);
   transform: translate3d(
     calc(var(--scroll-depth, 0) * -180px + var(--packet-index) * 9px),
@@ -81,12 +90,12 @@
 }
 
 .packet-drift[data-channel-mode='noise'] span {
-  color: rgba(244, 244, 240, 0.6);
+  color: rgba(var(--fx-muted-rgb, 244 244 240), 0.6);
 }
 
 .packet-drift[data-channel-mode='game'] span,
 .packet-drift[data-channel-mode='lock'] span {
-  color: rgba(216, 255, 53, 0.55);
+  color: rgba(var(--fx-signal-rgb, 216 255 53), 0.55);
 }
 
 .station-hero {
@@ -96,7 +105,7 @@
   display: grid;
   align-content: center;
   padding: 56px 92px;
-  text-shadow: 0 3px 24px rgba(5, 6, 7, 0.9);
+  text-shadow: 0 3px 24px rgba(5, 6, 7, calc(0.9 * var(--fx-occlusion-strength, 1)));
 }
 
 .station-kicker {
@@ -104,14 +113,14 @@
   flex-wrap: wrap;
   gap: 10px 18px;
   margin: 0 0 22px;
-  color: rgba(244, 244, 240, 0.74);
+  color: rgba(var(--fx-muted-rgb, 244 244 240), 0.74);
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.08em;
 }
 
 .station-kicker span:first-child {
-  color: #d8ff35;
+  color: var(--fx-signal, #d8ff35);
 }
 
 .station-hero h1 {
@@ -130,7 +139,7 @@
 .station-copy {
   max-width: 620px;
   margin: 28px 0 0;
-  color: rgba(244, 244, 240, 0.76);
+  color: rgba(var(--fx-muted-rgb, 244 244 240), 0.76);
   font-size: 15px;
   font-weight: 750;
   line-height: 1.6;
@@ -154,31 +163,31 @@
   display: inline-grid;
   place-items: center;
   padding: 0 18px;
-  border: 1px solid rgba(244, 244, 240, 0.26);
-  color: #f4f4f0;
+  border: 1px solid rgba(var(--fx-muted-rgb, 244 244 240), 0.26);
+  color: var(--fx-text, #f4f4f0);
   text-decoration: none;
 }
 
 .station-actions a:first-child,
 .landing-final a {
-  border-color: #d8ff35;
-  background: #d8ff35;
-  color: #050607;
+  border-color: var(--fx-signal, #d8ff35);
+  background: var(--fx-signal, #d8ff35);
+  color: var(--fx-bg, #050607);
 }
 
 .station-actions a:hover,
 .landing-final a:hover {
-  border-color: #f4f4f0;
-  background: #f4f4f0;
-  color: #050607;
+  border-color: var(--fx-text, #f4f4f0);
+  background: var(--fx-text, #f4f4f0);
+  color: var(--fx-bg, #050607);
 }
 
 .station-status {
   width: fit-content;
   margin: 28px 0 0;
   padding: 0 0 0 14px;
-  border-left: 4px solid #d8ff35;
-  color: rgba(244, 244, 240, 0.82);
+  border-left: 4px solid var(--fx-signal, #d8ff35);
+  color: rgba(var(--fx-muted-rgb, 244 244 240), 0.82);
   font-size: 15px;
   font-weight: 850;
   letter-spacing: 0.08em;

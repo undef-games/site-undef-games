@@ -13,14 +13,14 @@
   right: 6%;
   top: calc(10% + var(--toy-index, 0) * 6%);
   height: 2px;
-  background: rgba(216, 255, 53, 0.26);
+  background: rgba(var(--fx-signal-rgb, 216 255 53), 0.26);
   transform: translateX(calc(110vw - var(--section-progress, 0) * 220vw));
   border-radius: 0;
 }
 
 .section-toy span:nth-child(odd) {
   width: 34%;
-  background: rgba(244, 244, 240, 0.16);
+  background: rgba(var(--fx-muted-rgb, 244 244 240), 0.16);
 }
 
 .section-toy span:nth-child(3n) {
@@ -41,7 +41,7 @@
   position: static;
   width: auto;
   height: calc(24px + (var(--scroll-depth, 0) * 80px));
-  background: rgba(216, 255, 53, 0.16);
+  background: rgba(var(--fx-signal-rgb, 216 255 53), 0.16);
   transform:
     translateX(calc(112vw - var(--section-progress, 0) * 224vw))
     translateY(calc(var(--scroll-depth, 0) * -22px));
@@ -52,25 +52,30 @@
 }
 
 .section-toy--identity {
-  opacity: 0.28;
+  opacity: calc(0.28 * var(--fx-rectangle-opacity, 1));
 }
 
 .section-toy--identity span {
   --identity-distance: 238vw;
   --identity-alpha-high: 0.94;
   --identity-alpha-low: 0.78;
+  --identity-border-rgb: 216 255 53;
+  --identity-fill-rgb: 244 244 240;
+  --identity-glow-rgb: 216 255 53;
   --identity-blur-high: 1.6px;
   --identity-blur-low: 0.8px;
-  --identity-border-high: rgba(216, 255, 53, 0.32);
-  --identity-border-low: rgba(216, 255, 53, 0.16);
+  --identity-border-high-alpha: 0.32;
+  --identity-border-low-alpha: 0.16;
   --identity-border-speed: 4.8s;
   --identity-border-delay: -1.7s;
-  --identity-fill-high: rgba(244, 244, 240, 0.15);
-  --identity-fill-low: rgba(244, 244, 240, 0.07);
+  --identity-fill-high-alpha: 0.15;
+  --identity-fill-low-alpha: 0.07;
   --identity-fill-speed: 5.4s;
   --identity-fill-delay: -0.9s;
-  --identity-glow-high: 0 0 38px rgba(216, 255, 53, 0.08);
-  --identity-glow-low: 0 0 4px rgba(216, 255, 53, 0);
+  --identity-glow-high-alpha: 0.08;
+  --identity-glow-low-alpha: 0;
+  --identity-glow-high-size: 38px;
+  --identity-glow-low-size: 4px;
   --identity-glow-speed: 6.2s;
   --identity-glow-delay: -3.1s;
   --identity-scale: 0.9;
@@ -82,20 +87,25 @@
   top: calc(10% + var(--toy-index, 0) * 6%);
   width: 220px;
   height: 220px;
-  border: 2px solid var(--identity-border-low);
-  background-color: var(--identity-fill-low);
-  box-shadow: var(--identity-glow-low);
-  filter: blur(var(--identity-blur-low));
+  border: 2px solid rgb(var(--identity-border-rgb) / var(--identity-border-low-alpha));
+  background-color: rgb(var(--identity-fill-rgb) / var(--identity-fill-low-alpha));
+  box-shadow: 0 0 var(--identity-glow-low-size) rgb(var(--identity-glow-rgb) / var(--identity-glow-low-alpha));
+  filter: blur(var(--identity-blur-low)) brightness(1);
   opacity: var(--identity-alpha-low);
   transform-origin: center;
   transform:
-    translateX(calc(var(--identity-start) - var(--section-progress, 0) * var(--identity-distance)))
-    rotate(calc(var(--identity-spin-start) + var(--section-progress, 0) * var(--identity-spin)))
+    translateX(
+      calc(var(--identity-start) - var(--section-progress, 0) * var(--identity-distance) * var(--fx-rectangle-travel, 1))
+    )
+    rotate(calc(var(--identity-spin-start) + var(--section-progress, 0) * var(--identity-spin) * var(--fx-rectangle-spin, 1)))
     scale(var(--identity-scale));
   animation:
-    identity-fill-pulse var(--identity-fill-speed) ease-in-out var(--identity-fill-delay) infinite alternate,
-    identity-border-pulse var(--identity-border-speed) ease-in-out var(--identity-border-delay) infinite alternate,
-    identity-glow-pulse var(--identity-glow-speed) ease-in-out var(--identity-glow-delay) infinite alternate;
+    identity-fill-pulse calc(var(--identity-fill-speed) * var(--fx-rectangle-pulse-factor, 1)) ease-in-out
+      var(--identity-fill-delay) infinite alternate,
+    identity-border-pulse calc(var(--identity-border-speed) * var(--fx-rectangle-pulse-factor, 1)) ease-in-out
+      var(--identity-border-delay) infinite alternate,
+    identity-glow-pulse calc(var(--identity-glow-speed) * var(--fx-rectangle-pulse-factor, 1)) ease-in-out
+      var(--identity-glow-delay) infinite alternate;
   will-change: background-color, border-color, box-shadow, filter, opacity, transform;
 }
 
@@ -110,8 +120,10 @@
 .section-toy--identity span:nth-child(3n) {
   width: 58%;
   transform:
-    translateX(calc(var(--identity-start) - var(--section-progress, 0) * var(--identity-distance)))
-    rotate(calc(var(--identity-spin-start) + var(--section-progress, 0) * var(--identity-spin)))
+    translateX(
+      calc(var(--identity-start) - var(--section-progress, 0) * var(--identity-distance) * var(--fx-rectangle-travel, 1))
+    )
+    rotate(calc(var(--identity-spin-start) + var(--section-progress, 0) * var(--identity-spin) * var(--fx-rectangle-spin, 1)))
     scale(var(--identity-scale));
 }
 
@@ -121,16 +133,21 @@
   --identity-alpha-low: 0.76;
   --identity-blur-high: 1.9px;
   --identity-blur-low: 0.7px;
-  --identity-border-high: rgba(244, 244, 240, 0.24);
-  --identity-border-low: rgba(244, 244, 240, 0.11);
+  --identity-border-rgb: 244 244 240;
+  --identity-fill-rgb: 244 244 240;
+  --identity-glow-rgb: 244 244 240;
+  --identity-border-high-alpha: 0.24;
+  --identity-border-low-alpha: 0.11;
   --identity-border-speed: 4.2s;
   --identity-border-delay: -2.8s;
-  --identity-fill-high: rgba(244, 244, 240, 0.2);
-  --identity-fill-low: rgba(244, 244, 240, 0.1);
+  --identity-fill-high-alpha: 0.2;
+  --identity-fill-low-alpha: 0.1;
   --identity-fill-speed: 5.1s;
   --identity-fill-delay: -0.8s;
-  --identity-glow-high: 0 0 30px rgba(244, 244, 240, 0.07);
-  --identity-glow-low: 0 0 2px rgba(244, 244, 240, 0);
+  --identity-glow-high-alpha: 0.07;
+  --identity-glow-low-alpha: 0;
+  --identity-glow-high-size: 30px;
+  --identity-glow-low-size: 2px;
   --identity-glow-speed: 7.3s;
   --identity-glow-delay: -4.1s;
   --identity-scale: 0.94;
@@ -145,16 +162,21 @@
   --identity-alpha-low: 0.72;
   --identity-blur-high: 1.45px;
   --identity-blur-low: 0.9px;
-  --identity-border-high: rgba(216, 255, 53, 0.36);
-  --identity-border-low: rgba(216, 255, 53, 0.14);
+  --identity-border-rgb: 216 255 53;
+  --identity-fill-rgb: 216 255 53;
+  --identity-glow-rgb: 216 255 53;
+  --identity-border-high-alpha: 0.36;
+  --identity-border-low-alpha: 0.14;
   --identity-border-speed: 5.7s;
   --identity-border-delay: -1.2s;
-  --identity-fill-high: rgba(216, 255, 53, 0.055);
-  --identity-fill-low: rgba(216, 255, 53, 0.005);
+  --identity-fill-high-alpha: 0.055;
+  --identity-fill-low-alpha: 0.005;
   --identity-fill-speed: 6.6s;
   --identity-fill-delay: -3.5s;
-  --identity-glow-high: 0 0 42px rgba(216, 255, 53, 0.1);
-  --identity-glow-low: 0 0 6px rgba(216, 255, 53, 0.02);
+  --identity-glow-high-alpha: 0.1;
+  --identity-glow-low-alpha: 0.02;
+  --identity-glow-high-size: 42px;
+  --identity-glow-low-size: 6px;
   --identity-glow-speed: 4.9s;
   --identity-glow-delay: -0.4s;
   --identity-scale: 0.88;
@@ -169,16 +191,21 @@
   --identity-alpha-low: 0.7;
   --identity-blur-high: 2px;
   --identity-blur-low: 1px;
-  --identity-border-high: rgba(244, 244, 240, 0.22);
-  --identity-border-low: rgba(244, 244, 240, 0.09);
+  --identity-border-rgb: 244 244 240;
+  --identity-fill-rgb: 244 244 240;
+  --identity-glow-rgb: 244 244 240;
+  --identity-border-high-alpha: 0.22;
+  --identity-border-low-alpha: 0.09;
   --identity-border-speed: 6.4s;
   --identity-border-delay: -4.6s;
-  --identity-fill-high: rgba(244, 244, 240, 0.14);
-  --identity-fill-low: rgba(244, 244, 240, 0.05);
+  --identity-fill-high-alpha: 0.14;
+  --identity-fill-low-alpha: 0.05;
   --identity-fill-speed: 4.4s;
   --identity-fill-delay: -1.9s;
-  --identity-glow-high: 0 0 36px rgba(244, 244, 240, 0.05);
-  --identity-glow-low: 0 0 0 rgba(244, 244, 240, 0);
+  --identity-glow-high-alpha: 0.05;
+  --identity-glow-low-alpha: 0;
+  --identity-glow-high-size: 36px;
+  --identity-glow-low-size: 0;
   --identity-glow-speed: 5.8s;
   --identity-glow-delay: -2.7s;
   --identity-scale: 1;
@@ -193,16 +220,21 @@
   --identity-alpha-low: 0.74;
   --identity-blur-high: 1.7px;
   --identity-blur-low: 0.75px;
-  --identity-border-high: rgba(216, 255, 53, 0.3);
-  --identity-border-low: rgba(216, 255, 53, 0.1);
+  --identity-border-rgb: 216 255 53;
+  --identity-fill-rgb: 216 255 53;
+  --identity-glow-rgb: 216 255 53;
+  --identity-border-high-alpha: 0.3;
+  --identity-border-low-alpha: 0.1;
   --identity-border-speed: 3.9s;
   --identity-border-delay: -0.5s;
-  --identity-fill-high: rgba(216, 255, 53, 0.07);
-  --identity-fill-low: rgba(216, 255, 53, 0.018);
+  --identity-fill-high-alpha: 0.07;
+  --identity-fill-low-alpha: 0.018;
   --identity-fill-speed: 7.1s;
   --identity-fill-delay: -5.2s;
-  --identity-glow-high: 0 0 48px rgba(216, 255, 53, 0.085);
-  --identity-glow-low: 0 0 5px rgba(216, 255, 53, 0.01);
+  --identity-glow-high-alpha: 0.085;
+  --identity-glow-low-alpha: 0.01;
+  --identity-glow-high-size: 48px;
+  --identity-glow-low-size: 5px;
   --identity-glow-speed: 6.7s;
   --identity-glow-delay: -5.9s;
   --identity-scale: 0.86;
@@ -213,34 +245,34 @@
 
 @keyframes identity-fill-pulse {
   from {
-    background-color: var(--identity-fill-low);
+    background-color: rgb(var(--identity-fill-rgb) / var(--identity-fill-low-alpha));
   }
 
   to {
-    background-color: var(--identity-fill-high);
+    background-color: rgb(var(--identity-fill-rgb) / var(--identity-fill-high-alpha));
   }
 }
 
 @keyframes identity-border-pulse {
   from {
-    border-color: var(--identity-border-low);
+    border-color: rgb(var(--identity-border-rgb) / var(--identity-border-low-alpha));
   }
 
   to {
-    border-color: var(--identity-border-high);
+    border-color: rgb(var(--identity-border-rgb) / var(--identity-border-high-alpha));
   }
 }
 
 @keyframes identity-glow-pulse {
   from {
-    box-shadow: var(--identity-glow-low);
-    filter: blur(var(--identity-blur-low));
+    box-shadow: 0 0 var(--identity-glow-low-size) rgb(var(--identity-glow-rgb) / var(--identity-glow-low-alpha));
+    filter: blur(var(--identity-blur-low)) brightness(1);
     opacity: var(--identity-alpha-low);
   }
 
   to {
-    box-shadow: var(--identity-glow-high);
-    filter: blur(var(--identity-blur-high));
+    box-shadow: 0 0 var(--identity-glow-high-size) rgb(var(--identity-glow-rgb) / var(--identity-glow-high-alpha));
+    filter: blur(var(--identity-blur-high)) brightness(1);
     opacity: var(--identity-alpha-high);
   }
 }

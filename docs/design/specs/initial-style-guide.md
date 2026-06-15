@@ -2,7 +2,7 @@
 
 Date: 2026-06-14
 Status: Active baseline
-Baseline tag: `station-scanfield-v0.2`
+Baseline tag: `station-effects-rail-v0.3`
 
 ## Current Best Direction
 
@@ -10,7 +10,10 @@ The strongest direction so far is the static station identity with the Maze Gate
 
 This baseline replaces the previous abstract symbol explorations. It should be treated as the comparison point for future visual changes until a stronger direction is explicitly tagged.
 
-Prior saved baseline: `station-scanfield-v0.1`, the clean landing page with scan-field background, right-hand identity rail, and frosted background mark.
+Prior saved baselines:
+
+- `station-scanfield-v0.2`, the landing page with the fixed right-hand identity rail, Pixi scan field, page scroll toys, and tumbling identity rectangles.
+- `station-scanfield-v0.1`, the clean landing page with scan-field background, right-hand identity rail, and frosted background mark.
 
 ## Logo System
 
@@ -28,12 +31,15 @@ The right-hand side is part of the baseline, not a throwaway settings panel. Pre
 - signal meter and station status readout
 - channel toys for `CH 00`, `CH 13`, `CH ??`, and `UG`
 - compact signal scope reacting to scroll, tuning, and selected channel
+- effects presets and parameters for scanlines, interference, scene effects, rectangles, and palette
 - `Station ID` header with locked/scan state
 - primary Maze Gate U Cut lockup beside `undef games`
 - compact `UG 00` channel bug
 - `SCAN` / `LOCKED` specimen badge
 
 The rail should feel operational and dense. It should support the landing page without becoming a generic sidebar card stack.
+
+The first effects preset, `Current baseline`, is the canonical baseline. Its values are multiplier defaults and should preserve the current look exactly: dark page, bright signal green, dim page scanlines, Pixi scan field, frosted background mark, and visible tumbling identity rectangles. Other presets are for exploration only.
 
 ## Interactive Surface
 
@@ -50,6 +56,7 @@ The rail should feel operational and dense. It should support the landing page w
 - Locked state: signal can resolve to `LOCKED`, but the scene should not add a central emblem when locked.
 - Resize behavior: canvas must remain fitted to the scene bounds without stretching, offsetting, or leaving stale render areas.
 - Background mark: a very dim, blurred, frosted Maze Gate U Cut may sit behind the landing hero content, but it must not read as the main centered logo.
+- Effects behavior: the right rail may tune scan opacity, spacing, speed, sweep, noise, jitter, pointer wake, scroll boost, glow, frost, drift, occlusion, rectangle opacity, travel, spin, pulse, fill, border, glow, and palette. Keep these controls behind the content hierarchy; they are lab controls, not landing page copy.
 
 ## Visual Rules
 
@@ -64,5 +71,7 @@ The rail should feel operational and dense. It should support the landing page w
 This baseline is represented in code by:
 
 - `src/station/station-identity.tsx` for the Maze Gate U Cut lockup.
+- `src/station/effects-config.ts` for the right-rail baseline preset and effect CSS variables.
+- `src/station/effects-controls.tsx` for the right-rail preset and parameter controls.
 - `src/station/station-signal-scene.tsx` with `data-field-shape="scan-field"`.
 - `src/station/station-signal-scene.tsx` with `hasCenterMark: false`.

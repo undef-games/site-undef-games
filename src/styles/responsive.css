@@ -1,4 +1,8 @@
 @media (max-width: 980px) {
+  .landing-page {
+    padding-right: 0;
+  }
+
   .landing-hero {
     grid-template-columns: 1fr;
   }
@@ -6,11 +10,16 @@
   .station-broadcast {
     min-height: 82svh;
     border-right: 0;
-    border-bottom: 1px solid rgba(244, 244, 240, 0.14);
+    border-bottom: 1px solid rgba(var(--fx-muted-rgb, 244 244 240), 0.14);
   }
 
   .station-sidebar {
+    position: relative;
+    inset: auto;
+    width: auto;
     min-height: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .station-hero {
@@ -61,6 +70,15 @@
 
   .station-sidebar {
     padding: 18px;
+  }
+
+  .preset-buttons,
+  .palette-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .effect-control {
+    grid-template-columns: 1fr;
   }
 
   .station-copy {

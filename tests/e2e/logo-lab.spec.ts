@@ -191,6 +191,26 @@ test('switches channel toys and keeps one canvas scene', async ({ page }) => {
   await expect(signalScene.locator('canvas')).toHaveCount(1)
 })
 
+test('exposes right-rail effect presets and live parameters', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const rail = page.getByLabel('station tools and identity')
+  const effects = page.getByLabel('effects controls')
+  await expect(rail).toBeVisible()
+  await expect(effects).toBeVisible()
+  await expect(effects.getByRole('button', { name: /current baseline/i })).toHaveAttribute('aria-pressed', 'true')
+
+  await expect(effects.getByLabel('Scan opacity', { exact: true })).toHaveValue('1')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.055')
+
+  await effects.getByLabel('Scan opacity', { exact: true }).fill('1.4')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.077')
+
+  await effects.getByLabel('Rectangle spin', { exact: true }).fill('1.35')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-rectangle-spin').trim())).toBe('1.35')
+})
+
 function getTranslateX(element: Element) {
   const transform = getComputedStyle(element).transform
   if (transform === 'none') return 0

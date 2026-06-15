@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
+import { BASELINE_EFFECTS, hexToPixiColor, type EffectsSettings } from './effects-config'
 import { getStationStatus, type StationState } from './station-state'
 
 export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
@@ -8,10 +9,12 @@ export function StationSignalScene({
   state,
   scrollDepth = 0,
   channelMode = 'baseline',
+  effects = BASELINE_EFFECTS,
 }: {
   state: StationState
   scrollDepth?: number
   channelMode?: ChannelMode
+  effects?: EffectsSettings
 }) {
   const status = getStationStatus(state)
   const plan = getSignalFieldPlan(state.signal, channelMode)
@@ -19,6 +22,7 @@ export function StationSignalScene({
   const signalRef = useRef(state.signal)
   const scrollDepthRef = useRef(scrollDepth)
   const channelModeRef = useRef(channelMode)
+  const effectsRef = useRef(effects)
 
   useEffect(() => {
     signalRef.current = state.signal
@@ -31,6 +35,10 @@ export function StationSignalScene({
   useEffect(() => {
     channelModeRef.current = channelMode
   }, [channelMode])
+
+  useEffect(() => {
+    effectsRef.current = effects
+  }, [effects])
 
   useEffect(() => {
     const host = hostRef.current
@@ -65,7 +73,17 @@ export function StationSignalScene({
       const width = Math.max(1, Math.round(rect.width))
       const height = Math.max(1, Math.round(rect.height))
       app.renderer.resize(width, height)
-      if (graphics) drawSignalField(graphics, app, signalRef.current, pointer, scrollDepthRef.current, channelModeRef.current)
+      if (graphics) {
+        drawSignalField(
+          graphics,
+          app,
+          signalRef.current,
+          pointer,
+          scrollDepthRef.current,
+          channelModeRef.current,
+          effectsRef.current,
+        )
+      }
     }
 
     async function mountPixi() {
@@ -97,7 +115,15 @@ export function StationSignalScene({
       requestAnimationFrame(resizeToHost)
       app.ticker.add(() => {
         if (graphics && app) {
-          drawSignalField(graphics, app, signalRef.current, pointer, scrollDepthRef.current, channelModeRef.current)
+          drawSignalField(
+            graphics,
+            app,
+            signalRef.current,
+            pointer,
+            scrollDepthRef.current,
+            channelModeRef.current,
+            effectsRef.current,
+          )
         }
       })
     }
@@ -170,6 +196,7 @@ function drawSignalField(
   pointer: { active: boolean; x: number; y: number },
   scrollDepth: number,
   channelMode: ChannelMode,
+  effects: EffectsSettings,
 ) {
   const width = app.screen.width
   const height = app.screen.height
@@ -178,18 +205,32 @@ function drawSignalField(
   const clarity = signal / 100
   const plan = getSignalFieldPlan(signal, channelMode)
   const profile = getChannelProfile(channelMode)
-  const scrollEnergy = Math.min(1, Math.max(0, scrollDepth))
-  const driftX = pointer.x * width * (0.035 + scrollEnergy * 0.045 + profile.pointerPush)
+  const scrollEnergy = Math.min(1, Math.max(0, scrollDepth)) * effects.scrollBoost
+  const signalColor = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSignal)
+  const mutedColor = hexToPixiColor(effects.paletteMuted)
+  const backgroundColor = hexToPixiColor(effects.paletteBg)
+  const driftX =
+    pointer.x *
+    width *
+    (0.035 + scrollEnergy * 0.045 + profile.pointerPush) *
+    effects.pointerWake *
+    effects.driftAmount
   const pointerY = (pointer.y + 0.5) * height
 
   graphics.clear()
-  graphics.rect(0, 0, width, height).fill(0x050607)
+  graphics.rect(0, 0, width, height).fill(backgroundColor)
 
   for (let index = 0; index < plan.totalScanlines; index += 1) {
-    const y = ((index * profile.spacing + time * (54 + scrollEnergy * 120 + profile.speed)) % (height + 90)) - 45
+    const y =
+      ((index * profile.spacing * effects.scanSpacing +
+        time * (54 + scrollEnergy * 120 + profile.speed) * effects.scanSpeed) %
+        (height + 90)) -
+      45
     const active = index < plan.activeScanlines
-    const pointerBand = pointer.active ? Math.max(0, 1 - Math.abs(y - pointerY) / Math.max(height * 0.2, 1)) : 0
-    const jitter = profile.jitter * pseudoNoise(index + 203, time * 1.4) * width
+    const pointerBand = pointer.active
+      ? Math.max(0, 1 - Math.abs(y - pointerY) / Math.max(height * 0.2, 1)) * effects.pointerWake
+      : 0
+    const jitter = profile.jitter * effects.jitterAmount * pseudoNoise(index + 203, time * 1.4) * width
     const lineWidth = active
       ? width * (0.24 + ((index % 9) * 0.03 + clarity * 0.44 + pointerBand * 0.2 + scrollEnergy * 0.12))
       : width * (0.06 + (index % 5) * 0.028 + pointerBand * 0.08)
@@ -197,37 +238,49 @@ function drawSignalField(
       ? width * (0.03 + (index % 4) * 0.018) + driftX + jitter
       : width * (0.1 + ((index * 89) % Math.max(width * 0.22, 1)) / width)
     graphics.rect(x, y, Math.min(lineWidth, width * 0.94), active ? 2.4 : 1).fill({
-      color: active ? profile.color : 0xf4f4f0,
-      alpha: active ? 0.075 + clarity * 0.28 + pointerBand * 0.22 + scrollEnergy * 0.08 : 0.028 + pointerBand * 0.06,
+      color: active ? signalColor : mutedColor,
+      alpha: active
+        ? (0.075 + clarity * 0.28 + pointerBand * 0.22 + scrollEnergy * 0.08) * effects.scanOpacity
+        : (0.028 + pointerBand * 0.06) * effects.scanOpacity,
     })
   }
 
-  for (let index = 0; index < 130 + profile.noise; index += 1) {
+  const noiseCount = Math.round((130 + profile.noise) * Math.max(0.05, effects.noiseAmount))
+  for (let index = 0; index < noiseCount; index += 1) {
     const noise = pseudoNoise(index, time)
     const x = (noise * width + index * 31) % width
     const y = (pseudoNoise(index + 91, time * 0.7) * height + index * 17) % height
     const size = 1 + ((index + Math.floor(time * 6)) % 3)
-    graphics.rect(x, y, size, 1).fill({ color: 0xf4f4f0, alpha: 0.024 + (1 - clarity) * 0.13 + scrollEnergy * 0.03 })
+    graphics.rect(x, y, size, 1).fill({
+      color: mutedColor,
+      alpha: (0.024 + (1 - clarity) * 0.13 + scrollEnergy * 0.03) * effects.noiseAmount,
+    })
   }
 
   if (pointer.active) {
-    graphics.rect(0, pointerY - 34, width, 68).fill({ color: profile.color, alpha: 0.025 + clarity * 0.03 })
+    graphics.rect(0, pointerY - 34, width, 68).fill({
+      color: signalColor,
+      alpha: (0.025 + clarity * 0.03) * effects.pointerWake,
+    })
     graphics.rect(driftX - width * 0.08, pointerY, width * 1.08, 2).fill({
-      color: profile.color,
-      alpha: 0.16 + clarity * 0.16,
+      color: signalColor,
+      alpha: (0.16 + clarity * 0.16) * effects.pointerWake,
     })
   }
 
   const sweepY = (height * (0.12 + ((time * (0.14 + scrollEnergy * 0.26)) % 0.82))) | 0
-  graphics.rect(driftX, sweepY, width, lock ? 3 : 2).fill({ color: profile.color, alpha: 0.18 + clarity * 0.22 })
+  graphics.rect(driftX, sweepY, width, lock ? 3 : 2).fill({
+    color: signalColor,
+    alpha: (0.18 + clarity * 0.22) * effects.sweepStrength,
+  })
 
   if (channelMode === 'game' || channelMode === 'lock') {
     const blockY = (height * (0.18 + ((time * 0.07 + scrollEnergy * 0.4) % 0.58))) | 0
     for (let index = 0; index < 7; index += 1) {
       const blockX = width * (0.12 + index * 0.105) + driftX * 0.4
       graphics.rect(blockX, blockY + (index % 3) * 18, width * 0.045, 8).fill({
-        color: profile.color,
-        alpha: 0.12 + clarity * 0.22,
+        color: signalColor,
+        alpha: (0.12 + clarity * 0.22) * effects.sweepStrength,
       })
     }
   }

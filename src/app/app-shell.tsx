@@ -1,4 +1,12 @@
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useEffect, useState } from 'react'
+import { EffectsControls } from '../station/effects-controls'
+import {
+  BASELINE_EFFECTS,
+  EFFECTS_PRESETS,
+  createEffectsStyle,
+  type EffectsPresetId,
+  type EffectsSettings,
+} from '../station/effects-config'
 import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
 import { StationSignalScene } from '../station/station-signal-scene'
@@ -9,11 +17,23 @@ export function AppShell() {
   const [stationState, setStationState] = useState(createStationState)
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
+  const [effectsSettings, setEffectsSettings] = useState<EffectsSettings>(BASELINE_EFFECTS)
+  const [activePresetId, setActivePresetId] = useState<EffectsPresetId | 'custom'>('current')
   const status = getStationStatus(stationState)
 
   const tune = () => setStationState((current) => tuneSignal(current, 25))
   const detune = () => setStationState((current) => detuneSignal(current, 25))
   const reset = () => setStationState(resetSignal)
+  const applyEffectsPreset = (presetId: EffectsPresetId) => {
+    const preset = EFFECTS_PRESETS.find((candidate) => candidate.id === presetId)
+    if (!preset) return
+    setEffectsSettings({ ...preset.settings })
+    setActivePresetId(presetId)
+  }
+  const updateEffect = (key: keyof EffectsSettings, value: number | string) => {
+    setEffectsSettings((current) => ({ ...current, [key]: value }))
+    setActivePresetId('custom')
+  }
 
   useEffect(() => {
     const updateScrollDepth = () => {
@@ -38,14 +58,19 @@ export function AppShell() {
     }
   }, [])
 
-  const landingStyle = { '--scroll-depth': scrollDepth } as CSSProperties
+  const landingStyle = createEffectsStyle(effectsSettings, scrollDepth)
 
   return (
     <div className="station-shell" data-status={status.label.toLowerCase().replaceAll(' ', '-')} style={landingStyle}>
       <main className="landing-page">
         <section className="landing-hero" aria-label="undef games landing page">
           <div className="station-broadcast" aria-label="static station identity">
-            <StationSignalScene state={stationState} scrollDepth={scrollDepth} channelMode={activeChannel.mode} />
+            <StationSignalScene
+              state={stationState}
+              scrollDepth={scrollDepth}
+              channelMode={activeChannel.mode}
+              effects={effectsSettings}
+            />
             <StationGlyph signal={stationState.signal} className="hero-ghost-glyph" decorative />
             <PacketDrift activeChannel={activeChannel} />
             <div className="station-overlay" aria-hidden="true" />
@@ -71,6 +96,12 @@ export function AppShell() {
             <StationControls state={stationState} onTune={tune} onDetune={detune} onReset={reset} />
             <ChannelSelector activeChannel={activeChannel} channels={STATION_CHANNELS} onSelect={setActiveChannel} />
             <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
+            <EffectsControls
+              activePresetId={activePresetId}
+              settings={effectsSettings}
+              onChange={updateEffect}
+              onPreset={applyEffectsPreset}
+            />
             <StationIdentity state={stationState} />
           </aside>
         </section>

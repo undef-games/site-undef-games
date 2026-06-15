@@ -1,21 +1,22 @@
 body {
   font-family: var(--font-body);
-  background: #050607;
-  color: #f4f4f0;
+  background: var(--fx-bg, #050607);
+  color: var(--fx-text, #f4f4f0);
 }
 
 .station-shell {
   min-height: 100%;
   background:
-    linear-gradient(90deg, rgba(216, 255, 53, 0.08), transparent 22%),
+    linear-gradient(90deg, rgba(var(--fx-signal-rgb, 216 255 53), calc(0.08 * var(--fx-glow-strength, 1))), transparent 22%),
     radial-gradient(circle at 74% 12%, rgba(91, 203, 255, 0.08), transparent 28%),
-    #050607;
-  color: #f4f4f0;
+    var(--fx-bg, #050607);
+  color: var(--fx-text, #f4f4f0);
 }
 
 .landing-page {
   position: relative;
   min-height: 100svh;
+  padding-right: 360px;
   isolation: isolate;
 }
 
@@ -26,7 +27,7 @@ body {
 .landing-hero {
   min-height: 100svh;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0;
 }
 
