@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 test('tunes the static station identity to signal lock', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/lab/')
 
   await expect(page.getByRole('heading', { name: /undef games/i })).toBeVisible()
   const signalScene = page.getByLabel('interactive station signal')
@@ -47,7 +47,7 @@ test('tunes the static station identity to signal lock', async ({ page }) => {
 
 test('keeps the station surface usable on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   await expect(page.getByLabel('interactive station signal')).toBeVisible()
   await expect(page.getByRole('button', { name: /tune signal/i })).toBeVisible()
@@ -64,7 +64,7 @@ test('keeps the station surface usable on mobile', async ({ page }) => {
 
 test('keeps the Pixi canvas fitted after viewport resize', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const signalScene = page.getByLabel('interactive station signal')
   await expect(signalScene.locator('canvas')).toHaveCount(1)
@@ -76,7 +76,7 @@ test('keeps the Pixi canvas fitted after viewport resize', async ({ page }) => {
 
 test('updates the landing scan field while scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const signalScene = page.getByLabel('interactive station signal')
   const forwardToyLine = page.locator('.landing-section--signal .section-toy span').first()
@@ -97,7 +97,7 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
 })
 
 test('advertises concrete undef games projects', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const projects = page.getByLabel('undef games projects')
   await expect(projects).toBeVisible()
@@ -112,7 +112,7 @@ test('advertises concrete undef games projects', async ({ page }) => {
 
 test('moves identity boxes from right to left through section scroll and reverses', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const identitySection = page.getByLabel('identity baseline')
   const identityBox = page.locator('.landing-section--identity .section-toy span').first()
@@ -139,7 +139,7 @@ test('moves identity boxes from right to left through section scroll and reverse
 
 test('tumbles identity rectangles at distinct rates while they travel', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const identitySection = page.getByLabel('identity baseline')
   const identityBoxes = page.locator('.landing-section--identity .section-toy span').filter({ visible: true })
@@ -171,7 +171,7 @@ test('tumbles identity rectangles at distinct rates while they travel', async ({
 
 test('pulses identity rectangle fill border and glow out of phase', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const identityBoxes = page.locator('.landing-section--identity .section-toy span').filter({ visible: true })
   await expect(identityBoxes).toHaveCount(4)
@@ -203,7 +203,7 @@ test('pulses identity rectangle fill border and glow out of phase', async ({ pag
 })
 
 test('keeps pointer scan control active over the hero text', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const signalScene = page.getByLabel('interactive station signal')
   await expect(signalScene.locator('canvas')).toHaveCount(1)
@@ -218,7 +218,7 @@ test('keeps pointer scan control active over the hero text', async ({ page }) =>
 })
 
 test('switches channel toys and keeps one canvas scene', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const signalScene = page.getByLabel('interactive station signal')
   await expect(signalScene.locator('canvas')).toHaveCount(1)
@@ -235,7 +235,7 @@ test('switches channel toys and keeps one canvas scene', async ({ page }) => {
 
 test('exposes right-rail effect presets and live parameters', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const rail = page.getByLabel('station tools and identity')
   const effects = page.getByLabel('effects controls')
@@ -359,7 +359,7 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
 test('switches section background effects independently', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const effects = page.getByLabel('effects controls')
   const signalToy = page.locator('.landing-section--signal .section-toy')
@@ -437,7 +437,7 @@ test('switches section background effects independently', async ({ page }) => {
 
 test('keeps scanline layer checks readable on high-key light presets', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const effects = page.getByLabel('effects controls')
   const presetSelect = effects.getByLabel('Effect preset')
@@ -466,7 +466,7 @@ test('keeps scanline layer checks readable on high-key light presets', async ({ 
 
 test('keeps all section effects visibly distinct on whiteout carrier', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const effects = page.getByLabel('effects controls')
   await effects.getByLabel('Effect preset').selectOption('whiteout')
@@ -489,7 +489,7 @@ test('keeps all section effects visibly distinct on whiteout carrier', async ({ 
 
 test('keeps rectangle toys visible and smoothed under light presets', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const effects = page.getByLabel('effects controls')
   await effects.getByLabel('Effect preset').selectOption('whiteout')
@@ -526,7 +526,7 @@ test('keeps rectangle toys visible and smoothed under light presets', async ({ p
 
 test('tumbles skinny bars and varies row-rectangle travel directions', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
-  await page.goto('/')
+  await page.goto('/lab/')
 
   const signalSection = page.getByLabel('signal behavior')
   const signalMetrics = await signalSection.evaluate(readSectionMetrics)
