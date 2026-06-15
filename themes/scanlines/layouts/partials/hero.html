@@ -1,4 +1,4 @@
-{{ $hero := site.Data.site.home.hero }}
+{{ $hero := hugo.Data.site.home.hero }}
 <section class="scan-hero" aria-label="undef games landing page">
   <div class="scan-field" aria-hidden="true">
     <span class="scan-field__glyph">∪</span>
@@ -20,6 +20,6 @@
       <span class="scan-mark" aria-hidden="true">∪</span>
       <strong>undef<br>games</strong>
     </div>
-    <a class="scan-rail__lab" href="/lab/">Open interactive lab</a>
+    <a class="scan-rail__lab" href="{{ site.Params.lab }}">Open interactive lab</a>
   </aside>
 </section>

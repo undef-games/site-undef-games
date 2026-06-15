@@ -1,13 +1,11 @@
 baseURL = "https://logos.undef.games/"
-languageCode = "en-us"
+locale = "en-us"
 title = "undef games"
 theme = "scanlines"
 enableGitInfo = false
 enableRobotsTXT = true
 
-[markup]
-  [markup.goldmark.renderer]
-    unsafe = true
+[taxonomies]
 
 [params]
   description = "Systems, toys, and game-shaped experiments tuned out of undefined space."
