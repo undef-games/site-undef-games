@@ -39,7 +39,7 @@ The right-hand side is part of the baseline, not a throwaway settings panel. Pre
 
 The rail should feel operational and dense. It should support the landing page without becoming a generic sidebar card stack.
 
-The first effects preset, `Current baseline`, is the canonical baseline. Its values are multiplier defaults and should preserve the current look exactly: dark page, bright signal green, dim page scanlines, Pixi scan field, frosted background mark, and visible tumbling identity rectangles. Other presets are for exploration only. Keep the preset list in a dropdown so the rail can support 30+ visually distinct directions without turning into a button grid.
+The first effects preset, `Current baseline`, is the canonical baseline. Its values are multiplier defaults and should preserve the current look exactly: dark page, bright signal green, dim page scanlines, Pixi scan field, frosted background mark, and visible tumbling identity rectangles. Its three support colors intentionally match the primary signal green so the baseline remains single-signal. Other presets are for exploration only. Keep the preset list in a dropdown so the rail can support 30+ visually distinct directions without turning into a button grid.
 
 ## Interactive Surface
 
@@ -56,7 +56,7 @@ The first effects preset, `Current baseline`, is the canonical baseline. Its val
 - Locked state: signal can resolve to `LOCKED`, but the scene should not add a central emblem when locked.
 - Resize behavior: canvas must remain fitted to the scene bounds without stretching, offsetting, or leaving stale render areas.
 - Background mark: a very dim, blurred, frosted Maze Gate U Cut may sit behind the landing hero content, but it must not read as the main centered logo.
-- Effects behavior: the right rail may tune scan opacity, spacing, speed, sweep, noise, jitter, pointer wake, scroll boost, glow, frost, drift, occlusion, rectangle opacity, travel, spin, pulse, fill, border, glow, and palette. Keep these controls behind the content hierarchy; they are lab controls, not landing page copy.
+- Effects behavior: the right rail may tune scan opacity, spacing, speed, sweep, noise, jitter, pointer wake, scroll boost, glow, frost, drift, occlusion, rectangle opacity, travel, spin, pulse, fill, border, glow, and palette. Palette includes primary signal, muted, glow, and three supporting colors that can drive multi-color scanlines, scope bars, sweep accents, and section toys. Keep these controls behind the content hierarchy; they are lab controls, not landing page copy.
 
 ## Visual Rules
 

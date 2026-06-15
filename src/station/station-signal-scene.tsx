@@ -207,8 +207,12 @@ function drawSignalField(
   const profile = getChannelProfile(channelMode)
   const scrollEnergy = Math.min(1, Math.max(0, scrollDepth)) * effects.scrollBoost
   const signalColor = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSignal)
+  const support1Color = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSupport1)
+  const support2Color = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSupport2)
+  const support3Color = hexToPixiColor(channelMode === 'noise' ? effects.paletteMuted : effects.paletteSupport3)
   const mutedColor = hexToPixiColor(effects.paletteMuted)
   const backgroundColor = hexToPixiColor(effects.paletteBg)
+  const activeColors = [signalColor, support1Color, support2Color, support3Color]
   const driftX =
     pointer.x *
     width *
@@ -238,7 +242,7 @@ function drawSignalField(
       ? width * (0.03 + (index % 4) * 0.018) + driftX + jitter
       : width * (0.1 + ((index * 89) % Math.max(width * 0.22, 1)) / width)
     graphics.rect(x, y, Math.min(lineWidth, width * 0.94), active ? 2.4 : 1).fill({
-      color: active ? signalColor : mutedColor,
+      color: active ? activeColors[index % activeColors.length] : mutedColor,
       alpha: active
         ? (0.075 + clarity * 0.28 + pointerBand * 0.22 + scrollEnergy * 0.08) * effects.scanOpacity
         : (0.028 + pointerBand * 0.06) * effects.scanOpacity,
@@ -259,18 +263,18 @@ function drawSignalField(
 
   if (pointer.active) {
     graphics.rect(0, pointerY - 34, width, 68).fill({
-      color: signalColor,
+      color: support1Color,
       alpha: (0.025 + clarity * 0.03) * effects.pointerWake,
     })
     graphics.rect(driftX - width * 0.08, pointerY, width * 1.08, 2).fill({
-      color: signalColor,
+      color: support2Color,
       alpha: (0.16 + clarity * 0.16) * effects.pointerWake,
     })
   }
 
   const sweepY = (height * (0.12 + ((time * (0.14 + scrollEnergy * 0.26)) % 0.82))) | 0
   graphics.rect(driftX, sweepY, width, lock ? 3 : 2).fill({
-    color: signalColor,
+    color: support3Color,
     alpha: (0.18 + clarity * 0.22) * effects.sweepStrength,
   })
 
@@ -279,7 +283,7 @@ function drawSignalField(
     for (let index = 0; index < 7; index += 1) {
       const blockX = width * (0.12 + index * 0.105) + driftX * 0.4
       graphics.rect(blockX, blockY + (index % 3) * 18, width * 0.045, 8).fill({
-        color: signalColor,
+        color: activeColors[(index + 1) % activeColors.length],
         alpha: (0.12 + clarity * 0.22) * effects.sweepStrength,
       })
     }

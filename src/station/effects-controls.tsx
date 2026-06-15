@@ -45,7 +45,7 @@ const EFFECT_GROUPS: { controls: NumberControl[]; label: string }[] = [
       { key: 'rectangleOpacity', label: 'Rectangle opacity', min: 0, max: 2, step: 0.05 },
       { key: 'rectangleTravel', label: 'Rectangle travel', min: 0.25, max: 2, step: 0.05 },
       { key: 'rectangleSpin', label: 'Rectangle spin', min: 0, max: 2, step: 0.05 },
-        { key: 'rectanglePulse', label: 'Rectangle pulse', min: 0.1, max: 2, step: 0.05 },
+      { key: 'rectanglePulse', label: 'Rectangle pulse', min: 0.1, max: 2, step: 0.05 },
       { key: 'rectangleFill', label: 'Rectangle fill', min: 0, max: 2, step: 0.05 },
       { key: 'rectangleBorder', label: 'Rectangle border', min: 0, max: 2, step: 0.05 },
       { key: 'rectangleGlow', label: 'Rectangle glow', min: 0, max: 2, step: 0.05 },
@@ -60,6 +60,9 @@ const PALETTE_CONTROLS: { key: EffectsControlKey; label: string }[] = [
   { key: 'paletteSignal', label: 'Signal' },
   { key: 'paletteMuted', label: 'Muted' },
   { key: 'paletteGlow', label: 'Glow' },
+  { key: 'paletteSupport1', label: 'Support 1' },
+  { key: 'paletteSupport2', label: 'Support 2' },
+  { key: 'paletteSupport3', label: 'Support 3' },
 ]
 
 export function EffectsControls({

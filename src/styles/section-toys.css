@@ -13,7 +13,7 @@
   right: 6%;
   top: calc(10% + var(--toy-index, 0) * 6%);
   height: 2px;
-  background: rgba(var(--fx-signal-rgb, 216 255 53), 0.26);
+  background: rgba(var(--fx-support-1-rgb, 216 255 53), 0.26);
   transform: translateX(calc(110vw - var(--section-progress, 0) * 220vw));
   border-radius: 0;
 }
@@ -25,6 +25,7 @@
 
 .section-toy span:nth-child(3n) {
   width: 58%;
+  background: rgba(var(--fx-support-2-rgb, 216 255 53), 0.18);
   transform: translateX(calc(104vw - var(--section-progress, 0) * 220vw));
 }
 
@@ -41,7 +42,7 @@
   position: static;
   width: auto;
   height: calc(24px + (var(--scroll-depth, 0) * 80px));
-  background: rgba(var(--fx-signal-rgb, 216 255 53), 0.16);
+  background: rgba(var(--fx-support-1-rgb, 216 255 53), 0.16);
   transform:
     translateX(calc(112vw - var(--section-progress, 0) * 224vw))
     translateY(calc(var(--scroll-depth, 0) * -22px));
@@ -49,6 +50,7 @@
 
 .section-toy--system span:nth-child(odd) {
   height: calc(54px + (var(--scroll-depth, 0) * 48px));
+  background: rgba(var(--fx-support-3-rgb, 216 255 53), 0.14);
 }
 
 .section-toy--identity {

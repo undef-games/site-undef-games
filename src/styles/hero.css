@@ -31,7 +31,7 @@
     linear-gradient(
       90deg,
       rgba(var(--fx-signal-rgb, 216 255 53), calc(0.42 * var(--fx-glow-strength, 1))) 0 5%,
-      rgba(var(--fx-signal-rgb, 216 255 53), calc(0.08 * var(--fx-glow-strength, 1))) 5% 13%,
+      rgba(var(--fx-support-1-rgb, 216 255 53), calc(0.08 * var(--fx-glow-strength, 1))) 5% 13%,
       transparent 24%
     ),
     repeating-linear-gradient(
@@ -95,7 +95,7 @@
 
 .packet-drift[data-channel-mode='game'] span,
 .packet-drift[data-channel-mode='lock'] span {
-  color: rgba(var(--fx-signal-rgb, 216 255 53), 0.55);
+  color: rgba(var(--fx-support-2-rgb, 216 255 53), 0.55);
 }
 
 .station-hero {

@@ -208,6 +208,9 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   await presetSelect.selectOption('cyan-ice')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-signal').trim())).toBe('#39e8ff')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-support-1').trim())).toBe('#9df7ff')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-support-2').trim())).toBe('#8fb9ff')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-support-3').trim())).toBe('#d8ff35')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-spacing').trim())).toBe('15.6px')
 
   await effects.getByLabel('Scan opacity', { exact: true }).fill('1.4')

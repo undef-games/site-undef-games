@@ -9,6 +9,9 @@ export type EffectsSettings = {
   paletteSignal: string
   paletteMuted: string
   paletteGlow: string
+  paletteSupport1: string
+  paletteSupport2: string
+  paletteSupport3: string
   scanOpacity: number
   scanSpacing: number
   scanSpeed: number
@@ -43,6 +46,9 @@ export const BASELINE_EFFECTS: EffectsSettings = {
   paletteSignal: '#d8ff35',
   paletteMuted: '#f4f4f0',
   paletteGlow: '#d8ff35',
+  paletteSupport1: '#d8ff35',
+  paletteSupport2: '#d8ff35',
+  paletteSupport3: '#d8ff35',
   scanOpacity: 1,
   scanSpacing: 1,
   scanSpeed: 1,
@@ -64,11 +70,20 @@ export const BASELINE_EFFECTS: EffectsSettings = {
   rectangleGlow: 1,
 }
 
-const preset = (id: EffectsPresetId, label: string, settings: Partial<EffectsSettings>): EffectsPreset => ({
-  id,
-  label,
-  settings: { ...BASELINE_EFFECTS, ...settings },
-})
+const preset = (id: EffectsPresetId, label: string, settings: Partial<EffectsSettings>): EffectsPreset => {
+  const merged = { ...BASELINE_EFFECTS, ...settings }
+
+  return {
+    id,
+    label,
+    settings: {
+      ...merged,
+      paletteSupport1: settings.paletteSupport1 ?? settings.paletteGlow ?? settings.paletteSignal ?? merged.paletteSupport1,
+      paletteSupport2: settings.paletteSupport2 ?? settings.paletteMuted ?? settings.paletteGlow ?? merged.paletteSupport2,
+      paletteSupport3: settings.paletteSupport3 ?? settings.paletteSignal ?? settings.paletteGlow ?? merged.paletteSupport3,
+    },
+  }
+}
 
 export const EFFECTS_PRESETS: EffectsPreset[] = [
   { id: 'current', label: 'Current baseline', settings: BASELINE_EFFECTS },
@@ -166,6 +181,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#39e8ff',
     paletteMuted: '#d4f8ff',
     paletteGlow: '#74f1ff',
+    paletteSupport1: '#9df7ff',
+    paletteSupport2: '#8fb9ff',
+    paletteSupport3: '#d8ff35',
     scanOpacity: 0.96,
     scanSpacing: 1.3,
     scanSpeed: 0.52,
@@ -179,6 +197,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#ff4fe3',
     paletteMuted: '#fff0fb',
     paletteGlow: '#ff70ef',
+    paletteSupport1: '#ff9df0',
+    paletteSupport2: '#58d9ff',
+    paletteSupport3: '#d8ff35',
     scanOpacity: 1.34,
     scanSpeed: 1.26,
     sweepStrength: 1.36,
@@ -192,6 +213,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#ff3f35',
     paletteMuted: '#ffe5e0',
     paletteGlow: '#ff675e',
+    paletteSupport1: '#ff9c3d',
+    paletteSupport2: '#ffe45e',
+    paletteSupport3: '#ffffff',
     scanOpacity: 1.42,
     scanSpacing: 0.86,
     scanSpeed: 1.48,
@@ -205,6 +229,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#4b83ff',
     paletteMuted: '#e5edff',
     paletteGlow: '#78a2ff',
+    paletteSupport1: '#35d5ff',
+    paletteSupport2: '#9b6dff',
+    paletteSupport3: '#f4f4f0',
     scanOpacity: 1.05,
     scanSpeed: 1.86,
     noiseAmount: 1.78,
@@ -233,6 +260,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#a6ff00',
     paletteMuted: '#ebffd0',
     paletteGlow: '#c2ff4b',
+    paletteSupport1: '#d8ff35',
+    paletteSupport2: '#54ff7a',
+    paletteSupport3: '#00f0ff',
     scanOpacity: 1.5,
     scanSpacing: 1.08,
     scanSpeed: 0.82,
@@ -246,6 +276,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#9b6dff',
     paletteMuted: '#efe7ff',
     paletteGlow: '#ba90ff',
+    paletteSupport1: '#ff4fe3',
+    paletteSupport2: '#58d9ff',
+    paletteSupport3: '#d8ff35',
     scanOpacity: 1.16,
     scanSpacing: 0.92,
     scanSpeed: 1.14,
@@ -260,6 +293,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#ffd03d',
     paletteMuted: '#fff2cb',
     paletteGlow: '#ff9f1a',
+    paletteSupport1: '#ff7b4a',
+    paletteSupport2: '#fff0c2',
+    paletteSupport3: '#d8ff35',
     scanOpacity: 1.08,
     scanSpeed: 0.76,
     sweepStrength: 1.46,
@@ -313,6 +349,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#00ffb0',
     paletteMuted: '#fff8d6',
     paletteGlow: '#ff3df2',
+    paletteSupport1: '#ff3df2',
+    paletteSupport2: '#00b8ff',
+    paletteSupport3: '#f6d21b',
     scanOpacity: 1.28,
     scanSpacing: 0.68,
     scanSpeed: 1.32,
@@ -339,6 +378,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#ff7b4a',
     paletteMuted: '#ffe6d5',
     paletteGlow: '#ffcf52',
+    paletteSupport1: '#ffcf52',
+    paletteSupport2: '#ff49a8',
+    paletteSupport3: '#39e8ff',
     scanOpacity: 1.18,
     scanSpeed: 0.98,
     sweepStrength: 1.22,
@@ -365,6 +407,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#1eff9b',
     paletteMuted: '#ddfff0',
     paletteGlow: '#62ffc1',
+    paletteSupport1: '#62ffc1',
+    paletteSupport2: '#39e8ff',
+    paletteSupport3: '#fff45e',
     scanOpacity: 0.9,
     scanSpacing: 1.46,
     scanSpeed: 0.9,
@@ -391,6 +436,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#ff49a8',
     paletteMuted: '#ffe5f3',
     paletteGlow: '#55d7ff',
+    paletteSupport1: '#55d7ff',
+    paletteSupport2: '#ffcf52',
+    paletteSupport3: '#9b6dff',
     scanOpacity: 1.48,
     scanSpacing: 0.78,
     scanSpeed: 1.62,
@@ -417,6 +465,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#00f0ff',
     paletteMuted: '#f6f2ff',
     paletteGlow: '#ff2bd6',
+    paletteSupport1: '#ff2bd6',
+    paletteSupport2: '#d8ff35',
+    paletteSupport3: '#8b6dff',
     scanOpacity: 1.36,
     scanSpacing: 0.84,
     scanSpeed: 1.2,
@@ -430,6 +481,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#8fc7ff',
     paletteMuted: '#eef7ff',
     paletteGlow: '#d8ff35',
+    paletteSupport1: '#d8ff35',
+    paletteSupport2: '#9b6dff',
+    paletteSupport3: '#ff4fe3',
     scanOpacity: 1.02,
     scanSpacing: 1.04,
     scanSpeed: 1.58,
@@ -469,6 +523,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#f6d21b',
     paletteMuted: '#fff4b8',
     paletteGlow: '#ff5a1f',
+    paletteSupport1: '#ff5a1f',
+    paletteSupport2: '#11130d',
+    paletteSupport3: '#f4f4f0',
     scanOpacity: 1.3,
     scanSpacing: 0.62,
     scanSpeed: 1.08,
@@ -482,6 +539,9 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
     paletteSignal: '#69b7ff',
     paletteMuted: '#e5f5ff',
     paletteGlow: '#9ad7ff',
+    paletteSupport1: '#9ad7ff',
+    paletteSupport2: '#54ff7a',
+    paletteSupport3: '#d8ff35',
     scanOpacity: 0.7,
     scanSpacing: 1.88,
     scanSpeed: 0.42,
@@ -508,6 +568,9 @@ export function createEffectsStyle(settings: EffectsSettings, scrollDepth: numbe
   const signalRgb = hexToRgbTriplet(settings.paletteSignal)
   const mutedRgb = hexToRgbTriplet(settings.paletteMuted)
   const glowRgb = hexToRgbTriplet(settings.paletteGlow)
+  const support1Rgb = hexToRgbTriplet(settings.paletteSupport1)
+  const support2Rgb = hexToRgbTriplet(settings.paletteSupport2)
+  const support3Rgb = hexToRgbTriplet(settings.paletteSupport3)
   const textRgb = hexToRgbTriplet(settings.paletteText)
 
   return {
@@ -521,6 +584,12 @@ export function createEffectsStyle(settings: EffectsSettings, scrollDepth: numbe
     '--fx-muted-rgb': mutedRgb,
     '--fx-glow': settings.paletteGlow,
     '--fx-glow-rgb': glowRgb,
+    '--fx-support-1': settings.paletteSupport1,
+    '--fx-support-1-rgb': support1Rgb,
+    '--fx-support-2': settings.paletteSupport2,
+    '--fx-support-2-rgb': support2Rgb,
+    '--fx-support-3': settings.paletteSupport3,
+    '--fx-support-3-rgb': support3Rgb,
     '--fx-scan-opacity': formatNumber(0.055 * settings.scanOpacity),
     '--fx-scan-spacing': `${formatNumber(12 * settings.scanSpacing)}px`,
     '--fx-section-scan-opacity': formatNumber(0.035 * settings.scanOpacity),
@@ -538,13 +607,13 @@ export function createEffectsStyle(settings: EffectsSettings, scrollDepth: numbe
     '--fx-rectangle-travel': settings.rectangleTravel,
     '--fx-rectangle-spin': settings.rectangleSpin,
     '--fx-rectangle-pulse': settings.rectanglePulse,
-      '--fx-rectangle-fill': settings.rectangleFill,
-      '--fx-rectangle-border': settings.rectangleBorder,
-      '--fx-rectangle-glow': settings.rectangleGlow,
-      '--fx-rectangle-pulse-factor': formatNumber(1 / Math.max(0.1, settings.rectanglePulse)),
-      '--scroll-depth': scrollDepth,
-    } as CSSProperties
-  }
+    '--fx-rectangle-fill': settings.rectangleFill,
+    '--fx-rectangle-border': settings.rectangleBorder,
+    '--fx-rectangle-glow': settings.rectangleGlow,
+    '--fx-rectangle-pulse-factor': formatNumber(1 / Math.max(0.1, settings.rectanglePulse)),
+    '--scroll-depth': scrollDepth,
+  } as CSSProperties
+}
 
 export function hexToPixiColor(hex: string) {
   const normalized = hex.replace('#', '')

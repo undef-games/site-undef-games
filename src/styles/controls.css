@@ -123,6 +123,18 @@
   transition: block-size 160ms ease;
 }
 
+.scope-bars span:nth-child(3n) {
+  background: var(--fx-support-1, #d8ff35);
+}
+
+.scope-bars span:nth-child(4n) {
+  background: var(--fx-support-2, #d8ff35);
+}
+
+.scope-bars span:nth-child(5n) {
+  background: var(--fx-support-3, #d8ff35);
+}
+
 .signal-scope[data-channel-mode='noise'] .scope-bars span:nth-child(odd) {
   opacity: 0.88;
   background: var(--fx-muted, #f4f4f0);
