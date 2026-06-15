@@ -260,6 +260,24 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
     expect(group.options.every((label) => label.startsWith(icon))).toBe(true)
     expect(labels).toEqual([...labels].sort((left, right) => left.localeCompare(right)))
   })
+  const lightPresetLabels = presetGroups
+    .find((group) => group.label === '☀️ Light presets')!
+    .options.map((label) => label.replace(/^☀️\s/u, ''))
+  expect(lightPresetLabels).toEqual(
+    expect.arrayContaining([
+      'Airport display',
+      'Archive card',
+      'Blueprint paper',
+      'Copy machine',
+      'Faded arcade',
+      'Lab label',
+      'Microfiche',
+      'Polar logbook',
+      'Receipt green',
+      'Safety glass',
+      'Washed CRT',
+    ]),
+  )
 
   await expect(effects.getByLabel('Scan opacity', { exact: true })).toHaveValue('1')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.055')
