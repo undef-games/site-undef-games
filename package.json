@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "install:lab": "npm --prefix lab ci",
     "build": "make build",
     "deploy": "make deploy",
     "preview": "make preview",

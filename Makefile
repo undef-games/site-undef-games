@@ -1,4 +1,5 @@
-.PHONY: help install-lab stamp build-hugo build-lab build serve clean deploy preview test typecheck e2e
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy preview test typecheck e2e
+.NOTPARALLEL: clean build
 
 SHELL := /bin/bash
 
@@ -8,6 +9,9 @@ help: ## Show this help
 stamp: ## Refresh data/build.json with current SHA + timestamp
 	@bash scripts/stamp_build.sh
 
+install-root: ## Install root tool dependencies
+	@npm ci
+
 install-lab: ## Install Vite lab dependencies
 	@npm --prefix lab ci
 
@@ -15,13 +19,13 @@ build-hugo: stamp ## Build Hugo into public/
 	@rm -rf public/
 	@hugo --minify
 
-build-lab: install-lab ## Build the Vite lab into public/lab/
+build-lab: build-hugo install-lab ## Build the Vite lab into public/lab/
 	@npm --prefix lab run build
 	@rm -rf public/lab
 	@mkdir -p public/lab
 	@cp -R lab/dist/. public/lab/
 
-build: build-hugo build-lab ## Build Hugo and lab into one public/ artifact
+build: build-lab ## Build Hugo and lab into one public/ artifact
 
 serve: stamp ## Serve Hugo locally on http://127.0.0.1:1780
 	@hugo server --port 1780 --bind 127.0.0.1 --disableFastRender --noHTTPCache
@@ -35,11 +39,11 @@ typecheck: install-lab ## Run lab TypeScript checks
 test: install-lab ## Run lab unit tests
 	@npm --prefix lab run test:run
 
-e2e: build ## Run the current Playwright suite
-	@npx playwright test
+e2e: install-root build ## Run the current Playwright suite
+	@./node_modules/.bin/playwright test
 
-deploy: build ## Build then deploy to Cloudflare Pages production
-	@npx wrangler pages deploy public --project-name=undef-logos --branch=main
+deploy: install-root build ## Build then deploy to Cloudflare Pages production
+	@./node_modules/.bin/wrangler pages deploy public --project-name=undef-logos --branch=main
 
-preview: build ## Build then deploy to a Cloudflare Pages preview URL
-	@npx wrangler pages deploy public --project-name=undef-logos
+preview: install-root build ## Build then deploy to a Cloudflare Pages preview URL
+	@./node_modules/.bin/wrangler pages deploy public --project-name=undef-logos

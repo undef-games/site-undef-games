@@ -3,6 +3,7 @@ lab/node_modules/
 dist
 public/
 lab/dist/
+data/build.json
 playwright-report/
 test-results/
 .DS_Store
