@@ -53,7 +53,7 @@ resource "null_resource" "deploy" {
   provisioner "local-exec" {
     working_dir = "${path.module}/.."
     interpreter = ["/bin/bash", "-c"]
-    command     = "npm install && npm run build && npx wrangler pages deploy dist --project-name=${cloudflare_pages_project.undef_logos.name} --branch=${var.production_branch} --commit-dirty=true"
+    command     = "npm install && npm run build && npx wrangler pages deploy lab/dist --project-name=${cloudflare_pages_project.undef_logos.name} --branch=${var.production_branch} --commit-dirty=true"
   }
 
   depends_on = [
