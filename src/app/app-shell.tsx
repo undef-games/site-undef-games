@@ -13,6 +13,30 @@ import { StationSignalScene } from '../station/station-signal-scene'
 import { createStationState, detuneSignal, getStationStatus, resetSignal, tuneSignal } from '../station/station-state'
 import { ChannelSelector, PacketDrift, SectionToy, SignalScope, STATION_CHANNELS } from '../station/station-toys'
 
+const PRODUCT_LINKS = [
+  {
+    className: 'product-link--warp',
+    description: 'Agent runtime platform for TradeWars automation, tools, and live operators.',
+    href: 'https://warp.undef.games',
+    label: 'TradeWars: WARP Agent Runtime Platform',
+    tag: 'warp',
+  },
+  {
+    className: 'product-link--dice',
+    description: 'Fast dice, table helpers, and lightweight play tools for groups.',
+    href: 'https://undefdice.com',
+    label: 'Undef Dice',
+    tag: 'dice',
+  },
+  {
+    className: 'product-link--taybols',
+    description: 'Table-shaped experiments, generators, and odd little game utilities.',
+    href: 'https://taybols.undef.games',
+    label: 'Taybols',
+    tag: 'taybols',
+  },
+]
+
 export function AppShell() {
   const [stationState, setStationState] = useState(createStationState)
   const [scrollDepth, setScrollDepth] = useState(0)
@@ -87,7 +111,7 @@ export function AppShell() {
               <p className="station-copy">Systems, toys, and game-shaped experiments tuned out of undefined space.</p>
               <div className="station-actions" aria-label="landing actions">
                 <a href="#signal">Tune signal</a>
-                <a href="#identity">View identity</a>
+                <a href="#projects">View projects</a>
               </div>
               <p className="station-status">{status.lock ? 'Signal locked' : status.label}</p>
             </div>
@@ -116,15 +140,49 @@ export function AppShell() {
           </p>
         </section>
 
-        <section className="landing-section landing-section--system" aria-label="undef games system">
+        <section className="landing-section landing-section--products" id="projects" aria-label="undef games projects">
           <SectionToy variant="system" />
-          <p className="section-kicker">What it points at</p>
-          <h2>Game infrastructure with a playable edge.</h2>
-          <div className="landing-columns">
-            <p>Party games, tabletop tools, simulation toys, and strange little systems.</p>
-            <p>Retro-terminal texture without nostalgia cosplay or fake arcade dressing.</p>
-            <p>A studio identity that can hold software, experiments, and finished games.</p>
+          <p className="section-kicker">Live routes</p>
+          <h2>Actual projects on the network.</h2>
+          <div className="product-link-list" aria-label="undef games project links">
+            {PRODUCT_LINKS.map((product) => (
+              <a key={product.href} className={`product-link ${product.className}`} href={product.href}>
+                <span>{product.tag}</span>
+                <strong>{product.label}</strong>
+                <small>{product.description}</small>
+              </a>
+            ))}
           </div>
+        </section>
+
+        <section className="landing-section landing-section--warp" aria-label="TradeWars WARP Agent Runtime Platform">
+          <SectionToy variant="signal" />
+          <p className="section-kicker">Runtime platform</p>
+          <h2>TradeWars: WARP Agent Runtime Platform.</h2>
+          <p>Agents, automation, and operator surfaces for a live TradeWars environment.</p>
+          <a className="section-link" href="https://warp.undef.games">
+            warp.undef.games
+          </a>
+        </section>
+
+        <section className="landing-section landing-section--dice" aria-label="Undef Dice">
+          <SectionToy variant="system" />
+          <p className="section-kicker">Table tools</p>
+          <h2>Undef Dice keeps the table moving.</h2>
+          <p>Dice and tabletop utilities that feel quick, readable, and useful during play.</p>
+          <a className="section-link" href="https://undefdice.com">
+            undefdice.com
+          </a>
+        </section>
+
+        <section className="landing-section landing-section--taybols" aria-label="Taybols">
+          <SectionToy variant="signal" />
+          <p className="section-kicker">Game utilities</p>
+          <h2>Taybols is where the smaller tools can stay strange.</h2>
+          <p>Generators, table experiments, and playable oddities with room to become finished systems.</p>
+          <a className="section-link" href="https://taybols.undef.games">
+            taybols.undef.games
+          </a>
         </section>
 
         <section className="landing-section landing-section--identity" id="identity" aria-label="identity baseline">

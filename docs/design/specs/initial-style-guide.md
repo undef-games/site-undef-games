@@ -58,6 +58,16 @@ The first effects preset, `Current baseline`, is the canonical baseline. Its val
 - Background mark: a very dim, blurred, frosted Maze Gate U Cut may sit behind the landing hero content, but it must not read as the main centered logo.
 - Effects behavior: the right rail may tune scan opacity, spacing, speed, sweep, noise, jitter, pointer wake, scroll boost, glow, frost, drift, occlusion, rectangle opacity, travel, spin, pulse, fill, border, glow, and palette. Palette includes primary signal, muted, glow, and three supporting colors that can drive multi-color scanlines, scope bars, sweep accents, and section toys. Keep these controls behind the content hierarchy; they are lab controls, not landing page copy.
 
+## Product Examples
+
+The landing page should not stay abstract. It should show concrete routes for the current undef games surface:
+
+- `TradeWars: WARP Agent Runtime Platform` at `https://warp.undef.games`
+- `Undef Dice` at `https://undefdice.com`
+- `Taybols` at `https://taybols.undef.games`
+
+Keep these examples visually integrated with the transmission system. Product rows and individual product bands may use signal/support colors from the active preset so the lower page does not collapse into identical black sections.
+
 ## Visual Rules
 
 - Keep the screen utilitarian and broadcast-like, not decorative.

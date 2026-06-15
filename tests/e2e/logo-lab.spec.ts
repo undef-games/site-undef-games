@@ -69,6 +69,20 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
 })
 
+test('advertises concrete undef games projects', async ({ page }) => {
+  await page.goto('/')
+
+  const projects = page.getByLabel('undef games projects')
+  await expect(projects).toBeVisible()
+  await expect(projects.getByRole('heading', { name: /actual projects/i })).toBeVisible()
+  await expect(projects.getByRole('link', { name: /TradeWars: WARP Agent Runtime Platform/i })).toHaveAttribute(
+    'href',
+    /https:\/\/warp\.undef\.games\/?/,
+  )
+  await expect(projects.getByRole('link', { name: /Undef Dice/i })).toHaveAttribute('href', /https:\/\/undefdice\.com\/?/)
+  await expect(projects.getByRole('link', { name: /Taybols/i })).toHaveAttribute('href', /https:\/\/taybols\.undef\.games\/?/)
+})
+
 test('moves identity boxes from right to left through section scroll and reverses', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
   await page.goto('/')
@@ -165,6 +179,7 @@ test('keeps pointer scan control active over the hero text', async ({ page }) =>
   await page.goto('/')
 
   const signalScene = page.getByLabel('interactive station signal')
+  await expect(signalScene.locator('canvas')).toHaveCount(1)
   const heading = page.getByRole('heading', { name: /undef games/i })
   const box = await heading.boundingBox()
   expect(box).not.toBeNull()

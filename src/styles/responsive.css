@@ -51,6 +51,14 @@
   .landing-columns {
     grid-template-columns: 1fr;
   }
+
+  .product-link {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .product-link small {
+    grid-column: 2;
+  }
 }
 
 @media (max-width: 620px) {
@@ -115,7 +123,22 @@
   }
 
   .landing-section > p:not(.section-kicker),
-  .landing-columns p {
+  .landing-columns p,
+  .product-link small {
     font-size: 16px;
+  }
+
+  .product-link {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 18px;
+  }
+
+  .product-link small {
+    grid-column: auto;
+  }
+
+  .product-link strong {
+    font-size: 21px;
   }
 }
