@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "npm --prefix lab run build",
+    "install:lab": "npm --prefix lab install",
+    "build": "npm run install:lab && npm --prefix lab run build",
     "deploy": "npm run build && wrangler pages deploy lab/dist --project-name=undef-logos --branch=main",
-    "e2e": "playwright test",
-    "test:lab": "npm --prefix lab run test:run",
-    "typecheck:lab": "npm --prefix lab run typecheck"
+    "e2e": "npm run install:lab && playwright test",
+    "test:lab": "npm run install:lab && npm --prefix lab run test:run",
+    "typecheck:lab": "npm run install:lab && npm --prefix lab run typecheck"
   },
   "devDependencies": {
     "@playwright/test": "1.60.0",
