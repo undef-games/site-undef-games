@@ -11,3 +11,6 @@ test-results/
 .worktrees/
 .hugo_build.lock
 .terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/tfplan

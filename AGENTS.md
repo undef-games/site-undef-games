@@ -102,8 +102,8 @@ Use this deployment sequence:
 5. Verify `https://logos.undef.games/`, `https://logos.undef.games/lab/`,
    `https://undef.games/`, and `https://undef.games/lab/`.
 
-Do not commit `.terraform/`. Do commit `terraform/.terraform.lock.hcl` when
-provider selections change.
+Do not commit `.terraform/`, local Terraform state files, or saved plan files.
+Do commit `terraform/.terraform.lock.hcl` when provider selections change.
 
 ## Editing Guardrails
 
@@ -113,8 +113,8 @@ provider selections change.
   deciding whether they are related to your task.
 - Do not make the private `themes/scanlines` theme public.
 - Do not move the lab back to the repository root.
-- Do not commit generated `public/`, `lab/dist/`, `.terraform/`, or
-  `data/build.json`.
+- Do not commit generated `public/`, `lab/dist/`, `.terraform/`,
+  `terraform/terraform.tfstate*`, `terraform/tfplan`, or `data/build.json`.
 - Do commit `terraform/.terraform.lock.hcl` when Terraform provider locks are
   intentionally updated.
 - Keep Hugo templates, theme CSS/JS, lab source, Terraform, package files,
