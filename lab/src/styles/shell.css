@@ -20,6 +20,10 @@ body {
   isolation: isolate;
 }
 
+.station-shell--site .landing-page {
+  padding-right: 0;
+}
+
 .landing-page > * {
   position: relative;
 }
@@ -29,6 +33,10 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
+}
+
+.station-shell--site .station-broadcast {
+  border-right: 0;
 }
 
 .station-kicker,

@@ -1,5 +1,36 @@
 {{ define "main" }}
-  {{- partial "hero.html" . -}}
-  {{- partial "products.html" . -}}
-  {{- partial "identity.html" . -}}
+  {{ $hero := hugo.Data.site.home.hero }}
+  {{ $products := hugo.Data.site.home.products }}
+  {{ $identity := hugo.Data.site.home.identity }}
+  <div id="scanlines-root">
+    <main class="scan-fallback" id="main-content">
+      <section class="scan-fallback__hero" aria-label="undef games landing page">
+        <p class="scan-fallback__kicker">{{ $hero.kicker }}</p>
+        <h1>{{ $hero.title }}</h1>
+        <p>{{ $hero.copy }}</p>
+        <nav class="scan-fallback__actions" aria-label="landing actions">
+          <a href="/lab/">Open lab</a>
+          <a href="#projects">View projects</a>
+        </nav>
+      </section>
+      <section class="scan-fallback__section" id="projects" aria-label="undef games projects">
+        <p class="scan-fallback__kicker">Live routes</p>
+        <h2>Actual projects on the network.</h2>
+        <div class="scan-fallback__products">
+          {{ range $products }}
+            <a href="{{ .href }}">
+              <span>{{ .tag }}</span>
+              <strong>{{ .label }}</strong>
+              <small>{{ .description }}</small>
+            </a>
+          {{ end }}
+        </div>
+      </section>
+      <section class="scan-fallback__section" aria-label="identity baseline">
+        <p class="scan-fallback__kicker">{{ $identity.kicker }}</p>
+        <h2>{{ $identity.title }}</h2>
+        <p>{{ $identity.copy }}</p>
+      </section>
+    </main>
+  </div>
 {{ end }}

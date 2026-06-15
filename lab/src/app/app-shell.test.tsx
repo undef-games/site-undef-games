@@ -29,6 +29,19 @@ describe('AppShell', () => {
     expect(sidebar).toContainElement(controls)
   })
 
+  it('renders the production site surface without the lab control rail', () => {
+    render(<AppShell surface="site" />)
+
+    expect(screen.getByRole('heading', { name: /undef games/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/interactive station signal/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/interactive station signal/i)).toHaveAttribute('data-signal', '50')
+    expect(screen.getByRole('link', { name: /open lab/i })).toHaveAttribute('href', '/lab/')
+    expect(screen.getByRole('link', { name: /view projects/i })).toHaveAttribute('href', '#projects')
+    expect(screen.queryByLabelText(/station tools and identity/i)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/station controls/i)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/effects controls/i)).not.toBeInTheDocument()
+  })
+
   it('keeps the identity rail focused on the selected mark instead of exploration boards', () => {
     render(<AppShell />)
 

@@ -251,6 +251,10 @@
   text-shadow: 0 3px 24px rgba(5, 6, 7, calc(0.9 * var(--fx-occlusion-strength, 1)));
 }
 
+.station-shell--site .station-hero {
+  padding-right: min(14vw, 180px);
+}
+
 .station-shell[data-tone='light'] .station-hero {
   color: var(--fx-text-on-light, #050607);
   text-shadow: none;

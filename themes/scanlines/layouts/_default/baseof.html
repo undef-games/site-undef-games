@@ -2,10 +2,12 @@
 <html lang="{{ or site.Language.Locale site.Language.Lang "en-us" }}">
 {{- partial "head.html" . -}}
 <body class="{{ if .IsHome }}page-home{{ else }}page-{{ or .Section .Type "interior" }}{{ end }}">
-  <main id="main-content">
-    {{- block "main" . }}{{- end }}
-  </main>
-  {{- partial "footer.html" . -}}
-  <script src="/js/scanlines.js" defer></script>
+  {{- block "main" . }}{{- end }}
+  {{ if not .IsHome -}}
+    {{- partial "footer.html" . -}}
+  {{- end }}
+  {{ if .IsHome -}}
+    <script type="module" src="/lab/assets/site.js"></script>
+  {{- end }}
 </body>
 </html>

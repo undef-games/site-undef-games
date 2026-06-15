@@ -63,8 +63,11 @@ const DEFAULT_SCANLINE_LAYERS: ScanlineLayers = {
   glitch: false,
 }
 
-export function AppShell() {
-  const [stationState, setStationState] = useState(createStationState)
+export type AppShellSurface = 'lab' | 'site'
+
+export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
+  const isSiteSurface = surface === 'site'
+  const [stationState, setStationState] = useState(() => createStationState({ signal: isSiteSurface ? 50 : 0 }))
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
   const [effectsSettings, setEffectsSettings] = useState<EffectsSettings>(BASELINE_EFFECTS)
@@ -153,10 +156,11 @@ export function AppShell() {
 
   return (
     <div
-      className="station-shell"
+      className={`station-shell station-shell--${surface}`}
       data-scan-graph={scanlineLayers.graph}
       data-scan-crt={scanlineLayers.crt}
       data-scan-glitch={scanlineLayers.glitch}
+      data-surface={surface}
       data-status={status.label.toLowerCase().replaceAll(' ', '-')}
       data-tone={activeTone}
       style={landingStyle}
@@ -189,28 +193,30 @@ export function AppShell() {
               </h1>
               <p className="station-copy">Systems, toys, and game-shaped experiments tuned out of undefined space.</p>
               <div className="station-actions" aria-label="landing actions">
-                <a href="#signal">Tune signal</a>
+                <a href={isSiteSurface ? '/lab/' : '#signal'}>{isSiteSurface ? 'Open lab' : 'Tune signal'}</a>
                 <a href="#projects">View projects</a>
               </div>
               <p className="station-status">{status.lock ? 'Signal locked' : status.label}</p>
             </div>
           </div>
-          <aside className="station-sidebar" aria-label="station tools and identity">
-            <StationControls state={stationState} onTune={tune} onDetune={detune} onReset={reset} />
-            <ChannelSelector activeChannel={activeChannel} channels={STATION_CHANNELS} onSelect={setActiveChannel} />
-            <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
-            <EffectsControls
-              activePresetId={activePresetId}
-              scanlineLayers={scanlineLayers}
-              settings={effectsSettings}
-              sectionEffects={sectionEffects}
-              onChange={updateEffect}
-              onPreset={applyEffectsPreset}
-              onScanlineLayerChange={updateScanlineLayer}
-              onSectionEffect={updateSectionEffect}
-            />
-            <StationIdentity state={stationState} />
-          </aside>
+          {!isSiteSurface && (
+            <aside className="station-sidebar" aria-label="station tools and identity">
+              <StationControls state={stationState} onTune={tune} onDetune={detune} onReset={reset} />
+              <ChannelSelector activeChannel={activeChannel} channels={STATION_CHANNELS} onSelect={setActiveChannel} />
+              <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
+              <EffectsControls
+                activePresetId={activePresetId}
+                scanlineLayers={scanlineLayers}
+                settings={effectsSettings}
+                sectionEffects={sectionEffects}
+                onChange={updateEffect}
+                onPreset={applyEffectsPreset}
+                onScanlineLayerChange={updateScanlineLayer}
+                onSectionEffect={updateSectionEffect}
+              />
+              <StationIdentity state={stationState} />
+            </aside>
+          )}
         </section>
 
         <section className="landing-section landing-section--signal" id="signal" aria-label="signal behavior">

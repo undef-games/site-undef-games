@@ -5,4 +5,7 @@
   <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
   <meta name="theme-color" content="#050607">
   <link rel="stylesheet" href="/css/scanlines.css">
+  {{ if .IsHome -}}
+    <link rel="stylesheet" href="/lab/assets/style.css">
+  {{- end }}
 </head>
