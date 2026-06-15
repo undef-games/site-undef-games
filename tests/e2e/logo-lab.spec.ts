@@ -313,10 +313,8 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(244, 244, 240)')
   const crtLayerIndicator = effects.getByText('CRT scanline layer').locator('..').locator('.scanline-check')
-  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual)).toMatchObject({
-    afterOpacity: '0',
-    backgroundColor: 'rgba(0, 0, 0, 0)',
-  })
+  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.afterOpacity)).toBe('0')
+  await expect.poll(() => crtLayerIndicator.evaluate(readScanlineCheckVisual).then((visual) => visual.backgroundLuminance)).toBeGreaterThan(0.68)
 
   await presetSelect.selectOption('cyan-ice')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-signal').trim())).toBe('#39e8ff')
@@ -428,6 +426,58 @@ test('switches section background effects independently', async ({ page }) => {
   await expect
     .poll(() => page.locator('.landing-section--identity .section-toy span').first().evaluate((element) => element.getBoundingClientRect().width))
     .toBeGreaterThan(250)
+})
+
+test('keeps scanline layer checks readable on high-key light presets', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const effects = page.getByLabel('effects controls')
+  const presetSelect = effects.getByLabel('Effect preset')
+  const crtLayer = effects.getByText('CRT scanline layer').locator('..')
+  const crtLayerIndicator = crtLayer.locator('.scanline-check')
+
+  for (const presetId of ['whiteout', 'copy-machine']) {
+    await presetSelect.selectOption(presetId)
+    await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
+
+    const uncheckedRow = await crtLayer.evaluate(readControlContrast)
+    const uncheckedBox = await crtLayerIndicator.evaluate(readScanlineCheckVisual)
+    expect(uncheckedRow.backgroundLuminance).toBeGreaterThan(0.62)
+    expect(uncheckedRow.textLuminance).toBeLessThan(0.22)
+    expect(uncheckedBox.backgroundLuminance).toBeGreaterThan(0.68)
+    expect(uncheckedBox.afterOpacity).toBe('0')
+
+    await effects.getByLabel('CRT scanline layer').check()
+    const checkedBox = await crtLayerIndicator.evaluate(readScanlineCheckVisual)
+    expect(checkedBox.backgroundLuminance).toBeGreaterThan(0.68)
+    expect(checkedBox.afterOpacity).toBe('1')
+    expect(checkedBox.afterLuminance).toBeLessThan(0.22)
+    await effects.getByLabel('CRT scanline layer').uncheck()
+  }
+})
+
+test('keeps all section effects visibly distinct on whiteout carrier', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const effects = page.getByLabel('effects controls')
+  await effects.getByLabel('Effect preset').selectOption('whiteout')
+  const signalToy = page.locator('.landing-section--signal .section-toy')
+  const firstSpan = page.locator('.landing-section--signal .section-toy span').first()
+  const effectProfiles: string[] = []
+
+  for (const effect of ['bars', 'tumble', 'scatter', 'crt', 'notes', 'frames', 'rails', 'rungs', 'slab']) {
+    await effects.getByLabel('Signal background').selectOption(effect)
+    await expect(signalToy).toHaveClass(new RegExp(`section-toy--effect-${effect}`))
+    const profile = await firstSpan.evaluate(readToyEffectProfile)
+    expect(profile.area, `${effect} area`).toBeGreaterThan(20)
+    expect(profile.alpha, `${effect} alpha`).toBeGreaterThan(0.1)
+    expect(profile.contrast, `${effect} contrast`).toBeGreaterThan(0.16)
+    effectProfiles.push(`${effect}:${profile.width}x${profile.height}:${profile.backgroundColor}:${profile.borderColor}`)
+  }
+
+  expect(new Set(effectProfiles).size).toBe(effectProfiles.length)
 })
 
 test('keeps rectangle toys visible and smoothed under light presets', async ({ page }) => {
@@ -609,12 +659,142 @@ function readControlColors(element: Element) {
 }
 
 function readScanlineCheckVisual(element: Element) {
+  const parseColor = (color: string) => {
+    const srgbMatch = color.match(/color\(srgb\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)(?:\s*\/\s*([0-9.]+))?\)/)
+    if (srgbMatch) {
+      return {
+        a: srgbMatch[4] === undefined ? 1 : Number(srgbMatch[4]),
+        b: Number(srgbMatch[3]) * 255,
+        g: Number(srgbMatch[2]) * 255,
+        r: Number(srgbMatch[1]) * 255,
+      }
+    }
+    const rgbaMatch = color.match(/rgba?\(([^)]+)\)/)
+    if (rgbaMatch) {
+      const channels = rgbaMatch[1].split(/,\s*/)
+      return {
+        a: channels[3] === undefined ? 1 : Number(channels[3]),
+        b: Number(channels[2]),
+        g: Number(channels[1]),
+        r: Number(channels[0]),
+      }
+    }
+    return { a: 0, b: 0, g: 0, r: 0 }
+  }
+  const luminance = (color: { a: number; b: number; g: number; r: number }) => {
+    const alpha = Number.isFinite(color.a) ? color.a : 1
+    const blended = [color.r, color.g, color.b].map((channel) => {
+      const value = (channel * alpha + 255 * (1 - alpha)) / 255
+      return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * blended[0] + 0.7152 * blended[1] + 0.0722 * blended[2]
+  }
   const style = getComputedStyle(element)
   const afterStyle = getComputedStyle(element, '::after')
+  const background = parseColor(style.backgroundColor)
+  const afterBorder = parseColor(afterStyle.borderRightColor)
   return {
     afterOpacity: afterStyle.opacity,
+    afterLuminance: luminance(afterBorder),
+    backgroundColor: style.backgroundColor,
+    backgroundLuminance: luminance(background),
+    borderColor: style.borderTopColor,
+  }
+}
+
+function readControlContrast(element: Element) {
+  const parseColor = (color: string) => {
+    const srgbMatch = color.match(/color\(srgb\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)(?:\s*\/\s*([0-9.]+))?\)/)
+    if (srgbMatch) {
+      return {
+        a: srgbMatch[4] === undefined ? 1 : Number(srgbMatch[4]),
+        b: Number(srgbMatch[3]) * 255,
+        g: Number(srgbMatch[2]) * 255,
+        r: Number(srgbMatch[1]) * 255,
+      }
+    }
+    const rgbaMatch = color.match(/rgba?\(([^)]+)\)/)
+    if (rgbaMatch) {
+      const channels = rgbaMatch[1].split(/,\s*/)
+      return {
+        a: channels[3] === undefined ? 1 : Number(channels[3]),
+        b: Number(channels[2]),
+        g: Number(channels[1]),
+        r: Number(channels[0]),
+      }
+    }
+    return { a: 0, b: 0, g: 0, r: 0 }
+  }
+  const luminance = (color: { a: number; b: number; g: number; r: number }) => {
+    const alpha = Number.isFinite(color.a) ? color.a : 1
+    const blended = [color.r, color.g, color.b].map((channel) => {
+      const value = (channel * alpha + 255 * (1 - alpha)) / 255
+      return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * blended[0] + 0.7152 * blended[1] + 0.0722 * blended[2]
+  }
+  const style = getComputedStyle(element)
+  return {
+    backgroundColor: style.backgroundColor,
+    backgroundLuminance: luminance(parseColor(style.backgroundColor)),
+    color: style.color,
+    textLuminance: luminance(parseColor(style.color)),
+  }
+}
+
+function readToyEffectProfile(element: Element) {
+  const parseColor = (color: string) => {
+    const srgbMatch = color.match(/color\(srgb\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)(?:\s*\/\s*([0-9.]+))?\)/)
+    if (srgbMatch) {
+      return {
+        a: srgbMatch[4] === undefined ? 1 : Number(srgbMatch[4]),
+        b: Number(srgbMatch[3]) * 255,
+        g: Number(srgbMatch[2]) * 255,
+        r: Number(srgbMatch[1]) * 255,
+      }
+    }
+    const rgbaMatch = color.match(/rgba?\(([^)]+)\)/)
+    if (rgbaMatch) {
+      const channels = rgbaMatch[1].split(/,\s*/)
+      return {
+        a: channels[3] === undefined ? 1 : Number(channels[3]),
+        b: Number(channels[2]),
+        g: Number(channels[1]),
+        r: Number(channels[0]),
+      }
+    }
+    const hexMatch = color.trim().match(/^#([0-9a-f]{6})$/i)
+    if (hexMatch) {
+      const value = Number.parseInt(hexMatch[1], 16)
+      return {
+        a: 1,
+        b: value & 255,
+        g: (value >> 8) & 255,
+        r: (value >> 16) & 255,
+      }
+    }
+    return { a: 0, b: 0, g: 0, r: 0 }
+  }
+  const luminance = (color: { a: number; b: number; g: number; r: number }) => {
+    const alpha = Number.isFinite(color.a) ? color.a : 1
+    const blended = [color.r, color.g, color.b].map((channel) => {
+      const value = (channel * alpha + 255 * (1 - alpha)) / 255
+      return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * blended[0] + 0.7152 * blended[1] + 0.0722 * blended[2]
+  }
+  const style = getComputedStyle(element)
+  const rect = element.getBoundingClientRect()
+  const background = parseColor(style.backgroundColor)
+  const pageBackground = parseColor(getComputedStyle(document.querySelector('.station-shell')!).getPropertyValue('--fx-bg'))
+  return {
+    alpha: background.a,
+    area: Math.round(rect.width * rect.height),
     backgroundColor: style.backgroundColor,
     borderColor: style.borderTopColor,
+    contrast: Math.abs(luminance(background) - luminance(pageBackground)),
+    height: Math.round(rect.height),
+    width: Math.round(rect.width),
   }
 }
 

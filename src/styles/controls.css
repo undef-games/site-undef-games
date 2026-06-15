@@ -371,18 +371,23 @@
 }
 
 .station-shell[data-tone='light'] .scanline-layer-control {
-  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
-  color: var(--fx-text-on-dark, #f4f4f0);
+  border-color: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.26);
+  background: color-mix(in srgb, var(--fx-panel, #dfe3da) 58%, #ffffff 42%);
+  color: var(--fx-text-on-light, #11130d);
 }
 
 .station-shell[data-tone='light'] .scanline-check {
-  border-color: rgb(var(--fx-bg-rgb, 244 240 223) / 0.48);
-  box-shadow: inset 0 0 0 1px rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.3);
+  border-color: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.52);
+  background: color-mix(in srgb, var(--fx-panel, #dfe3da) 42%, #ffffff 58%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.34);
 }
 
 .station-shell[data-tone='light'] .scanline-layer-control input:checked + .scanline-check {
-  border-color: var(--fx-signal, #d8ff35);
-  background: var(--fx-signal, #d8ff35);
+  border-color: var(--fx-signal, #1f2937);
+  background: color-mix(in srgb, var(--fx-bg, #f4f0df) 72%, #ffffff 28%);
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.18),
+    0 0 0 2px rgb(var(--fx-signal-rgb, 31 41 55) / 0.16);
 }
 
 .station-shell[data-tone='light'] .scanline-layer-control input:checked + .scanline-check::after {
