@@ -1,0 +1,14 @@
+{{ define "main" }}
+  <main class="scan-page" id="main-content">
+    <section class="scan-page__hero" aria-labelledby="page-title">
+      <p class="scan-fallback__kicker">{{ with .Params.kicker }}{{ . }}{{ else }}undef games{{ end }}</p>
+      <h1 id="page-title">{{ .Title }}</h1>
+      {{ with .Params.description }}
+        <p>{{ . }}</p>
+      {{ end }}
+    </section>
+    <section class="scan-page__body">
+      {{ .Content }}
+    </section>
+  </main>
+{{ end }}
