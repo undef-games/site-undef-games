@@ -11,6 +11,20 @@ test('tunes the static station identity to signal lock', async ({ page }) => {
   await expect.poll(() => signalScene.locator('canvas').evaluate(hasPaintedWebGlPixels)).toBe(true)
   const initialScanlines = Number(await signalScene.getAttribute('data-active-scanlines'))
   await expect(page.getByText(/NO SIGNAL/i).first()).toBeVisible()
+  await expect
+    .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate(readControlColors))
+    .toMatchObject({
+      backgroundColor: 'rgb(244, 244, 240)',
+      borderColor: 'rgba(244, 244, 240, 0.72)',
+      color: 'rgb(5, 6, 7)',
+    })
+  await expect
+    .poll(() => page.getByRole('button', { name: /CH 13/i }).evaluate(readControlColors))
+    .toMatchObject({
+      backgroundColor: 'rgb(244, 244, 240)',
+      borderColor: 'rgba(244, 244, 240, 0.72)',
+      color: 'rgb(5, 6, 7)',
+    })
 
   for (let index = 0; index < 4; index += 1) {
     await page.getByRole('button', { name: /tune signal/i }).click()
@@ -342,4 +356,13 @@ function hasPaintedWebGlPixels(canvas: HTMLCanvasElement) {
 function getToyRectArea(element: Element) {
   const rect = element.getBoundingClientRect()
   return rect.width * rect.height
+}
+
+function readControlColors(element: Element) {
+  const style = getComputedStyle(element)
+  return {
+    backgroundColor: style.backgroundColor,
+    borderColor: style.borderTopColor,
+    color: style.color,
+  }
 }
