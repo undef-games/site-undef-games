@@ -14,16 +14,23 @@ test('tunes the static station identity to signal lock', async ({ page }) => {
   await expect
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgba(244, 244, 240, 0.64)',
-      borderColor: 'rgba(244, 244, 240, 0.58)',
-      color: 'rgb(5, 6, 7)',
+      backgroundColor: 'rgba(5, 6, 7, 0.84)',
+      borderColor: 'rgba(244, 244, 240, 0.22)',
+      color: 'rgb(244, 244, 240)',
+    })
+  await expect
+    .poll(() => page.getByRole('button', { name: /CH 00/i }).evaluate(readControlColors))
+    .toMatchObject({
+      backgroundColor: 'rgba(216, 255, 53, 0.12)',
+      borderColor: 'rgb(216, 255, 53)',
+      color: 'rgb(216, 255, 53)',
     })
   await expect
     .poll(() => page.getByRole('button', { name: /CH 13/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgba(244, 244, 240, 0.64)',
-      borderColor: 'rgba(244, 244, 240, 0.58)',
-      color: 'rgb(5, 6, 7)',
+      backgroundColor: 'rgb(5, 6, 7)',
+      borderColor: 'rgba(244, 244, 240, 0.2)',
+      color: 'rgba(244, 244, 240, 0.78)',
     })
 
   for (let index = 0; index < 4; index += 1) {
