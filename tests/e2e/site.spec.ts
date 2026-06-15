@@ -55,6 +55,27 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
   }
 })
 
+test('keeps the site header responsive without pinning controls to wide viewport edges', async ({ page }) => {
+  await page.setViewportSize({ width: 1920, height: 900 })
+  await page.goto('/')
+
+  const brandBox = await page.locator('.site-header__brand').boundingBox()
+  const loginBox = await page.getByRole('button', { name: /log in/i }).boundingBox()
+  expect(brandBox).not.toBeNull()
+  expect(loginBox).not.toBeNull()
+  expect(brandBox!.x).toBeGreaterThan(240)
+  expect(loginBox!.x + loginBox!.width).toBeLessThan(1680)
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.reload()
+
+  await expect(page.getByRole('banner')).toBeVisible()
+  await expect(page.getByRole('navigation', { name: /primary/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /log in/i })).toBeVisible()
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
+  expect(overflow).toBe(false)
+})
+
 test('serves the interactive lab below /lab/', async ({ page }) => {
   await page.goto('/lab/')
 
