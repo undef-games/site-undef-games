@@ -17,7 +17,7 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
     'href',
     '/about/',
   )
-  await expect(page.getByRole('button', { name: /log in/i })).toHaveAttribute('aria-disabled', 'true')
+  await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
   await expect(page.getByRole('link', { name: /open lab/i }).last()).toHaveAttribute('href', '/lab/')
   await expect(page.locator('.station-shell')).toHaveAttribute('data-surface', 'site')
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-renderer', 'pixijs')
@@ -49,7 +49,7 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
 
     await expect(page.getByRole('banner')).toBeVisible()
     await expect(page.getByRole('heading', { name: route.heading })).toBeVisible()
-    await expect(page.getByRole('button', { name: /log in/i })).toHaveAttribute('aria-disabled', 'true')
+    await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
     await expect(page.getByRole('link', { name: /open lab/i })).toHaveAttribute('href', '/lab/')
     await expect(page.getByLabel('effects controls')).toHaveCount(0)
   }
@@ -60,18 +60,23 @@ test('keeps the site header responsive without pinning controls to wide viewport
   await page.goto('/')
 
   const brandBox = await page.locator('.site-header__brand').boundingBox()
-  const loginBox = await page.getByRole('button', { name: /log in/i }).boundingBox()
+  const loginBox = await page.getByRole('link', { name: /log in/i }).boundingBox()
+  const heroTextInset = await page.locator('.station-hero').evaluate((element) => {
+    const rect = element.getBoundingClientRect()
+    const style = getComputedStyle(element)
+    return rect.x + Number.parseFloat(style.paddingLeft)
+  })
   expect(brandBox).not.toBeNull()
   expect(loginBox).not.toBeNull()
-  expect(brandBox!.x).toBeGreaterThan(240)
-  expect(loginBox!.x + loginBox!.width).toBeLessThan(1680)
+  expect(Math.abs(brandBox!.x - heroTextInset)).toBeLessThanOrEqual(8)
+  expect(loginBox!.x + loginBox!.width).toBeLessThan(heroTextInset + 720)
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.reload()
 
   await expect(page.getByRole('banner')).toBeVisible()
   await expect(page.getByRole('navigation', { name: /primary/i })).toBeVisible()
-  await expect(page.getByRole('button', { name: /log in/i })).toBeVisible()
+  await expect(page.getByRole('link', { name: /log in/i })).toBeVisible()
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
   expect(overflow).toBe(false)
 })

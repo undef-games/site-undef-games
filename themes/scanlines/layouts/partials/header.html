@@ -9,8 +9,8 @@
       <a href="/blog/" {{ if eq .RelPermalink "/blog/" }}aria-current="page"{{ end }}>Blog</a>
       <a href="/about/" {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>About</a>
     </nav>
-    <button class="site-header__login" type="button" aria-disabled="true" title="Login stub">
+    <a class="site-header__login" href="{{ site.Params.login_url }}">
       Log in
-    </button>
+    </a>
   </div>
 </header>
