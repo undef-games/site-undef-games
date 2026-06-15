@@ -1,4 +1,4 @@
-.PHONY: help stamp build-hugo build-lab build serve clean deploy preview test typecheck e2e
+.PHONY: help install-lab stamp build-hugo build-lab build serve clean deploy preview test typecheck e2e
 
 SHELL := /bin/bash
 
@@ -8,12 +8,14 @@ help: ## Show this help
 stamp: ## Refresh data/build.json with current SHA + timestamp
 	@bash scripts/stamp_build.sh
 
+install-lab: ## Install Vite lab dependencies
+	@npm --prefix lab ci
+
 build-hugo: stamp ## Build Hugo into public/
 	@rm -rf public/
 	@hugo --minify
 
-build-lab: ## Build the Vite lab into public/lab/
-	@npm --prefix lab ci
+build-lab: install-lab ## Build the Vite lab into public/lab/
 	@npm --prefix lab run build
 	@rm -rf public/lab
 	@mkdir -p public/lab
@@ -27,17 +29,17 @@ serve: stamp ## Serve Hugo locally on http://127.0.0.1:1780
 clean: ## Remove build output
 	@rm -rf public lab/dist
 
-typecheck: ## Run lab TypeScript checks
+typecheck: install-lab ## Run lab TypeScript checks
 	@npm --prefix lab run typecheck
 
-test: ## Run lab unit tests
+test: install-lab ## Run lab unit tests
 	@npm --prefix lab run test:run
 
-e2e: build ## Run Playwright against the built combined site
-	@playwright test
+e2e: build ## Run the current Playwright suite
+	@npx playwright test
 
 deploy: build ## Build then deploy to Cloudflare Pages production
-	@wrangler pages deploy public --project-name=undef-logos --branch=main
+	@npx wrangler pages deploy public --project-name=undef-logos --branch=main
 
 preview: build ## Build then deploy to a Cloudflare Pages preview URL
-	@wrangler pages deploy public --project-name=undef-logos
+	@npx wrangler pages deploy public --project-name=undef-logos
