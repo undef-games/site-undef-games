@@ -45,6 +45,24 @@
   z-index: 1;
 }
 
+.station-shell[data-tone='light'] .station-overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(var(--fx-signal-rgb, 216 255 53), calc(0.22 * var(--fx-glow-strength, 1))) 0 5%,
+      rgba(var(--fx-support-1-rgb, 216 255 53), calc(0.06 * var(--fx-glow-strength, 1))) 5% 13%,
+      transparent 24%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(var(--fx-text-on-light-rgb, 5 6 7), calc(var(--fx-scan-opacity, 0.055) * 0.58)) 0 1px,
+      transparent 1px var(--fx-scan-spacing, 12px)
+    ),
+    linear-gradient(180deg, transparent 0 68%, rgba(var(--fx-bg-rgb, 244 240 223), calc(0.44 * var(--fx-occlusion-strength, 1))));
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
 .hero-ghost-glyph {
   position: absolute;
   z-index: 1;
@@ -108,6 +126,11 @@
   text-shadow: 0 3px 24px rgba(5, 6, 7, calc(0.9 * var(--fx-occlusion-strength, 1)));
 }
 
+.station-shell[data-tone='light'] .station-hero {
+  color: var(--fx-text-on-light, #050607);
+  text-shadow: none;
+}
+
 .station-kicker {
   display: flex;
   flex-wrap: wrap;
@@ -146,6 +169,16 @@
   text-transform: none;
 }
 
+.station-shell[data-tone='light'] .station-kicker,
+.station-shell[data-tone='light'] .station-copy,
+.station-shell[data-tone='light'] .station-status {
+  color: rgba(var(--fx-text-on-light-rgb, 5 6 7), 0.78);
+}
+
+.station-shell[data-tone='light'] .station-kicker span:first-child {
+  color: var(--fx-signal, #d8ff35);
+}
+
 .station-actions {
   display: flex;
   flex-wrap: wrap;
@@ -168,6 +201,12 @@
   text-decoration: none;
 }
 
+.station-shell[data-tone='light'] .station-actions a,
+.station-shell[data-tone='light'] .landing-final a {
+  border-color: rgba(var(--fx-text-on-light-rgb, 5 6 7), 0.28);
+  color: var(--fx-text-on-light, #050607);
+}
+
 .station-actions a:first-child,
 .landing-final a {
   border-color: var(--fx-signal, #d8ff35);
@@ -175,11 +214,22 @@
   color: var(--fx-bg, #050607);
 }
 
+.station-shell[data-tone='light'] .station-actions a:first-child,
+.station-shell[data-tone='light'] .landing-final a {
+  color: var(--fx-text-on-dark, #f4f4f0);
+}
+
 .station-actions a:hover,
 .landing-final a:hover {
   border-color: var(--fx-text, #f4f4f0);
   background: var(--fx-text, #f4f4f0);
   color: var(--fx-bg, #050607);
+}
+
+.station-shell[data-tone='light'] .station-actions a:hover,
+.station-shell[data-tone='light'] .landing-final a:hover {
+  background: var(--fx-text-on-light, #050607);
+  color: var(--fx-text-on-dark, #f4f4f0);
 }
 
 .station-status {

@@ -1,6 +1,10 @@
 import type { CSSProperties } from 'react'
 import type { ChannelMode } from './station-signal-scene'
 
+export type SectionToyEffect = 'bars' | 'slab' | 'tumble'
+export type SectionEffectId = 'dice' | 'identity' | 'projects' | 'signal' | 'taybols' | 'warp'
+export type SectionEffects = Record<SectionEffectId, SectionToyEffect>
+
 export type StationChannel = {
   id: string
   label: string
@@ -82,12 +86,36 @@ export function PacketDrift({ activeChannel }: { activeChannel: StationChannel }
   )
 }
 
-export function SectionToy({ variant }: { variant: 'signal' | 'system' | 'identity' }) {
+export function SectionToy({ effect, variant }: { effect: SectionToyEffect; variant: 'signal' | 'system' | 'identity' }) {
+  const count = variant === 'system' ? 18 : 12
+
   return (
-    <div className={`section-toy section-toy--${variant}`} aria-hidden="true">
-      {Array.from({ length: variant === 'system' ? 16 : 12 }, (_, index) => (
-        <span key={index} style={{ '--toy-index': index } as CSSProperties} />
-      ))}
+    <div className={`section-toy section-toy--${variant} section-toy--effect-${effect}`} aria-hidden="true">
+      {Array.from({ length: count }, (_, index) => {
+        const row = index % 7
+        const width = 48 + (index % 5) * 34
+        const height = index % 4 === 0 ? 8 : index % 3 === 0 ? 5 : 2
+        const start = 82 + (index % 6) * 11
+        const speed = start + 122 + (index % 4) * 18
+        const drift = index % 2 === 0 ? -1 : 1
+
+        return (
+          <span
+            key={index}
+            style={
+              {
+                '--toy-drift': drift,
+                '--toy-height': `${height}px`,
+                '--toy-index': index,
+                '--toy-row': row,
+                '--toy-speed': `${speed}vw`,
+                '--toy-start': `${start}vw`,
+                '--toy-width': `${width}px`,
+              } as CSSProperties
+            }
+          />
+        )
+      })}
     </div>
   )
 }

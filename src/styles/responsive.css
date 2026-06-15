@@ -81,6 +81,21 @@
   }
 
   .palette-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .color-control {
+    grid-template-columns: minmax(0, 1fr) 34px;
+    align-items: center;
+  }
+
+  .color-control input[type='color'] {
+    width: 34px;
+    height: 24px;
+    justify-self: end;
+  }
+
+  .section-effect-controls {
     grid-template-columns: 1fr;
   }
 

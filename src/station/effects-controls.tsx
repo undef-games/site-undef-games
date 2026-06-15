@@ -1,5 +1,6 @@
-import type { EffectsPresetId, EffectsSettings } from './effects-config'
+import type { EffectsPresetId, EffectsSettings, EffectsTone } from './effects-config'
 import { EFFECTS_PRESETS } from './effects-config'
+import type { SectionEffectId, SectionEffects, SectionToyEffect } from './station-toys'
 
 type EffectsControlKey = keyof EffectsSettings
 
@@ -56,7 +57,8 @@ const EFFECT_GROUPS: { controls: NumberControl[]; label: string }[] = [
 const PALETTE_CONTROLS: { key: EffectsControlKey; label: string }[] = [
   { key: 'paletteBg', label: 'Page bg' },
   { key: 'palettePanel', label: 'Rail bg' },
-  { key: 'paletteText', label: 'Text' },
+  { key: 'paletteTextOnDark', label: 'Text on dark' },
+  { key: 'paletteTextOnLight', label: 'Text on light' },
   { key: 'paletteSignal', label: 'Signal' },
   { key: 'paletteMuted', label: 'Muted' },
   { key: 'paletteGlow', label: 'Glow' },
@@ -65,16 +67,40 @@ const PALETTE_CONTROLS: { key: EffectsControlKey; label: string }[] = [
   { key: 'paletteSupport3', label: 'Support 3' },
 ]
 
+const PRESET_GROUPS: { icon: string; label: string; tone: EffectsTone }[] = [
+  { icon: '🌙', label: 'Dark presets', tone: 'dark' },
+  { icon: '☀️', label: 'Light presets', tone: 'light' },
+]
+
+const SECTION_EFFECT_OPTIONS: { label: string; value: SectionToyEffect }[] = [
+  { label: 'Skinny bars', value: 'bars' },
+  { label: 'Tumble rectangles', value: 'tumble' },
+  { label: 'Legacy slab', value: 'slab' },
+]
+
+const SECTION_EFFECT_CONTROLS: { id: SectionEffectId; label: string }[] = [
+  { id: 'signal', label: 'Signal' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'warp', label: 'WARP' },
+  { id: 'dice', label: 'Dice' },
+  { id: 'taybols', label: 'Taybols' },
+  { id: 'identity', label: 'Identity' },
+]
+
 export function EffectsControls({
   activePresetId,
+  sectionEffects,
   settings,
   onChange,
   onPreset,
+  onSectionEffect,
 }: {
   activePresetId: EffectsPresetId | 'custom'
+  sectionEffects: SectionEffects
   settings: EffectsSettings
   onChange: (key: EffectsControlKey, value: string | number) => void
   onPreset: (presetId: EffectsPresetId) => void
+  onSectionEffect: (sectionId: SectionEffectId, effect: SectionToyEffect) => void
 }) {
   return (
     <section className="effects-controls" aria-label="effects controls">
@@ -91,10 +117,14 @@ export function EffectsControls({
           onChange={(event) => onPreset(event.currentTarget.value)}
         >
           {activePresetId === 'custom' ? <option value="custom">Custom</option> : null}
-          {EFFECTS_PRESETS.map((preset) => (
-            <option key={preset.id} value={preset.id}>
-              {preset.label}
-            </option>
+          {PRESET_GROUPS.map((group) => (
+            <optgroup key={group.tone} label={`${group.icon} ${group.label}`}>
+              {EFFECTS_PRESETS.filter((preset) => preset.tone === group.tone).map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {group.icon} {preset.label}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </label>
@@ -104,6 +134,26 @@ export function EffectsControls({
           <label key={control.key} className="color-control">
             <span>{control.label}</span>
             <input type="color" value={String(settings[control.key])} onChange={(event) => onChange(control.key, event.currentTarget.value)} />
+          </label>
+        ))}
+      </div>
+
+      <div className="section-effect-controls" aria-label="section background controls">
+        <p className="control-label">Section backgrounds</p>
+        {SECTION_EFFECT_CONTROLS.map((control) => (
+          <label key={control.id} className="section-effect-control">
+            <span>{control.label}</span>
+            <select
+              aria-label={`${control.label} background`}
+              value={sectionEffects[control.id]}
+              onChange={(event) => onSectionEffect(control.id, event.currentTarget.value as SectionToyEffect)}
+            >
+              {SECTION_EFFECT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </label>
         ))}
       </div>

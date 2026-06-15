@@ -12,6 +12,7 @@
   background:
     linear-gradient(90deg, rgba(var(--section-accent-rgb), calc(0.07 * var(--fx-glow-strength, 1))), transparent 30%),
     var(--fx-bg, #050607);
+  color: var(--fx-text-on-dark, #f4f4f0);
 }
 
 .landing-section > :not(.section-toy),
@@ -48,7 +49,7 @@
   background:
     linear-gradient(90deg, rgba(var(--section-accent-rgb), 0.16), transparent 42%),
     repeating-linear-gradient(0deg, rgba(var(--section-accent-rgb), 0.035) 0 1px, transparent 1px 18px),
-    #050607;
+    var(--fx-bg, #050607);
 }
 
 .landing-section--dice {
@@ -57,7 +58,7 @@
   background:
     radial-gradient(circle at 20% 44%, rgba(var(--section-accent-rgb), 0.16), transparent 34%),
     linear-gradient(90deg, transparent, rgba(var(--section-accent-rgb), 0.08)),
-    #07080a;
+    var(--fx-panel, #07080a);
 }
 
 .landing-section--taybols {
@@ -75,6 +76,60 @@
   background:
     radial-gradient(circle at 76% 42%, rgba(var(--section-accent-rgb), calc(0.08 * var(--fx-glow-strength, 1))), transparent 34%),
     var(--fx-bg, #050607);
+}
+
+.station-shell[data-tone='light'] .landing-section,
+.station-shell[data-tone='light'] .landing-final {
+  color: var(--fx-text-on-light, #050607);
+  border-top-color: rgba(var(--fx-text-on-light-rgb, 5 6 7), 0.14);
+  background:
+    linear-gradient(90deg, rgba(var(--section-accent-rgb), 0.13), transparent 34%),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--signal {
+  background:
+    radial-gradient(circle at 18% 24%, rgba(var(--section-accent-rgb), 0.14), transparent 31%),
+    linear-gradient(180deg, rgba(var(--section-accent-rgb), 0.06), transparent 58%),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--products {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(var(--fx-text-on-light-rgb, 5 6 7), calc(var(--fx-section-scan-opacity, 0.035) * 0.72)) 0 1px,
+      transparent 1px var(--fx-scan-spacing, 12px)
+    ),
+    radial-gradient(circle at 72% 36%, rgba(var(--section-accent-rgb), 0.18), transparent 36%),
+    var(--fx-panel, #ddd7c1);
+}
+
+.station-shell[data-tone='light'] .landing-section--warp {
+  background:
+    linear-gradient(90deg, rgba(var(--section-accent-rgb), 0.18), transparent 42%),
+    repeating-linear-gradient(0deg, rgba(var(--section-accent-rgb), 0.055) 0 1px, transparent 1px 18px),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--dice {
+  background:
+    radial-gradient(circle at 20% 44%, rgba(var(--section-accent-rgb), 0.2), transparent 34%),
+    linear-gradient(90deg, transparent, rgba(var(--section-accent-rgb), 0.1)),
+    var(--fx-panel, #ddd7c1);
+}
+
+.station-shell[data-tone='light'] .landing-section--taybols {
+  background:
+    linear-gradient(135deg, rgba(var(--section-accent-rgb), 0.15), transparent 38%),
+    radial-gradient(circle at 78% 24%, rgba(var(--fx-support-3-rgb, 216 255 53), 0.13), transparent 32%),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--identity {
+  background:
+    radial-gradient(circle at 76% 42%, rgba(var(--section-accent-rgb), calc(0.12 * var(--fx-glow-strength, 1))), transparent 34%),
+    var(--fx-bg, #f4f0df);
 }
 
 .section-kicker,
@@ -168,6 +223,23 @@
   line-height: 1.4;
 }
 
+.station-shell[data-tone='light'] .product-link {
+  background:
+    linear-gradient(90deg, rgba(var(--product-accent-rgb), 0.22), transparent 38%),
+    rgba(var(--fx-text-on-dark-rgb, 244 244 240), 0.58);
+  color: var(--fx-text-on-light, #050607);
+}
+
+.station-shell[data-tone='light'] .product-link:hover {
+  background:
+    linear-gradient(90deg, rgba(var(--product-accent-rgb), 0.32), transparent 48%),
+    rgba(var(--fx-text-on-dark-rgb, 244 244 240), 0.78);
+}
+
+.station-shell[data-tone='light'] .product-link small {
+  color: rgba(var(--fx-text-on-light-rgb, 5 6 7), 0.7);
+}
+
 .section-link {
   width: fit-content;
   min-height: 44px;
@@ -192,6 +264,11 @@
   color: rgba(var(--fx-muted-rgb, 244 244 240), 0.72);
   font-size: 20px;
   line-height: 1.5;
+}
+
+.station-shell[data-tone='light'] .landing-section > p:not(.section-kicker),
+.station-shell[data-tone='light'] .landing-columns p {
+  color: rgba(var(--fx-text-on-light-rgb, 5 6 7), 0.74);
 }
 
 .landing-columns {

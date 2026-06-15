@@ -30,6 +30,12 @@ test('keeps the station surface usable on mobile', async ({ page }) => {
 
   await expect(page.getByLabel('interactive station signal')).toBeVisible()
   await expect(page.getByRole('button', { name: /tune signal/i })).toBeVisible()
+  const colorSwatch = page.locator('.color-control input[type="color"]').first()
+  const swatchBox = await colorSwatch.boundingBox()
+  expect(swatchBox).not.toBeNull()
+  expect(swatchBox!.width).toBeLessThanOrEqual(40)
+  expect(swatchBox!.height).toBeLessThanOrEqual(28)
+  await expect.poll(() => colorSwatch.evaluate((element) => getComputedStyle(element).borderRadius)).toBe('0px')
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
   expect(overflow).toBe(false)
@@ -217,9 +223,36 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   await expect(effects).toBeVisible()
   await expect(presetSelect).toHaveValue('current')
   await expect.poll(() => presetSelect.locator('option').count()).toBeGreaterThanOrEqual(30)
+  const presetGroups = await presetSelect.locator('optgroup').evaluateAll((groups) =>
+    groups.map((group) => {
+      const presetGroup = group as HTMLOptGroupElement
+      return {
+        label: presetGroup.label,
+        options: Array.from(presetGroup.querySelectorAll('option')).map((option) => option.textContent?.trim() ?? ''),
+      }
+    }),
+  )
+  expect(presetGroups.map((group) => group.label)).toEqual(['🌙 Dark presets', '☀️ Light presets'])
+  presetGroups.forEach((group) => {
+    const icon = group.label.startsWith('🌙') ? '🌙' : '☀️'
+    const labels = group.options.map((label) => label.replace(/^\S+\s/u, ''))
+    expect(group.options.every((label) => label.startsWith(icon))).toBe(true)
+    expect(labels).toEqual([...labels].sort((left, right) => left.localeCompare(right)))
+  })
 
   await expect(effects.getByLabel('Scan opacity', { exact: true })).toHaveValue('1')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.055')
+
+  await presetSelect.selectOption('paper-terminal')
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-text-on-light').trim())).toBe('#11130d')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-text-on-dark').trim())).toBe('#f4f4f0')
+  await expect
+    .poll(() => page.getByRole('heading', { name: /actual projects/i }).evaluate((element) => getComputedStyle(element).color))
+    .toBe('rgb(17, 19, 13)')
+  await expect
+    .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate((element) => getComputedStyle(element).color))
+    .toBe('rgb(244, 244, 240)')
 
   await presetSelect.selectOption('cyan-ice')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-signal').trim())).toBe('#39e8ff')
@@ -233,6 +266,27 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
 
   await effects.getByLabel('Rectangle spin', { exact: true }).fill('1.35')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-rectangle-spin').trim())).toBe('1.35')
+})
+
+test('switches section background effects independently', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 })
+  await page.goto('/')
+
+  const effects = page.getByLabel('effects controls')
+  const signalToy = page.locator('.landing-section--signal .section-toy')
+  const identityToy = page.locator('.landing-section--identity .section-toy')
+  await expect(signalToy).toHaveClass(/section-toy--effect-bars/)
+  await expect(identityToy).toHaveClass(/section-toy--effect-tumble/)
+
+  await effects.getByLabel('Signal background').selectOption('tumble')
+  await expect(signalToy).toHaveClass(/section-toy--effect-tumble/)
+  await expect.poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(getToyRectArea)).toBeGreaterThan(30000)
+
+  await effects.getByLabel('Identity background').selectOption('slab')
+  await expect(identityToy).toHaveClass(/section-toy--effect-slab/)
+  await expect
+    .poll(() => page.locator('.landing-section--identity .section-toy span').first().evaluate((element) => element.getBoundingClientRect().width))
+    .toBeGreaterThan(250)
 })
 
 function getTranslateX(element: Element) {
@@ -283,4 +337,9 @@ function hasPaintedWebGlPixels(canvas: HTMLCanvasElement) {
   gl.readPixels(sampleX, sampleY, 3, 3, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
   return pixels.some((channel) => channel > 0)
+}
+
+function getToyRectArea(element: Element) {
+  const rect = element.getBoundingClientRect()
+  return rect.width * rect.height
 }

@@ -1,11 +1,14 @@
 import type { CSSProperties } from 'react'
 
 export type EffectsPresetId = string
+export type EffectsTone = 'dark' | 'light'
 
 export type EffectsSettings = {
   paletteBg: string
   palettePanel: string
   paletteText: string
+  paletteTextOnDark: string
+  paletteTextOnLight: string
   paletteSignal: string
   paletteMuted: string
   paletteGlow: string
@@ -37,12 +40,15 @@ export type EffectsPreset = {
   id: EffectsPresetId
   label: string
   settings: EffectsSettings
+  tone: EffectsTone
 }
 
 export const BASELINE_EFFECTS: EffectsSettings = {
   paletteBg: '#050607',
   palettePanel: '#08090a',
   paletteText: '#f4f4f0',
+  paletteTextOnDark: '#f4f4f0',
+  paletteTextOnLight: '#050607',
   paletteSignal: '#d8ff35',
   paletteMuted: '#f4f4f0',
   paletteGlow: '#d8ff35',
@@ -70,23 +76,31 @@ export const BASELINE_EFFECTS: EffectsSettings = {
   rectangleGlow: 1,
 }
 
-const preset = (id: EffectsPresetId, label: string, settings: Partial<EffectsSettings>): EffectsPreset => {
+const preset = (id: EffectsPresetId, label: string, settings: Partial<EffectsSettings>, tone?: EffectsTone): EffectsPreset => {
   const merged = { ...BASELINE_EFFECTS, ...settings }
+  const resolvedTone = tone ?? getEffectsTone(merged)
+  const textOnDark = settings.paletteTextOnDark ?? (resolvedTone === 'dark' ? merged.paletteText : BASELINE_EFFECTS.paletteTextOnDark)
+  const textOnLight =
+    settings.paletteTextOnLight ?? (resolvedTone === 'light' ? merged.paletteText : BASELINE_EFFECTS.paletteTextOnLight)
 
   return {
     id,
     label,
     settings: {
       ...merged,
+      paletteText: resolvedTone === 'light' ? textOnLight : textOnDark,
+      paletteTextOnDark: textOnDark,
+      paletteTextOnLight: textOnLight,
       paletteSupport1: settings.paletteSupport1 ?? settings.paletteGlow ?? settings.paletteSignal ?? merged.paletteSupport1,
       paletteSupport2: settings.paletteSupport2 ?? settings.paletteMuted ?? settings.paletteGlow ?? merged.paletteSupport2,
       paletteSupport3: settings.paletteSupport3 ?? settings.paletteSignal ?? settings.paletteGlow ?? merged.paletteSupport3,
     },
+    tone: resolvedTone,
   }
 }
 
-export const EFFECTS_PRESETS: EffectsPreset[] = [
-  { id: 'current', label: 'Current baseline', settings: BASELINE_EFFECTS },
+const RAW_EFFECTS_PRESETS: EffectsPreset[] = [
+  { id: 'current', label: 'Current baseline', settings: BASELINE_EFFECTS, tone: 'dark' },
   preset('low-signal', 'Low signal', {
     scanOpacity: 0.72,
     scanSpeed: 0.72,
@@ -564,20 +578,42 @@ export const EFFECTS_PRESETS: EffectsPreset[] = [
   }),
 ]
 
+export const EFFECTS_PRESETS: EffectsPreset[] = [...RAW_EFFECTS_PRESETS].sort((left, right) => {
+  const toneOrder = left.tone.localeCompare(right.tone)
+  if (toneOrder !== 0) return toneOrder
+  return left.label.localeCompare(right.label)
+})
+
+export function getEffectsTone(settings: EffectsSettings): EffectsTone {
+  return getHexLuminance(settings.paletteBg) > 0.62 ? 'light' : 'dark'
+}
+
 export function createEffectsStyle(settings: EffectsSettings, scrollDepth: number): CSSProperties {
+  const tone = getEffectsTone(settings)
+  const activeText = tone === 'light' ? settings.paletteTextOnLight : settings.paletteTextOnDark
+  const bgRgb = hexToRgbTriplet(settings.paletteBg)
+  const panelRgb = hexToRgbTriplet(settings.palettePanel)
   const signalRgb = hexToRgbTriplet(settings.paletteSignal)
   const mutedRgb = hexToRgbTriplet(settings.paletteMuted)
   const glowRgb = hexToRgbTriplet(settings.paletteGlow)
   const support1Rgb = hexToRgbTriplet(settings.paletteSupport1)
   const support2Rgb = hexToRgbTriplet(settings.paletteSupport2)
   const support3Rgb = hexToRgbTriplet(settings.paletteSupport3)
-  const textRgb = hexToRgbTriplet(settings.paletteText)
+  const textRgb = hexToRgbTriplet(activeText)
+  const textOnDarkRgb = hexToRgbTriplet(settings.paletteTextOnDark)
+  const textOnLightRgb = hexToRgbTriplet(settings.paletteTextOnLight)
 
   return {
     '--fx-bg': settings.paletteBg,
+    '--fx-bg-rgb': bgRgb,
     '--fx-panel': settings.palettePanel,
-    '--fx-text': settings.paletteText,
+    '--fx-panel-rgb': panelRgb,
+    '--fx-text': activeText,
     '--fx-text-rgb': textRgb,
+    '--fx-text-on-dark': settings.paletteTextOnDark,
+    '--fx-text-on-dark-rgb': textOnDarkRgb,
+    '--fx-text-on-light': settings.paletteTextOnLight,
+    '--fx-text-on-light-rgb': textOnLightRgb,
     '--fx-signal': settings.paletteSignal,
     '--fx-signal-rgb': signalRgb,
     '--fx-muted': settings.paletteMuted,
@@ -632,4 +668,17 @@ function hexToRgbTriplet(hex: string) {
 
 function formatNumber(value: number) {
   return Number(value.toFixed(4)).toString()
+}
+
+function getHexLuminance(hex: string) {
+  const normalized = hex.replace('#', '')
+  const value = normalized.length === 3 ? normalized.split('').map((char) => `${char}${char}`).join('') : normalized
+  const numeric = Number.parseInt(value, 16)
+  if (!Number.isFinite(numeric)) return 0
+
+  const channels = [((numeric >> 16) & 255) / 255, ((numeric >> 8) & 255) / 255, (numeric & 255) / 255].map((channel) =>
+    channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  )
+
+  return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722
 }

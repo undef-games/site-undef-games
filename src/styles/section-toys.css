@@ -3,61 +3,64 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.42;
   overflow: hidden;
 }
 
 .section-toy span {
   position: absolute;
-  left: calc(4% + var(--scroll-depth, 0) * 12%);
-  right: 6%;
-  top: calc(10% + var(--toy-index, 0) * 6%);
-  height: 2px;
+  left: 0;
+  top: calc(8% + var(--toy-row, 0) * 10%);
+  width: var(--toy-width, 72px);
+  height: var(--toy-height, 2px);
   background: rgba(var(--fx-support-1-rgb, 216 255 53), 0.26);
-  transform: translateX(calc(110vw - var(--section-progress, 0) * 220vw));
+  transform:
+    translateX(calc(var(--toy-start, 90vw) - var(--section-progress, 0) * var(--toy-speed, 190vw)))
+    translateY(calc(var(--toy-drift, 1) * var(--section-progress, 0) * 38px))
+    rotate(calc(var(--toy-drift, 1) * var(--section-progress, 0) * 28deg));
+  transform-origin: center;
   border-radius: 0;
 }
 
-.section-toy span:nth-child(odd) {
-  width: 34%;
+.section-toy:not(.section-toy--identity) span:nth-child(odd) {
   background: rgba(var(--fx-muted-rgb, 244 244 240), 0.16);
 }
 
-.section-toy span:nth-child(3n) {
-  width: 58%;
+.section-toy:not(.section-toy--identity) span:nth-child(3n) {
   background: rgba(var(--fx-support-2-rgb, 216 255 53), 0.18);
-  transform: translateX(calc(104vw - var(--section-progress, 0) * 220vw));
 }
 
 .section-toy--system {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  align-items: end;
-  gap: 8px;
-  padding: 13% 8% 10% 60%;
   opacity: 0.38;
 }
 
 .section-toy--system span {
-  position: static;
-  width: auto;
-  height: calc(24px + (var(--scroll-depth, 0) * 80px));
+  left: auto;
+  right: calc(-18vw + var(--toy-row, 0) * 5vw);
+  top: auto;
+  bottom: calc(14% + (var(--toy-index, 0) % 4) * 4%);
+  width: 12px;
+  height: calc(44px + var(--toy-row, 0) * 13px);
   background: rgba(var(--fx-support-1-rgb, 216 255 53), 0.16);
   transform:
-    translateX(calc(112vw - var(--section-progress, 0) * 224vw))
-    translateY(calc(var(--scroll-depth, 0) * -22px));
+    translateX(calc(var(--section-progress, 0) * -76vw * var(--fx-rectangle-travel, 1)))
+    translateY(calc(var(--toy-drift, 1) * var(--section-progress, 0) * -34px))
+    rotate(calc(var(--toy-drift, 1) * var(--section-progress, 0) * 10deg));
 }
 
 .section-toy--system span:nth-child(odd) {
+  width: 16px;
   height: calc(54px + (var(--scroll-depth, 0) * 48px));
   background: rgba(var(--fx-support-3-rgb, 216 255 53), 0.14);
 }
 
-.section-toy--identity {
-  opacity: calc(0.28 * var(--fx-rectangle-opacity, 1));
+.section-toy--effect-tumble,
+.section-toy--effect-slab {
+  opacity: calc(0.38 * var(--fx-rectangle-opacity, 1));
 }
 
-.section-toy--identity span {
+.section-toy--effect-tumble span,
+.section-toy--effect-slab span {
   --identity-distance: 238vw;
   --identity-alpha-high: 0.94;
   --identity-alpha-low: 0.78;
@@ -84,11 +87,13 @@
   --identity-spin: 320deg;
   --identity-spin-start: -12deg;
   --identity-start: 112vw;
+  --identity-width: 220px;
+  --identity-height: 220px;
   left: auto;
   right: calc(10% + var(--scroll-depth, 0) * 8%);
   top: calc(10% + var(--toy-index, 0) * 6%);
-  width: 220px;
-  height: 220px;
+  width: var(--identity-width);
+  height: var(--identity-height);
   border: 2px solid rgb(var(--identity-border-rgb) / var(--identity-border-low-alpha));
   background-color: rgb(var(--identity-fill-rgb) / var(--identity-fill-low-alpha));
   box-shadow: 0 0 var(--identity-glow-low-size) rgb(var(--identity-glow-rgb) / var(--identity-glow-low-alpha));
@@ -111,25 +116,13 @@
   will-change: background-color, border-color, box-shadow, filter, opacity, transform;
 }
 
-.section-toy--identity span:nth-child(n + 5) {
+.section-toy--effect-tumble span:nth-child(n + 5),
+.section-toy--effect-slab span:nth-child(n + 5) {
   display: none;
 }
 
-.section-toy--identity span:nth-child(odd) {
-  width: 34%;
-}
-
-.section-toy--identity span:nth-child(3n) {
-  width: 58%;
-  transform:
-    translateX(
-      calc(var(--identity-start) - var(--section-progress, 0) * var(--identity-distance) * var(--fx-rectangle-travel, 1))
-    )
-    rotate(calc(var(--identity-spin-start) + var(--section-progress, 0) * var(--identity-spin) * var(--fx-rectangle-spin, 1)))
-    scale(var(--identity-scale));
-}
-
-.section-toy--identity span:nth-child(1) {
+.section-toy--effect-tumble span:nth-child(1),
+.section-toy--effect-slab span:nth-child(1) {
   --identity-distance: 252vw;
   --identity-alpha-high: 0.96;
   --identity-alpha-low: 0.76;
@@ -156,9 +149,12 @@
   --identity-spin: -310deg;
   --identity-spin-start: -8deg;
   --identity-start: 118vw;
+  --identity-width: 220px;
+  --identity-height: 220px;
 }
 
-.section-toy--identity span:nth-child(2) {
+.section-toy--effect-tumble span:nth-child(2),
+.section-toy--effect-slab span:nth-child(2) {
   --identity-distance: 232vw;
   --identity-alpha-high: 0.92;
   --identity-alpha-low: 0.72;
@@ -185,9 +181,12 @@
   --identity-spin: 430deg;
   --identity-spin-start: 16deg;
   --identity-start: 108vw;
+  --identity-width: 220px;
+  --identity-height: 220px;
 }
 
-.section-toy--identity span:nth-child(3) {
+.section-toy--effect-tumble span:nth-child(3),
+.section-toy--effect-slab span:nth-child(3) {
   --identity-distance: 264vw;
   --identity-alpha-high: 0.9;
   --identity-alpha-low: 0.7;
@@ -214,9 +213,15 @@
   --identity-spin: -235deg;
   --identity-spin-start: -18deg;
   --identity-start: 126vw;
+  --identity-width: 58%;
+  --identity-height: 220px;
+  left: 14%;
+  right: auto;
+  top: 31%;
 }
 
-.section-toy--identity span:nth-child(4) {
+.section-toy--effect-tumble span:nth-child(4),
+.section-toy--effect-slab span:nth-child(4) {
   --identity-distance: 242vw;
   --identity-alpha-high: 0.94;
   --identity-alpha-low: 0.74;
@@ -243,6 +248,17 @@
   --identity-spin: 560deg;
   --identity-spin-start: 28deg;
   --identity-start: 114vw;
+  --identity-width: 188px;
+  --identity-height: 188px;
+}
+
+.section-toy--effect-slab span:nth-child(odd) {
+  --identity-width: 34%;
+}
+
+.section-toy--effect-slab span:nth-child(3n) {
+  --identity-width: 58%;
+  --identity-height: 220px;
 }
 
 @keyframes identity-fill-pulse {

@@ -4,6 +4,7 @@ import {
   BASELINE_EFFECTS,
   EFFECTS_PRESETS,
   createEffectsStyle,
+  getEffectsTone,
   type EffectsPresetId,
   type EffectsSettings,
 } from '../station/effects-config'
@@ -11,7 +12,16 @@ import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
 import { StationSignalScene } from '../station/station-signal-scene'
 import { createStationState, detuneSignal, getStationStatus, resetSignal, tuneSignal } from '../station/station-state'
-import { ChannelSelector, PacketDrift, SectionToy, SignalScope, STATION_CHANNELS } from '../station/station-toys'
+import {
+  ChannelSelector,
+  PacketDrift,
+  SectionToy,
+  SignalScope,
+  STATION_CHANNELS,
+  type SectionEffectId,
+  type SectionEffects,
+  type SectionToyEffect,
+} from '../station/station-toys'
 
 const PRODUCT_LINKS = [
   {
@@ -37,12 +47,22 @@ const PRODUCT_LINKS = [
   },
 ]
 
+const DEFAULT_SECTION_EFFECTS: SectionEffects = {
+  dice: 'bars',
+  identity: 'tumble',
+  projects: 'bars',
+  signal: 'bars',
+  taybols: 'bars',
+  warp: 'bars',
+}
+
 export function AppShell() {
   const [stationState, setStationState] = useState(createStationState)
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
   const [effectsSettings, setEffectsSettings] = useState<EffectsSettings>(BASELINE_EFFECTS)
   const [activePresetId, setActivePresetId] = useState<EffectsPresetId | 'custom'>('current')
+  const [sectionEffects, setSectionEffects] = useState<SectionEffects>(DEFAULT_SECTION_EFFECTS)
   const status = getStationStatus(stationState)
 
   const tune = () => setStationState((current) => tuneSignal(current, 25))
@@ -57,6 +77,9 @@ export function AppShell() {
   const updateEffect = (key: keyof EffectsSettings, value: number | string) => {
     setEffectsSettings((current) => ({ ...current, [key]: value }))
     setActivePresetId('custom')
+  }
+  const updateSectionEffect = (sectionId: SectionEffectId, effect: SectionToyEffect) => {
+    setSectionEffects((current) => ({ ...current, [sectionId]: effect }))
   }
 
   useEffect(() => {
@@ -83,9 +106,18 @@ export function AppShell() {
   }, [])
 
   const landingStyle = createEffectsStyle(effectsSettings, scrollDepth)
+  const activeTone =
+    activePresetId === 'custom'
+      ? getEffectsTone(effectsSettings)
+      : (EFFECTS_PRESETS.find((preset) => preset.id === activePresetId)?.tone ?? getEffectsTone(effectsSettings))
 
   return (
-    <div className="station-shell" data-status={status.label.toLowerCase().replaceAll(' ', '-')} style={landingStyle}>
+    <div
+      className="station-shell"
+      data-status={status.label.toLowerCase().replaceAll(' ', '-')}
+      data-tone={activeTone}
+      style={landingStyle}
+    >
       <main className="landing-page">
         <section className="landing-hero" aria-label="undef games landing page">
           <div className="station-broadcast" aria-label="static station identity">
@@ -123,15 +155,17 @@ export function AppShell() {
             <EffectsControls
               activePresetId={activePresetId}
               settings={effectsSettings}
+              sectionEffects={sectionEffects}
               onChange={updateEffect}
               onPreset={applyEffectsPreset}
+              onSectionEffect={updateSectionEffect}
             />
             <StationIdentity state={stationState} />
           </aside>
         </section>
 
         <section className="landing-section landing-section--signal" id="signal" aria-label="signal behavior">
-          <SectionToy variant="signal" />
+          <SectionToy variant="signal" effect={sectionEffects.signal} />
           <p className="section-kicker">Interactive field</p>
           <h2>Scanlines react to the hand and the page.</h2>
           <p>
@@ -141,7 +175,7 @@ export function AppShell() {
         </section>
 
         <section className="landing-section landing-section--products" id="projects" aria-label="undef games projects">
-          <SectionToy variant="system" />
+          <SectionToy variant="system" effect={sectionEffects.projects} />
           <p className="section-kicker">Live routes</p>
           <h2>Actual projects on the network.</h2>
           <div className="product-link-list" aria-label="undef games project links">
@@ -156,7 +190,7 @@ export function AppShell() {
         </section>
 
         <section className="landing-section landing-section--warp" aria-label="TradeWars WARP Agent Runtime Platform">
-          <SectionToy variant="signal" />
+          <SectionToy variant="signal" effect={sectionEffects.warp} />
           <p className="section-kicker">Runtime platform</p>
           <h2>TradeWars: WARP Agent Runtime Platform.</h2>
           <p>Agents, automation, and operator surfaces for a live TradeWars environment.</p>
@@ -166,7 +200,7 @@ export function AppShell() {
         </section>
 
         <section className="landing-section landing-section--dice" aria-label="Undef Dice">
-          <SectionToy variant="system" />
+          <SectionToy variant="system" effect={sectionEffects.dice} />
           <p className="section-kicker">Table tools</p>
           <h2>Undef Dice keeps the table moving.</h2>
           <p>Dice and tabletop utilities that feel quick, readable, and useful during play.</p>
@@ -176,7 +210,7 @@ export function AppShell() {
         </section>
 
         <section className="landing-section landing-section--taybols" aria-label="Taybols">
-          <SectionToy variant="signal" />
+          <SectionToy variant="signal" effect={sectionEffects.taybols} />
           <p className="section-kicker">Game utilities</p>
           <h2>Taybols is where the smaller tools can stay strange.</h2>
           <p>Generators, table experiments, and playable oddities with room to become finished systems.</p>
@@ -186,7 +220,7 @@ export function AppShell() {
         </section>
 
         <section className="landing-section landing-section--identity" id="identity" aria-label="identity baseline">
-          <SectionToy variant="identity" />
+          <SectionToy variant="identity" effect={sectionEffects.identity} />
           <p className="section-kicker">Identity baseline</p>
           <h2>The mark stays quiet until the lockup needs it.</h2>
           <p>
