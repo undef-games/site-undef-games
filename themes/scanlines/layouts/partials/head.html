@@ -10,7 +10,10 @@
   <meta property="og:description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
   <meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
   <link rel="canonical" href="{{ .Permalink }}">
+  {{ $themeHydrate := resources.Get "ts/theme-hydrate.ts" | js.Build (dict "target" "es2020" "minify" hugo.IsProduction) -}}
+  <script>{{ $themeHydrate.Content | safeJS }}</script>
   <link rel="stylesheet" href="/css/scanlines.css">
+  <link rel="stylesheet" href="/css/chrome.css">
   {{ if .IsHome -}}
     <link rel="stylesheet" href="/lab/assets/style.css">
   {{- end }}

@@ -51,8 +51,59 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
     await expect(page.getByRole('heading', { name: route.heading })).toBeVisible()
     await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
     await expect(page.getByRole('link', { name: /open lab/i })).toHaveAttribute('href', '/lab/')
+    await expect(page.getByRole('contentinfo')).toContainText(/undef\.games/i)
     await expect(page.getByLabel('effects controls')).toHaveCount(0)
   }
+})
+
+test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      'undef-logos-theme',
+      JSON.stringify({
+        activeTone: 'light',
+        scanlineLayers: { crt: false, glitch: false, graph: false },
+        sectionEffects: {
+          dice: 'bars',
+          identity: 'tumble',
+          projects: 'tumble',
+          signal: 'bars',
+          taybols: 'bars',
+          warp: 'tumble',
+        },
+        tones: {
+          dark: { presetId: 'current', settings: {} },
+          light: {
+            presetId: 'custom',
+            settings: {
+              paletteBg: '#f4f0df',
+              paletteGlow: '#b0d000',
+              paletteMuted: '#11130d',
+              palettePanel: '#ddd7c1',
+              paletteSignal: '#405500',
+              paletteSupport1: '#b0d000',
+              paletteSupport2: '#213019',
+              paletteSupport3: '#f8fbef',
+              paletteText: '#11130d',
+              paletteTextOnDark: '#f4f4f0',
+              paletteTextOnLight: '#11130d',
+            },
+          },
+        },
+        version: 1,
+      }),
+    )
+  })
+
+  await page.goto('/games/')
+
+  await expect(page.locator('html')).toHaveAttribute('data-scan-tone', 'light')
+  await expect
+    .poll(() => page.locator('.site-header__mark').evaluate((element) => getComputedStyle(element).color))
+    .toBe('rgb(64, 85, 0)')
+  await expect
+    .poll(() => page.locator('.scan-footer p').evaluate((element) => getComputedStyle(element).color))
+    .toBe('rgb(17, 19, 13)')
 })
 
 test('keeps the site header responsive without pinning controls to wide viewport edges', async ({ page }) => {
@@ -61,6 +112,7 @@ test('keeps the site header responsive without pinning controls to wide viewport
 
   const brandBox = await page.locator('.site-header__brand').boundingBox()
   const loginBox = await page.getByRole('link', { name: /log in/i }).boundingBox()
+  const navBox = await page.getByRole('navigation', { name: /primary/i }).boundingBox()
   const heroTextInset = await page.locator('.station-hero').evaluate((element) => {
     const rect = element.getBoundingClientRect()
     const style = getComputedStyle(element)
@@ -68,8 +120,11 @@ test('keeps the site header responsive without pinning controls to wide viewport
   })
   expect(brandBox).not.toBeNull()
   expect(loginBox).not.toBeNull()
+  expect(navBox).not.toBeNull()
   expect(Math.abs(brandBox!.x - heroTextInset)).toBeLessThanOrEqual(8)
-  expect(loginBox!.x + loginBox!.width).toBeLessThan(heroTextInset + 720)
+  expect(navBox!.x - brandBox!.x).toBeGreaterThan(150)
+  expect(loginBox!.x - navBox!.x).toBeGreaterThan(360)
+  expect(loginBox!.x + loginBox!.width).toBeLessThan(heroTextInset + 1180)
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.reload()
@@ -87,4 +142,5 @@ test('serves the interactive lab below /lab/', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /undef games/i })).toBeVisible()
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-renderer', 'pixijs')
   await expect(page.getByLabel('effects controls')).toBeVisible()
+  await expect(page.getByRole('link', { name: /go home/i })).toHaveAttribute('href', '/')
 })

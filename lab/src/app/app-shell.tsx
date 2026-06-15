@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { EffectsControls } from '../station/effects-controls'
 import {
   EFFECTS_PRESETS,
-  createEffectsStyle,
   type EffectsPresetId,
   type EffectsSettings,
   type EffectsTone,
 } from '../station/effects-config'
+import { createEffectsStyle } from '../station/effects-style'
 import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
 import { StationSignalScene } from '../station/station-signal-scene'
@@ -328,6 +328,15 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
           </a>
         </section>
       </main>
+      {!isSiteSurface && (
+        <a className="home-quick-link" href="/" aria-label="Go home">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+            <path d="M4 11.5 12 4l8 7.5" />
+            <path d="M6.5 10.5V20h11v-9.5" />
+            <path d="M10 20v-5h4v5" />
+          </svg>
+        </a>
+      )}
     </div>
   )
 }

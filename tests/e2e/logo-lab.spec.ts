@@ -376,6 +376,14 @@ test('persists separate lab themes and hydrates the production surface', async (
   await page.goto('/')
   await expect(page.locator('.station-shell')).toHaveAttribute('data-surface', 'site')
   await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
+  await expect
+    .poll(() => page.locator('.hero-ghost-glyph').evaluate((element) => getComputedStyle(element).mixBlendMode))
+    .toBe('multiply')
+  await expect
+    .poll(() =>
+      page.locator('.hero-ghost-glyph').evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity)),
+    )
+    .toBeGreaterThanOrEqual(0.16)
   await expect(page.getByLabel('effects controls')).toHaveCount(0)
 
   await page.goto('/lab/')
