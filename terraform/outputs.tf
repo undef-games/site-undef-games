@@ -3,12 +3,25 @@ output "pages_subdomain" {
   value       = cloudflare_pages_project.undef_logos.subdomain
 }
 
-output "custom_domain" {
-  description = "Public custom domain attached to the Pages project."
-  value       = cloudflare_pages_domain.prod.name
+output "hosted_domains" {
+  description = "Custom hostnames attached to the Pages project."
+  value = {
+    for key, domain in cloudflare_pages_domain.hostnames :
+    key => domain.name
+  }
 }
 
-output "site_url" {
-  description = "User-facing URL once DNS propagates."
-  value       = "https://${var.subdomain}"
+output "site_urls" {
+  description = "User-facing URLs for the Pages project."
+  value       = local.site_urls
+}
+
+output "logos_site_url" {
+  description = "Primary logos site URL."
+  value       = local.site_urls.logos
+}
+
+output "apex_site_url" {
+  description = "Apex site URL."
+  value       = local.site_urls.apex
 }

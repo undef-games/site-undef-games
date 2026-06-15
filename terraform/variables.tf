@@ -5,21 +5,27 @@ variable "cloudflare_account_id" {
 }
 
 variable "project_name" {
-  description = "Cloudflare Pages project name (also wrangler --project-name)."
+  description = "Cloudflare Pages project name, also used by wrangler --project-name."
   type        = string
   default     = "undef-logos"
 }
 
 variable "root_zone" {
-  description = "The DNS zone that hosts the subdomain."
+  description = "Cloudflare DNS zone that hosts the production Pages custom domains."
   type        = string
   default     = "undef.games"
 }
 
-variable "subdomain" {
-  description = "Fully-qualified subdomain to attach to the Pages project."
+variable "logos_domain" {
+  description = "Primary logos hostname to attach to the Pages project."
   type        = string
   default     = "logos.undef.games"
+}
+
+variable "apex_domain" {
+  description = "Apex hostname to attach to the same Pages project."
+  type        = string
+  default     = "undef.games"
 }
 
 variable "production_branch" {
@@ -28,8 +34,20 @@ variable "production_branch" {
   default     = "main"
 }
 
-variable "auto_deploy" {
-  description = "If true, run `npm run build` and `wrangler pages deploy` after infra is created/updated."
-  type        = bool
-  default     = true
+variable "site_build_command" {
+  description = "Cloudflare Pages build command for the Hugo and lab artifact."
+  type        = string
+  default     = "make build"
+}
+
+variable "site_destination_dir" {
+  description = "Cloudflare Pages output directory produced by the build command."
+  type        = string
+  default     = "public"
+}
+
+variable "site_root_dir" {
+  description = "Cloudflare Pages root directory for builds."
+  type        = string
+  default     = "/"
 }

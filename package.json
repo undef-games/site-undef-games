@@ -6,7 +6,8 @@
   "scripts": {
     "build": "make build",
     "deploy": "make deploy",
-    "preview": "make preview",
+    "preview": "make deploy-preview",
+    "deploy-preview": "make deploy-preview",
     "e2e": "make e2e",
     "test:lab": "make test",
     "typecheck:lab": "make typecheck"

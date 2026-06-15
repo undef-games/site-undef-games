@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy preview test typecheck e2e
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -42,8 +42,10 @@ test: install-lab ## Run lab unit tests
 e2e: install-root build ## Run the current Playwright suite
 	@./node_modules/.bin/playwright test
 
-deploy: install-root build ## Build then deploy to Cloudflare Pages production
+deploy: install-root build ## Build then deploy public/ to Cloudflare Pages production
 	@./node_modules/.bin/wrangler pages deploy public --project-name=undef-logos --branch=main
 
-preview: install-root build ## Build then deploy to a Cloudflare Pages preview URL
-	@./node_modules/.bin/wrangler pages deploy public --project-name=undef-logos
+deploy-preview: install-root build ## Build then deploy public/ to a Cloudflare Pages staging preview URL
+	@./node_modules/.bin/wrangler pages deploy public --project-name=undef-logos --branch=staging
+
+preview: deploy-preview ## Alias for deploy-preview
