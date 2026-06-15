@@ -1,8 +1,11 @@
-node_modules
+node_modules/
+lab/node_modules/
 dist
 public/
-playwright-report
-test-results
+lab/dist/
+playwright-report/
+test-results/
 .DS_Store
 .superpowers/
 .worktrees/
+.hugo_build.lock
