@@ -1,11 +1,16 @@
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { readSiteSurfaceCopy, type SiteSurfaceCopy } from './site-copy-site'
 
-const builtHomepageHtml = readFileSync(resolve(process.cwd(), '../public/index.html'), 'utf8')
+const testFilePath = import.meta.url.startsWith('file:')
+  ? fileURLToPath(import.meta.url)
+  : import.meta.url
+const builtHomepagePath = resolve(dirname(testFilePath), '../../../public/index.html')
+const builtHomepageHtml = readFileSync(builtHomepagePath, 'utf8')
 const builtPayloadMatch = builtHomepageHtml.match(
-  /<script id=site-copy-data type=application\/json>([\s\S]*?)<\/script>/i,
+  /<script[^>]*id=["']?site-copy-data["']?[^>]*type=["']?application\/json["']?[^>]*>([\s\S]*?)<\/script>/i,
 )
 
 if (!builtPayloadMatch) {
