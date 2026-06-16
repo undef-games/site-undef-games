@@ -6,6 +6,7 @@ import {
   buildScanlineFrame,
   sampleAuditTrace,
   sampleBrokenTrace,
+  samplePulseTrace,
   sampleSineTrace,
   sampleStraightTrace,
 } from './scanline-renderer'
@@ -33,6 +34,16 @@ describe('scanline-renderer', () => {
     expect(signatures.sine).toEqual([40, 50, 50, 40, 30, 30, 40])
     expect(signatures.audit).toEqual([29, 29, 40, 51, 51, 40, 29])
     expect(signatures.broken).toEqual([34, 49, 44, 39, 29, 44, 51])
+  })
+
+  it('shifts broken and pulse waveforms when phase changes', () => {
+    const brokenA = sampleBrokenTrace(SAMPLE_INPUT).flatMap((point) => (point ? [Math.round(point.y)] : []))
+    const brokenB = sampleBrokenTrace({ ...SAMPLE_INPUT, phase: 0.25 }).flatMap((point) => (point ? [Math.round(point.y)] : []))
+    const pulseA = samplePulseTrace(SAMPLE_INPUT).flatMap((point) => (point ? [Math.round(point.y)] : []))
+    const pulseB = samplePulseTrace({ ...SAMPLE_INPUT, phase: 0.25 }).flatMap((point) => (point ? [Math.round(point.y)] : []))
+
+    expect(brokenB).not.toEqual(brokenA)
+    expect(pulseB).not.toEqual(pulseA)
   })
 
   it('builds planned base and layer traces without drawing directly', () => {

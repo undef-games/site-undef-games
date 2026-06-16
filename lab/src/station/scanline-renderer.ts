@@ -79,16 +79,16 @@ export function sampleAuditTrace(input: TraceSampleInput): TracePoint[] {
 
 export function sampleBrokenTrace(input: TraceSampleInput): TracePoint[] {
   const profile = [0, 7 / 6, -0.5, 0.5, -1, 0, 1]
-  return buildTracePoints(input, ({ index, sampleCount, stepSharpness }) => {
-    const stepped = profile[mapProfileIndex(index, sampleCount, profile.length)]
-    const smooth = Math.sin(((index / Math.max(1, sampleCount - 1)) * TAU * 1.5) - TAU / 6)
+  return buildTracePoints(input, ({ phaseTurns, stepSharpness, t }) => {
+    const stepped = profile[mapProfileIndexFromTurns(t, phaseTurns, profile.length)]
+    const smooth = Math.sin(((t + phaseTurns) * TAU * 1.5) - TAU / 6)
     return mix(smooth, stepped, 0.4 + stepSharpness * 0.6)
   })
 }
 
 export function samplePulseTrace(input: TraceSampleInput): TracePoint[] {
   const profile = [0, 0, 1.5, 0, -1.5, 0, 0]
-  return buildTracePoints(input, ({ index, sampleCount }) => profile[mapProfileIndex(index, sampleCount, profile.length)])
+  return buildTracePoints(input, ({ phaseTurns, t }) => profile[mapProfileIndexFromTurns(t, phaseTurns, profile.length)])
 }
 
 export function buildBasePatternTraces(input: BuildBasePatternTracesInput): PlannedTrace[] {
@@ -206,6 +206,7 @@ function buildTracePoints(
   getNormalizedOffset: (context: {
     angle: number
     index: number
+    phaseTurns: number
     sampleCount: number
     stepSharpness: number
     t: number
@@ -213,6 +214,7 @@ function buildTracePoints(
 ): TracePoint[] {
   const sampleCount = Math.max(2, Math.round(input.sampleCount ?? 33))
   const phase = input.phase * TAU
+  const phaseTurns = normalizeTurns(input.phase)
   const stepSharpness = clamp(input.stepSharpness ?? 0, 0, 1)
   const dashLength = Math.max(0, input.dashLength ?? 0)
   const gapLength = Math.max(0, input.gapLength ?? 0)
@@ -236,7 +238,7 @@ function buildTracePoints(
     return {
       x: t * input.width,
       y: clamp(
-        input.baseY + getNormalizedOffset({ angle, index, sampleCount, stepSharpness, t }) * input.amplitude + jitterOffset,
+        input.baseY + getNormalizedOffset({ angle, index, phaseTurns, sampleCount, stepSharpness, t }) * input.amplitude + jitterOffset,
         0,
         input.height,
       ),
@@ -249,6 +251,13 @@ function mapProfileIndex(index: number, sampleCount: number, profileLength: numb
   return Math.round((index / (sampleCount - 1)) * (profileLength - 1))
 }
 
+function mapProfileIndexFromTurns(t: number, phaseTurns: number, profileLength: number) {
+  const rawTurns = t + phaseTurns
+  const wrapped = ((rawTurns % 1) + 1) % 1
+  const shifted = wrapped === 0 && rawTurns > 0 ? 1 : wrapped
+  return Math.round(shifted * (profileLength - 1))
+}
+
 function mix(a: number, b: number, weight: number) {
   const clampedWeight = clamp(weight, 0, 1)
   return a * (1 - clampedWeight) + b * clampedWeight
@@ -256,4 +265,8 @@ function mix(a: number, b: number, weight: number) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
+}
+
+function normalizeTurns(value: number) {
+  return ((value % 1) + 1) % 1
 }
