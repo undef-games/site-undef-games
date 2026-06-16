@@ -31,13 +31,48 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   )
   expect(payloadMatch, 'homepage should embed serialized site copy').not.toBeNull()
   const payload = JSON.parse(payloadMatch?.[1] ?? '{}')
-  expect(payload).toEqual(
-    expect.objectContaining({
-      hero: expect.any(Object),
-      sections: expect.any(Object),
-      projects: expect.any(Array),
-    }),
+  expect(payload).toMatchObject({
+    hero: {
+      kicker: 'CH 00 / SIGNAL FIELD',
+      title: 'undef games',
+      support: 'Indie developer building game tools and systems for fun shared experiences online and off.',
+      primaryAction: {
+        href: 'https://warp.undef.games',
+        label: 'Explore WARP',
+      },
+      secondaryAction: {
+        href: '#projects',
+        label: 'View projects',
+      },
+      statusLabel: 'Shared play, digital and physical.',
+    },
+    sections: {
+      projects: {
+        kicker: 'Live routes',
+        title: 'Projects built to be used, watched, and played with.',
+      },
+      identity: {
+        kicker: 'Company baseline',
+        title: 'Good systems should make shared play easier to reach.',
+        body: 'undef games builds the technical side of play so people can gather, operate, and have fun across digital and physical spaces.',
+      },
+    },
+  })
+  expect(payload.projects).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        href: 'https://warp.undef.games',
+        label: 'TradeWars: WARP Agent Runtime Platform',
+        tag: 'warp',
+      }),
+    ]),
   )
+  expect(payload.hero).not.toHaveProperty('copy')
+  expect(payload.hero).not.toHaveProperty('primary_href')
+  expect(payload.hero).not.toHaveProperty('primary_label')
+  expect(payload.hero).not.toHaveProperty('secondary_href')
+  expect(payload.hero).not.toHaveProperty('secondary_label')
+  expect(payload.sections.identity).not.toHaveProperty('copy')
   await expect(page.getByText(/indie developer building game tools and systems/i)).toBeVisible()
   await expect(page.getByLabel('landing actions').getByRole('link', { name: /explore warp/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')

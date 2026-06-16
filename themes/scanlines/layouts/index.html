@@ -11,11 +11,24 @@
     "identity" (dict
       "kicker" $identity.kicker
       "title" $identity.title
-      "copy" $identity.copy
+      "body" $identity.copy
     )
   }}
   {{ $siteCopy := dict
-    "hero" $hero
+    "hero" (dict
+      "kicker" $hero.kicker
+      "title" $hero.title
+      "support" $hero.copy
+      "primaryAction" (dict
+        "href" $hero.primary_href
+        "label" $hero.primary_label
+      )
+      "secondaryAction" (dict
+        "href" $hero.secondary_href
+        "label" $hero.secondary_label
+      )
+      "statusLabel" "Shared play, digital and physical."
+    )
     "sections" $sections
     "projects" $products
   }}
