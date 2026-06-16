@@ -16,9 +16,10 @@ const builtPayloadMatch = builtHomepageHtml.match(
 if (!builtPayloadMatch) {
   throw new Error('public/index.html is missing embedded site-copy-data')
 }
+const builtPayloadJson = builtPayloadMatch[1]
 
 function createValidPayload() {
-  return JSON.parse(builtPayloadMatch[1]) as SiteSurfaceCopy
+  return JSON.parse(builtPayloadJson) as SiteSurfaceCopy
 }
 
 function mountSiteCopyScript(payload: unknown, type = 'application/json') {
@@ -79,7 +80,7 @@ describe('site copy loader', () => {
 
   it('returns null when the embedded payload omits required hero fields', () => {
     const payload = createValidPayload()
-    delete payload.hero.secondaryAction
+    payload.hero = (({ secondaryAction: _removed, ...hero }) => hero)(payload.hero) as never
     mountSiteCopyScript(payload)
 
     expect(readSiteSurfaceCopy()).toBeNull()
@@ -87,7 +88,7 @@ describe('site copy loader', () => {
 
   it('returns null when a project omits its required class name', () => {
     const payload = createValidPayload()
-    delete payload.projects[0].className
+    payload.projects[0] = (({ className: _removed, ...project }) => project)(payload.projects[0]) as never
     mountSiteCopyScript(payload)
 
     expect(readSiteSurfaceCopy()).toBeNull()

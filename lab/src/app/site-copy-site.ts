@@ -65,7 +65,8 @@ function isSectionCopy(value: unknown): value is SectionCopy {
 }
 
 function isBodySectionCopy(value: unknown): value is BodySectionCopy {
-  return isSectionCopy(value) && typeof value.body === 'string'
+  if (!isRecord(value) || !isSectionCopy(value)) return false
+  return 'body' in value && typeof value.body === 'string'
 }
 
 function isSiteSurfaceSections(value: unknown): value is SiteSurfaceSections {
