@@ -56,6 +56,32 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
   }
 })
 
+test('keeps the home mark alive with a subtle theme chase', async ({ page }) => {
+  await page.goto('/games/')
+
+  const mark = page.locator('.site-header__mark')
+  await expect(mark).toBeVisible()
+  await expect
+    .poll(() =>
+      mark.evaluate((element) => {
+        const style = getComputedStyle(element, '::before')
+        return {
+          animationDuration: style.animationDuration,
+          animationName: style.animationName,
+          backgroundImage: style.backgroundImage,
+        }
+      }),
+    )
+    .toMatchObject({
+      animationDuration: '8s',
+      animationName: 'ug-mark-chase',
+      backgroundImage: expect.stringContaining('conic-gradient'),
+    })
+  await expect
+    .poll(() => mark.evaluate((element) => getComputedStyle(element).boxShadow))
+    .not.toBe('none')
+})
+
 test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem(

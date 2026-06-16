@@ -38,14 +38,68 @@
 }
 
 .site-header__mark {
+  position: relative;
   display: grid;
   width: 34px;
   height: 34px;
   place-items: center;
-  border: 1px solid rgb(var(--fx-signal-rgb, 216 255 53) / 0.68);
-  background: rgb(var(--fx-signal-rgb, 216 255 53) / 0.12);
+  overflow: hidden;
+  border: 1px solid rgb(var(--fx-signal-rgb, 216 255 53) / 0.5);
+  background: transparent;
+  box-shadow:
+    0 0 calc(10px * var(--fx-glow-strength, 1)) rgb(var(--fx-signal-rgb, 216 255 53) / 0.14),
+    inset 0 0 0 1px rgb(var(--fx-muted-rgb, 244 244 240) / 0.08);
   color: var(--scan-signal);
   font-size: 11px;
+  isolation: isolate;
+}
+
+.site-header__mark::before,
+.site-header__mark::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.site-header__mark::before {
+  z-index: -2;
+  inset: -88%;
+  background: conic-gradient(
+    from 0deg,
+    rgb(var(--fx-signal-rgb, 216 255 53) / 0.48),
+    rgb(var(--fx-support-1-rgb, 216 255 53) / 0.08) 28%,
+    rgb(var(--fx-support-2-rgb, 216 255 53) / 0.36) 48%,
+    rgb(var(--fx-support-3-rgb, 216 255 53) / 0.06) 62%,
+    rgb(var(--fx-signal-rgb, 216 255 53) / 0.48)
+  );
+  animation: ug-mark-chase 8s linear infinite;
+}
+
+.site-header__mark::after {
+  z-index: -1;
+  inset: 2px;
+  background:
+    linear-gradient(135deg, rgb(var(--fx-signal-rgb, 216 255 53) / 0.09), transparent 58%),
+    rgb(var(--fx-bg-rgb, 5 6 7) / 0.82);
+}
+
+.site-header__brand:hover .site-header__mark,
+.site-header__brand:focus-visible .site-header__mark {
+  border-color: rgb(var(--fx-signal-rgb, 216 255 53) / 0.68);
+  box-shadow:
+    0 0 calc(16px * var(--fx-glow-strength, 1)) rgb(var(--fx-signal-rgb, 216 255 53) / 0.22),
+    inset 0 0 0 1px rgb(var(--fx-signal-rgb, 216 255 53) / 0.14);
+}
+
+.site-header__brand:hover .site-header__mark::before,
+.site-header__brand:focus-visible .site-header__mark::before {
+  animation-duration: 5.5s;
+}
+
+@keyframes ug-mark-chase {
+  to {
+    transform: rotate(1turn);
+  }
 }
 
 .site-header__nav {
@@ -245,5 +299,11 @@ html[data-scan-tone='light'] .theme-quick-toggle__icon--moon {
 
   .scan-footer small {
     justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__mark::before {
+    animation: none;
   }
 }
