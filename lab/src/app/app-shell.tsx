@@ -330,6 +330,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
           <div ref={stationBroadcastRef} className="station-broadcast" aria-label="static station identity">
             <StationSignalScene
               state={stationState}
+              scanlineEngine={scanlineEngine}
               scrollDepth={scrollDepth}
               channelMode={activeChannel.mode}
               effects={effectsSettings}

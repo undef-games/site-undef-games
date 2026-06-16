@@ -77,6 +77,47 @@ describe('AppShell', () => {
     expect(shell).toHaveAttribute('data-scan-crt', 'true')
   })
 
+  it('passes persisted scanline engine state into the scene metadata', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...createDefaultThemeState(),
+        scanlineEngine: {
+          basePattern: 'audit',
+          layers: [
+            {
+              amplitude: 0.4,
+              blendMode: 'screen',
+              dashLength: 0,
+              enabled: true,
+              frequency: 1,
+              gapLength: 0,
+              id: 'layer-a',
+              jitter: 0,
+              kind: 'sine',
+              opacity: 0.6,
+              phase: 0,
+              pointerCoupling: 0,
+              role: 'advanced',
+              scrollCoupling: 0,
+              spacingInfluence: 0.5,
+              speed: 0,
+              stepSharpness: 0.5,
+              thickness: 1,
+              verticalOffset: 0,
+            },
+          ],
+        },
+      }),
+    )
+
+    render(<AppShell />)
+
+    const scene = screen.getByLabelText(/interactive station signal/i)
+    expect(scene).toHaveAttribute('data-scanline-base-pattern', 'audit')
+    expect(scene).toHaveAttribute('data-scanline-layer-count', '1')
+  })
+
   it('saves separate dark and light theme choices and clears them with reset theme', async () => {
     const user = userEvent.setup()
     render(<AppShell />)

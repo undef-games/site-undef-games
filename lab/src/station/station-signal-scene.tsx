@@ -2,17 +2,21 @@ import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
 import { BASELINE_EFFECTS, type EffectsSettings } from './effects-config'
 import { hexToPixiColor } from './effects-style'
+import type { ScanlineEngineState } from './scanline-engine'
+import { buildScanlineFrame } from './scanline-renderer'
 import { getStationStatus, type StationState } from './station-state'
 
 export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
 
 export function StationSignalScene({
   state,
+  scanlineEngine,
   scrollDepth = 0,
   channelMode = 'baseline',
   effects = BASELINE_EFFECTS,
 }: {
   state: StationState
+  scanlineEngine: ScanlineEngineState
   scrollDepth?: number
   channelMode?: ChannelMode
   effects?: EffectsSettings
@@ -21,6 +25,7 @@ export function StationSignalScene({
   const plan = getSignalFieldPlan(state.signal, channelMode)
   const hostRef = useRef<HTMLDivElement>(null)
   const signalRef = useRef(state.signal)
+  const scanlineEngineRef = useRef(scanlineEngine)
   const scrollDepthRef = useRef(scrollDepth)
   const channelModeRef = useRef(channelMode)
   const effectsRef = useRef(effects)
@@ -28,6 +33,10 @@ export function StationSignalScene({
   useEffect(() => {
     signalRef.current = state.signal
   }, [state.signal])
+
+  useEffect(() => {
+    scanlineEngineRef.current = scanlineEngine
+  }, [scanlineEngine])
 
   useEffect(() => {
     scrollDepthRef.current = scrollDepth
@@ -79,6 +88,7 @@ export function StationSignalScene({
           graphics,
           app,
           signalRef.current,
+          scanlineEngineRef.current,
           pointer,
           scrollDepthRef.current,
           channelModeRef.current,
@@ -120,6 +130,7 @@ export function StationSignalScene({
             graphics,
             app,
             signalRef.current,
+            scanlineEngineRef.current,
             pointer,
             scrollDepthRef.current,
             channelModeRef.current,
@@ -151,6 +162,8 @@ export function StationSignalScene({
       data-resize-mode="observer"
       data-channel-mode={channelMode}
       data-pointer-active="false"
+      data-scanline-base-pattern={scanlineEngine.basePattern}
+      data-scanline-layer-count={scanlineEngine.layers.length}
       data-scroll-depth={scrollDepth}
       data-signal={state.signal}
       data-status={status.label}
@@ -194,6 +207,7 @@ function drawSignalField(
   graphics: Graphics,
   app: Application,
   signal: number,
+  scanlineEngine: ScanlineEngineState,
   pointer: { active: boolean; x: number; y: number },
   scrollDepth: number,
   channelMode: ChannelMode,
@@ -214,6 +228,7 @@ function drawSignalField(
   const mutedColor = hexToPixiColor(effects.paletteMuted)
   const backgroundColor = hexToPixiColor(effects.paletteBg)
   const activeColors = [signalColor, support1Color, support2Color, support3Color]
+  const traceColors = [signalColor, support1Color, support2Color, support3Color]
   const driftX =
     pointer.x *
     width *
@@ -249,6 +264,33 @@ function drawSignalField(
         : (0.028 + pointerBand * 0.06) * effects.scanOpacity,
     })
   }
+
+  const frame = buildScanlineFrame({
+    engine: scanlineEngine,
+    height,
+    pointer,
+    scrollDepth,
+    signal,
+    time,
+    width,
+  })
+
+  frame.traces.forEach((trace, index) => {
+    const firstPoint = trace.points[0]
+    if (!firstPoint) return
+
+    graphics.moveTo(firstPoint.x + driftX, firstPoint.y)
+    for (let pointIndex = 1; pointIndex < trace.points.length; pointIndex += 1) {
+      const point = trace.points[pointIndex]
+      if (!point) continue
+      graphics.lineTo(point.x + driftX, point.y)
+    }
+    graphics.stroke({
+      alpha: trace.opacity * effects.scanOpacity,
+      color: traceColors[index % traceColors.length],
+      width: trace.thickness,
+    })
+  })
 
   const noiseCount = Math.round((130 + profile.noise) * Math.max(0.05, effects.noiseAmount))
   for (let index = 0; index < noiseCount; index += 1) {
