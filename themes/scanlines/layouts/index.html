@@ -1,5 +1,6 @@
 {{ define "main" }}
   {{ $hero := hugo.Data.site.home.hero }}
+  {{ $productsIntro := hugo.Data.site.home.products_intro }}
   {{ $products := hugo.Data.site.home.products }}
   {{ $identity := hugo.Data.site.home.identity }}
   <div id="scanlines-root">
@@ -14,8 +15,8 @@
         </nav>
       </section>
       <section class="scan-fallback__section" id="projects" aria-label="undef games projects">
-        <p class="scan-fallback__kicker">Live routes</p>
-        <h2>Projects built to be used, watched, and played with.</h2>
+        <p class="scan-fallback__kicker">{{ $productsIntro.kicker }}</p>
+        <h2>{{ $productsIntro.title }}</h2>
         <div class="scan-fallback__products">
           {{ range $products }}
             <a href="{{ .href }}">

@@ -8,6 +8,10 @@
     "secondary_label": "View projects",
     "secondary_href": "#projects"
   },
+  "products_intro": {
+    "kicker": "Live routes",
+    "title": "Projects built to be used, watched, and played with."
+  },
   "products": [
     {
       "tag": "warp",
