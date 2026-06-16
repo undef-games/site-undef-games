@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { EffectsControls } from '../station/effects-controls'
+import { PROMINENT_ENTRANCE_CONFIGS } from '../prominent/prominent-config'
+import { ProminentEntrance } from '../prominent/prominent-entrance'
+import { resetProminentEntrances } from '../prominent/prominent-storage'
 import {
   EFFECTS_PRESETS,
   type EffectsPresetId,
@@ -29,6 +32,7 @@ import {
   type ScanlineLayerId,
   type ThemeState,
 } from '../store/persistence'
+import { attachButtonPressFeedback } from '../ui/button-press-feedback'
 
 const PRODUCT_LINKS = [
   {
@@ -71,6 +75,9 @@ function resolveLabBackHref() {
 export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const isSiteSurface = surface === 'site'
   const [labBackHref, setLabBackHref] = useState('/')
+  const [prominentReplaySeed, setProminentReplaySeed] = useState(0)
+  const [prominentOriginReady, setProminentOriginReady] = useState(false)
+  const [prominentOrigin, setProminentOrigin] = useState({ bottom: '50vh', left: '50vw' })
   const [stationState, setStationState] = useState(() => createStationState({ signal: isSiteSurface ? 50 : 0 }))
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
@@ -82,6 +89,8 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const sectionEffects = themeState.sectionEffects
   const scanlineLayers = themeState.scanlineLayers
   const effectsSettingsRef = useRef(effectsSettings)
+  const stationBroadcastRef = useRef<HTMLDivElement | null>(null)
+  const stationSidebarRef = useRef<HTMLElement | null>(null)
   const status = getStationStatus(stationState)
 
   const tune = () => setStationState((current) => tuneSignal(current, 25))
@@ -143,6 +152,10 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
     clearThemeState()
     setThemeState(createDefaultThemeState())
   }
+  const resetProminent = () => {
+    resetProminentEntrances([PROMINENT_ENTRANCE_CONFIGS.labBack])
+    setProminentReplaySeed((current) => current + 1)
+  }
 
   useEffect(() => {
     effectsSettingsRef.current = effectsSettings
@@ -151,6 +164,38 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   useEffect(() => {
     if (!isSiteSurface) setLabBackHref(resolveLabBackHref())
   }, [isSiteSurface])
+
+  useLayoutEffect(() => {
+    const broadcast = stationBroadcastRef.current
+    if (!broadcast) return
+
+    const updateProminentOrigin = () => {
+      const rect = broadcast.getBoundingClientRect()
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
+      setProminentOrigin({
+        bottom: `${Math.max(0, window.innerHeight - centerY)}px`,
+        left: `${centerX}px`,
+      })
+      setProminentOriginReady(rect.width > 0 && rect.height > 0)
+    }
+
+    updateProminentOrigin()
+
+    const observer = new ResizeObserver(updateProminentOrigin)
+    observer.observe(broadcast)
+    window.addEventListener('resize', updateProminentOrigin)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateProminentOrigin)
+    }
+  }, [])
+
+  useEffect(() => {
+    const sidebar = stationSidebarRef.current
+    if (!sidebar) return
+    return attachButtonPressFeedback(sidebar)
+  }, [])
 
   useEffect(() => {
     const syncThemeState = () => {
@@ -216,6 +261,11 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
 
   const landingStyle = createEffectsStyle(effectsSettings, scrollDepth)
   const activeTone = themeState.activeTone
+  const shellStyle = {
+    ...landingStyle,
+    '--prominent-origin-bottom': prominentOrigin.bottom,
+    '--prominent-origin-left': prominentOrigin.left,
+  } as CSSProperties
 
   return (
     <div
@@ -226,11 +276,11 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
       data-surface={surface}
       data-status={status.label.toLowerCase().replaceAll(' ', '-')}
       data-tone={activeTone}
-      style={landingStyle}
+      style={shellStyle}
     >
       <main className="landing-page">
         <section className="landing-hero" aria-label="undef games landing page">
-          <div className="station-broadcast" aria-label="static station identity">
+          <div ref={stationBroadcastRef} className="station-broadcast" aria-label="static station identity">
             <StationSignalScene
               state={stationState}
               scrollDepth={scrollDepth}
@@ -263,7 +313,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
             </div>
           </div>
           {!isSiteSurface && (
-            <aside className="station-sidebar" aria-label="station tools and identity">
+            <aside ref={stationSidebarRef} className="station-sidebar" aria-label="station tools and identity">
               <StationControls state={stationState} onTune={tune} onDetune={detune} onReset={reset} />
               <ChannelSelector activeChannel={activeChannel} channels={STATION_CHANNELS} onSelect={setActiveChannel} />
               <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
@@ -278,6 +328,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
                 onChange={updateEffect}
                 onActiveTone={updateActiveTone}
                 onPreset={applyEffectsPreset}
+                onResetProminent={resetProminent}
                 onResetTheme={resetTheme}
                 onScanlineLayerChange={updateScanlineLayer}
                 onSectionEffect={updateSectionEffect}
@@ -361,9 +412,19 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
         </section>
       </main>
       {!isSiteSurface && (
-        <a className="home-quick-link" href={labBackHref}>
-          {'< Back'}
-        </a>
+        <ProminentEntrance
+          key={`lab-back:${prominentReplaySeed}`}
+          config={PROMINENT_ENTRANCE_CONFIGS.labBack}
+          enabled={prominentOriginReady}
+          activeClassName="home-quick-link--intro"
+        >
+          <a
+            className="home-quick-link"
+            href={labBackHref}
+          >
+            {'< Back'}
+          </a>
+        </ProminentEntrance>
       )}
     </div>
   )

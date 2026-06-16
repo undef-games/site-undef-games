@@ -62,6 +62,63 @@ test('keeps the station surface usable on mobile', async ({ page }) => {
   expect(overflow).toBe(false)
 })
 
+test('pulses lab rail buttons on press and release in dark and light themes', async ({ page }) => {
+  await page.goto('/lab/')
+
+  const tuneButton = page.getByRole('button', { name: /tune signal/i })
+  await expect(tuneButton).toBeVisible()
+  await tuneButton.dispatchEvent('pointerdown', { pointerType: 'mouse' })
+  await expect(tuneButton).toHaveAttribute('data-press-state', 'down')
+  await expect.poll(() => tuneButton.evaluate((element) => getComputedStyle(element).filter)).not.toBe('none')
+
+  await page.locator('body').dispatchEvent('pointerup', { pointerType: 'mouse' })
+  await expect(tuneButton).toHaveAttribute('data-press-state', 'release')
+  await expect(tuneButton).not.toHaveAttribute('data-press-state', 'release')
+
+  await page.getByRole('button', { name: /light mode/i }).click()
+  await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'light')
+
+  await tuneButton.dispatchEvent('pointerdown', { pointerType: 'mouse' })
+  await expect(tuneButton).toHaveAttribute('data-press-state', 'down')
+
+  await page.locator('body').dispatchEvent('pointerup', { pointerType: 'mouse' })
+  await expect(tuneButton).toHaveAttribute('data-press-state', 'release')
+})
+
+test('splits lab rail sections into distinct panels with separate accents', async ({ page }) => {
+  await page.goto('/lab/')
+
+  const controls = page.locator('.station-controls')
+  const channels = page.locator('.channel-selector')
+  const scope = page.locator('.signal-scope')
+  const effects = page.locator('.effects-controls')
+  const identity = page.locator('.station-identity')
+
+  const panelStyles = await Promise.all(
+    [controls, channels, scope, effects, identity].map((locator) =>
+      locator.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return {
+          backgroundImage: style.backgroundImage,
+          borderTopColor: style.borderTopColor,
+          borderRadius: style.borderRadius,
+        }
+      }),
+    ),
+  )
+
+  const distinctBorders = new Set(panelStyles.map((style) => style.borderTopColor))
+  expect(distinctBorders.size).toBeGreaterThanOrEqual(3)
+  panelStyles.forEach((style) => {
+    expect(style.backgroundImage).not.toBe('none')
+    expect(style.borderRadius).not.toBe('0px')
+  })
+
+  await expect
+    .poll(() => page.locator('.effects-controls .control-label').first().evaluate((element) => getComputedStyle(element).fontSize))
+    .toBe('11px')
+})
+
 test('keeps the Pixi canvas fitted after viewport resize', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
   await page.goto('/lab/')

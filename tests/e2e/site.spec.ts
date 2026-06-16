@@ -209,6 +209,60 @@ test('serves the interactive lab below /lab/', async ({ page }) => {
     .not.toBe('none')
 })
 
+test('plays the prominent back control entrance once on first lab load', async ({ page }) => {
+  await page.goto('/lab/')
+  await page.evaluate(() => window.localStorage.removeItem('undef-prominent-back-seen'))
+  await page.reload()
+
+  const veil = page.locator('.prominent-control-veil')
+  const backLink = page.getByRole('link', { name: /back/i })
+  const broadcast = page.getByLabel('static station identity')
+  await expect(veil).toBeVisible()
+  await expect(backLink).toHaveAttribute('data-prominent-effect', 'geometric-genie')
+  await expect(backLink).toHaveClass(/home-quick-link--intro/)
+
+  const introBox = await backLink.boundingBox()
+  const broadcastBox = await broadcast.boundingBox()
+  expect(introBox).not.toBeNull()
+  expect(broadcastBox).not.toBeNull()
+  expect(introBox!.width).toBeGreaterThan(360)
+  expect(introBox!.height).toBeGreaterThan(120)
+  expect(Math.abs(introBox!.x + introBox!.width / 2 - (broadcastBox!.x + broadcastBox!.width / 2))).toBeLessThan(90)
+
+  await expect
+    .poll(() =>
+      backLink.evaluate((element) => {
+        const style = getComputedStyle(element)
+        const borderStyle = getComputedStyle(element, '::before')
+        return {
+          animationName: style.animationName,
+          animationDuration: style.animationDuration,
+          backdropFilter: style.backdropFilter,
+          clipPath: style.clipPath,
+          borderBackground: borderStyle.backgroundImage,
+        }
+      }),
+    )
+    .toMatchObject({
+      animationName: expect.stringContaining('back-geometric-genie'),
+      animationDuration: '0.48s',
+      backdropFilter: expect.stringContaining('blur'),
+      clipPath: expect.stringContaining('polygon'),
+      borderBackground: expect.stringContaining('conic-gradient'),
+    })
+
+  await expect(veil).toHaveCount(0, { timeout: 4000 })
+  await expect(backLink).not.toHaveClass(/home-quick-link--intro/)
+  await expect
+    .poll(() => page.evaluate(() => window.localStorage.getItem('undef-prominent-back-seen')))
+    .toBe('true')
+
+  await page.reload()
+
+  await expect(page.locator('.prominent-control-veil')).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /back/i })).not.toHaveClass(/home-quick-link--intro/)
+})
+
 test('returns from the lab to the previous undef games page when available', async ({ page }) => {
   await page.goto('/games/')
   await page.getByRole('link', { name: /open lab/i }).last().click()

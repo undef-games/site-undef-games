@@ -1,14 +1,15 @@
 .station-controls {
   display: grid;
   gap: 14px;
-  padding: 0 0 22px;
-  border-bottom: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.18);
+  padding: 15px 16px 18px;
 }
 
 .control-label {
-  margin: 0 0 10px;
-  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.76);
-  font-size: 13px;
+  margin: 0 0 9px;
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.84);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
 }
 
 .signal-meter {
@@ -38,6 +39,13 @@
   background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.84);
   color: var(--fx-text-on-dark, #f4f4f0);
   font: inherit;
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
 }
 
 .control-buttons button:hover {
@@ -60,8 +68,9 @@
 }
 
 .station-shell[data-tone='light'] .theme-mode-control button,
-.station-shell[data-tone='light'] .reset-theme-button {
-  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
+.station-shell[data-tone='light'] .reset-theme-button,
+.station-shell[data-tone='light'] .reset-prominent-button {
+  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.22);
   color: var(--fx-text-on-dark, #f4f4f0);
 }
 
@@ -70,6 +79,7 @@
 .station-shell[data-tone='light'] .theme-mode-control button[aria-pressed='true'],
 .station-shell[data-tone='light'] .preset-select-control select:focus,
 .station-shell[data-tone='light'] .reset-theme-button:hover,
+.station-shell[data-tone='light'] .reset-prominent-button:hover,
 .station-shell[data-tone='light'] .section-effect-control select:focus {
   color: var(--fx-text-on-dark, #f4f4f0);
 }
@@ -86,8 +96,7 @@
 .effects-controls {
   display: grid;
   gap: 12px;
-  padding: 0 0 22px;
-  border-bottom: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.18);
+  padding: 15px 16px 18px;
 }
 
 .channel-buttons {
@@ -107,6 +116,13 @@
   color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.78);
   font: inherit;
   text-align: left;
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
 }
 
 .channel-buttons button[aria-pressed='true'] {
@@ -208,6 +224,101 @@
   scrollbar-color: rgb(var(--fx-signal-rgb, 216 255 53) / 0.42) transparent;
 }
 
+.station-controls,
+.channel-selector,
+.signal-scope,
+.effects-controls,
+.station-identity {
+  position: relative;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.14);
+  border-radius: 9px;
+  background:
+    linear-gradient(180deg, rgb(var(--rail-accent-rgb, 216 255 53) / 0.14), transparent 34%),
+    linear-gradient(90deg, rgb(var(--rail-accent-rgb, 216 255 53) / 0.08), transparent 26%),
+    rgb(var(--fx-bg-rgb, 5 6 7) / 0.3);
+  box-shadow:
+    inset 0 1px 0 rgb(var(--fx-muted-rgb, 244 244 240) / 0.08),
+    0 16px 34px rgb(0 0 0 / 0.16);
+}
+
+.station-controls {
+  --rail-accent-rgb: var(--fx-signal-rgb, 216 255 53);
+  border-top-color: rgb(var(--fx-signal-rgb, 216 255 53) / 0.34);
+}
+
+.channel-selector {
+  --rail-accent-rgb: var(--fx-support-1-rgb, 216 255 53);
+  border-top-color: rgb(var(--fx-support-1-rgb, 216 255 53) / 0.22);
+}
+
+.signal-scope {
+  --rail-accent-rgb: var(--fx-support-2-rgb, 216 255 53);
+  border-top-color: rgb(var(--fx-support-2-rgb, 216 255 53) / 0.42);
+}
+
+.effects-controls {
+  --rail-accent-rgb: var(--fx-support-3-rgb, 216 255 53);
+  border-top-color: rgb(var(--fx-support-3-rgb, 216 255 53) / 0.16);
+}
+
+.station-identity {
+  --rail-accent-rgb: var(--fx-signal-rgb, 216 255 53);
+  border-top-color: rgb(var(--fx-glow-rgb, 216 255 53) / 0.28);
+}
+
+.station-controls::before,
+.channel-selector::before,
+.signal-scope::before,
+.effects-controls::before,
+.station-identity::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: 9px 0 0 9px;
+  background: rgb(var(--rail-accent-rgb, 216 255 53) / 0.9);
+  box-shadow: 0 0 16px rgb(var(--rail-accent-rgb, 216 255 53) / 0.28);
+}
+
+.station-shell[data-tone='light'] .station-controls,
+.station-shell[data-tone='light'] .channel-selector,
+.station-shell[data-tone='light'] .signal-scope,
+.station-shell[data-tone='light'] .effects-controls,
+.station-shell[data-tone='light'] .station-identity {
+  border-color: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.18);
+  background:
+    linear-gradient(180deg, rgb(var(--rail-accent-rgb, 64 85 0) / 0.09), transparent 34%),
+    linear-gradient(90deg, rgb(var(--rail-accent-rgb, 64 85 0) / 0.06), transparent 26%),
+    rgb(255 255 255 / 0.18);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 14px 30px rgb(17 19 13 / 0.08);
+}
+
+.station-sidebar button {
+  will-change: transform, filter, box-shadow;
+}
+
+.station-shell[data-tone='dark'] .station-sidebar button[data-press-state='down'] {
+  filter: brightness(1.16) saturate(1.08);
+  transform: translateY(1px) scale(0.992);
+  box-shadow: 0 0 0 1px rgb(var(--fx-signal-rgb, 216 255 53) / 0.2);
+}
+
+.station-shell[data-tone='dark'] .station-sidebar button[data-press-state='release'] {
+  animation: lab-button-release-dark 240ms ease-out;
+}
+
+.station-shell[data-tone='light'] .station-sidebar button[data-press-state='down'] {
+  filter: brightness(0.84) saturate(1.05);
+  transform: translateY(1px) scale(0.992);
+  box-shadow: 0 0 0 1px rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.2);
+}
+
+.station-shell[data-tone='light'] .station-sidebar button[data-press-state='release'] {
+  animation: lab-button-release-light 240ms ease-out;
+}
+
 .effects-controls {
   gap: 16px;
 }
@@ -222,15 +333,39 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.theme-preset-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.theme-preset-grid .preset-select-control,
+.theme-preset-grid .reset-theme-button,
+.theme-preset-grid .reset-prominent-button {
+  grid-column: span 1;
+}
+
+.theme-preset-grid .reset-theme-button,
+.theme-preset-grid .reset-prominent-button {
+  min-height: 40px;
+}
+
 .theme-mode-control button,
-.reset-theme-button {
+.reset-theme-button,
+.reset-prominent-button {
   min-height: 38px;
   border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
   border-radius: 0;
-  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.72);
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.32);
+  backdrop-filter: blur(14px);
   color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.78);
   font: 900 11px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
   text-transform: uppercase;
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
 }
 
 .theme-mode-control button {
@@ -248,9 +383,18 @@
 
 .theme-mode-control button[aria-pressed='true'],
 .theme-mode-control button:hover,
-.reset-theme-button:hover {
+.reset-theme-button:hover,
+.reset-prominent-button:hover {
   border-color: var(--fx-signal, #d8ff35);
   color: var(--fx-signal, #d8ff35);
+}
+
+.theme-mode-control button[aria-pressed='true'] {
+  background: rgb(var(--fx-signal-rgb, 216 255 53) / 0.12);
+}
+
+.station-shell[data-tone='light'] .theme-mode-control button[aria-pressed='true'] {
+  background: rgb(var(--fx-signal-rgb, 64 85 0) / 0.16);
 }
 
 .preset-select-control,
@@ -440,6 +584,38 @@
     0 0 0 2px rgb(var(--fx-signal-rgb, 31 41 55) / 0.16);
 }
 
+@keyframes lab-button-release-dark {
+  0% {
+    filter: brightness(1.26) saturate(1.12);
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  55% {
+    filter: brightness(1.08) saturate(1.04);
+  }
+
+  100% {
+    filter: brightness(1) saturate(1);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lab-button-release-light {
+  0% {
+    filter: brightness(0.74) saturate(1.06);
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  55% {
+    filter: brightness(0.9) saturate(1.03);
+  }
+
+  100% {
+    filter: brightness(1) saturate(1);
+    transform: translateY(0) scale(1);
+  }
+}
+
 .station-shell[data-tone='light'] .scanline-layer-control input:checked + .scanline-check::after {
   border-color: var(--fx-text-on-light, #11130d);
 }
@@ -485,6 +661,7 @@
   display: grid;
   align-content: start;
   gap: 18px;
+  padding: 15px 16px 18px;
 }
 
 .identity-header {
@@ -492,7 +669,8 @@
   justify-content: space-between;
   gap: 14px;
   color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.64);
-  font-size: 12px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
 }
 
 .identity-header p,

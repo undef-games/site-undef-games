@@ -1,8 +1,10 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AppShell } from './app-shell'
 import { createDefaultThemeState, STORAGE_KEY } from '../store/persistence'
+import { PROMINENT_ENTRANCE_CONFIGS } from '../prominent/prominent-config'
+import { getProminentEntranceStorageKey } from '../prominent/prominent-storage'
 
 afterEach(() => {
   cleanup()
@@ -143,5 +145,33 @@ describe('AppShell', () => {
 
     expect(screen.getByLabelText(/signal 0/i)).toBeInTheDocument()
     expect(screen.getAllByText(/NO SIGNAL/i).length).toBeGreaterThan(0)
+  })
+
+  it('resets saved prominent entrances from the lab rail and replays the back control intro', async () => {
+    const user = userEvent.setup()
+    const storageKey = getProminentEntranceStorageKey(PROMINENT_ENTRANCE_CONFIGS.labBack)
+    window.localStorage.setItem(storageKey, 'true')
+    const getBoundingClientRectSpy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      if (this.getAttribute('aria-label') === 'static station identity') {
+        return new DOMRect(0, 0, 1200, 720)
+      }
+      return new DOMRect(0, 0, 160, 48)
+    })
+
+    try {
+      render(<AppShell />)
+
+      const backLink = screen.getByRole('link', { name: /back/i })
+      expect(backLink).not.toHaveClass('prominent-entrance--active')
+
+      await user.click(screen.getByRole('button', { name: /reset intros/i }))
+
+      const replayedBackLink = screen.getByRole('link', { name: /back/i })
+      expect(window.localStorage.getItem(storageKey)).toBeNull()
+      expect(replayedBackLink).toHaveClass('prominent-entrance--active')
+      expect(replayedBackLink).toHaveAttribute('data-prominent-effect', 'geometric-genie')
+    } finally {
+      getBoundingClientRectSpy.mockRestore()
+    }
   })
 })

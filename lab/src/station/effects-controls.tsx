@@ -109,6 +109,7 @@ export function EffectsControls({
   darkPresetId,
   lightPresetId,
   onActiveTone,
+  onResetProminent,
   onScanlineLayerChange,
   onResetTheme,
   sectionEffects,
@@ -123,6 +124,7 @@ export function EffectsControls({
   darkPresetId: EffectsPresetId | 'custom'
   lightPresetId: EffectsPresetId | 'custom'
   onActiveTone: (tone: EffectsTone) => void
+  onResetProminent: () => void
   onScanlineLayerChange: (layerId: ScanlineLayerId, active: boolean) => void
   onResetTheme: () => void
   sectionEffects: SectionEffects
@@ -185,6 +187,13 @@ export function EffectsControls({
           onClick={onResetTheme}
         >
           Reset theme
+        </button>
+        <button
+          className="reset-prominent-button"
+          type="button"
+          onClick={onResetProminent}
+        >
+          Reset intros
         </button>
       </div>
 
