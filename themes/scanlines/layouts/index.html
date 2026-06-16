@@ -3,7 +3,26 @@
   {{ $productsIntro := hugo.Data.site.home.products_intro }}
   {{ $products := hugo.Data.site.home.products }}
   {{ $identity := hugo.Data.site.home.identity }}
+  {{ $sections := slice
+    (dict
+      "id" "projects"
+      "kicker" $productsIntro.kicker
+      "title" $productsIntro.title
+    )
+    (dict
+      "id" "identity"
+      "kicker" $identity.kicker
+      "title" $identity.title
+      "copy" $identity.copy
+    )
+  }}
+  {{ $siteCopy := dict
+    "hero" $hero
+    "sections" $sections
+    "projects" $products
+  }}
   <div id="scanlines-root">
+    <script id="site-copy-data" type="application/json">{{ $siteCopy | jsonify | safeJS }}</script>
     <main class="scan-fallback" id="main-content">
       <section class="scan-fallback__hero" aria-label="undef games landing page">
         <p class="scan-fallback__kicker">{{ $hero.kicker }}</p>

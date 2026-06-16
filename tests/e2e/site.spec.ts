@@ -26,6 +26,18 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   expect(homeHtml).toMatch(/Indie developer building game tools and systems for fun shared experiences online and off\./i)
   expect(homeHtml).toMatch(/<a href=https:\/\/warp\.undef\.games>\s*Explore WARP\s*<\/a>/i)
   expect(homeHtml).toMatch(/<a href=#projects>\s*View projects\s*<\/a>/i)
+  const payloadMatch = homeHtml.match(
+    /<script id="?site-copy-data"? type="?application\/json"?>([\s\S]*?)<\/script>/i,
+  )
+  expect(payloadMatch, 'homepage should embed serialized site copy').not.toBeNull()
+  const payload = JSON.parse(payloadMatch?.[1] ?? '{}')
+  expect(payload).toEqual(
+    expect.objectContaining({
+      hero: expect.any(Object),
+      sections: expect.any(Array),
+      projects: expect.any(Array),
+    }),
+  )
   await expect(page.getByText(/indie developer building game tools and systems/i)).toBeVisible()
   await expect(page.getByLabel('landing actions').getByRole('link', { name: /explore warp/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
