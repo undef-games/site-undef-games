@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
-import { BASELINE_EFFECTS, type EffectsSettings } from '../../../../lab/src/station/effects-config'
-import { hexToPixiColor } from '../../../../lab/src/station/effects-style'
+import { BASELINE_EFFECTS, type EffectsSettings } from './effects-config'
+import { hexToPixiColor } from './effects-style'
 import type { ScanlineBlendMode, ScanlineEngineState } from './scanline-engine'
 import { buildScanlineFrame } from './scanline-renderer'
-import { getStationStatus, type StationState } from '../../../../lab/src/station/station-state'
+import { getStationStatus, type StationState } from './station-state'
 
 export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
 

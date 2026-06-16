@@ -3,7 +3,7 @@ import {
   type EffectsPresetId,
   type EffectsSettings,
   type EffectsTone,
-} from '../../../../lab/src/station/effects-config'
+} from '../station/effects-config'
 import {
   createDefaultScanlineEngine,
   updateScanlineLayer,
@@ -12,7 +12,7 @@ import {
   type ScanlineLayerPatch,
   type ScanlinePattern,
 } from '../station/scanline-engine'
-import type { SectionEffects } from '../../../../lab/src/station/station-toys'
+import type { SectionEffects } from '../station/station-toys'
 
 export const STORAGE_KEY = 'undef-logos-theme'
 export const THEME_STATE_VERSION = 1

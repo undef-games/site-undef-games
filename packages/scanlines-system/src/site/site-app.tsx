@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { createEffectsStyle } from '../../../../lab/src/station/effects-style'
-import { StationGlyph } from '../../../../lab/src/station/station-identity'
-import { StationSignalScene } from '../../../../lab/src/station/station-signal-scene'
-import { createStationState, getStationStatus } from '../../../../lab/src/station/station-state'
+import { createEffectsStyle } from '../station/effects-style'
+import { StationGlyph } from '../station/station-identity'
+import { StationSignalScene } from '../station/station-signal-scene'
+import { createStationState, getStationStatus } from '../station/station-state'
 import {
   PacketDrift,
   SectionToy,
   STATION_CHANNELS,
-  type SectionEffectId,
   type SectionToyEffect,
-} from '../../../../lab/src/station/station-toys'
+} from '../station/station-toys'
 import { createDefaultThemeState, getActiveThemeSettings, readThemeState, type ThemeState } from '../theme/persistence'
 import { readSiteSurfaceCopy } from './site-copy-loader'
 

@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "make build",
     "deploy": "make deploy",
@@ -14,8 +16,8 @@
     "typecheck:lab": "make typecheck"
   },
   "devDependencies": {
-    "@playwright/test": "1.60.0",
+    "@playwright/test": "^1.60.0",
     "http-server": "^14.1.1",
-    "wrangler": "4.100.0"
+    "wrangler": "^4.100.0"
   }
 }
