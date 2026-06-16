@@ -1,4 +1,4 @@
-baseURL = "https://logos.undef.games/"
+baseURL = "https://undef.games/"
 locale = "en-us"
 title = "undef games"
 theme = "scanlines"
