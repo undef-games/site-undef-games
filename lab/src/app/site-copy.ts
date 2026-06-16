@@ -36,9 +36,9 @@ export const LAB_PROJECTS = [
 export const LAB_SECTIONS = {
   signal: {
     kicker: 'Interactive field',
-    title: 'Responsive by design, not by decoration.',
+    title: 'Shared play needs strong systems underneath it.',
     body:
-      'The scanline field stays alive under the cursor and the page so the site feels active without hiding the products behind abstract motion.',
+      'The site stays active and readable while pointing people toward the products, tools, and experiments that make play easier to share online and off.',
   },
   projects: {
     kicker: 'Live routes',
