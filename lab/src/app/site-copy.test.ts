@@ -12,19 +12,67 @@ describe('site copy loader', () => {
         {
           "hero": {
             "support": "from-hugo",
-            "primaryAction": { "href": "/play", "label": "Play" }
+            "primaryAction": { "href": "https://warp.undef.games", "label": "Explore WARP" },
+            "secondaryAction": { "href": "#projects", "label": "View projects" },
+            "statusLabel": "Shared play, digital and physical."
           },
           "projects": [
             {
-              "description": "desc",
-              "href": "/warp",
-              "label": "Warp",
+              "className": "product-link--warp",
+              "description": "The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.",
+              "href": "https://warp.undef.games",
+              "label": "TradeWars: WARP Agent Runtime Platform",
               "tag": "warp"
+            },
+            {
+              "className": "product-link--dice",
+              "description": "Dice and table tools built to keep groups moving quickly at the table and on the network.",
+              "href": "https://undefdice.com",
+              "label": "Undef Dice",
+              "tag": "dice"
             }
           ],
           "sections": {
-            "projects": { "kicker": "k", "title": "t" },
-            "identity": { "kicker": "i", "title": "it", "body": "ib" }
+            "signal": {
+              "kicker": "Interactive field",
+              "title": "Shared play needs strong systems underneath it.",
+              "body": "The site stays active and readable while pointing people toward the products, tools, and experiments that make play easier to share online and off."
+            },
+            "projects": {
+              "kicker": "Live routes",
+              "title": "Projects built to be used, watched, and played with."
+            },
+            "warp": {
+              "kicker": "Flagship route",
+              "title": "TradeWars: WARP Agent Runtime Platform.",
+              "body": "A live alpha platform for runtime control, automation, and operator tooling around TradeWars.",
+              "linkLabel": "Explore WARP",
+              "href": "https://warp.undef.games"
+            },
+            "dice": {
+              "kicker": "Table tools",
+              "title": "Undef Dice keeps shared play moving.",
+              "body": "Fast dice and lightweight utilities for groups who want clearer game moments online and off.",
+              "linkLabel": "Open Undef Dice",
+              "href": "https://undefdice.com"
+            },
+            "taybols": {
+              "kicker": "Small experiments",
+              "title": "Taybols keeps the smaller ideas in circulation.",
+              "body": "Generators, utility tools, and playful experiments that can grow into finished systems.",
+              "linkLabel": "Open Taybols",
+              "href": "https://taybols.undef.games"
+            },
+            "identity": {
+              "kicker": "Company baseline",
+              "title": "Good systems should make shared play easier to reach.",
+              "body": "undef games builds the technical side of play so people can gather, operate, and have fun across digital and physical spaces."
+            },
+            "closing": {
+              "kicker": "undef.games",
+              "title": "Built for people to play together.",
+              "action": "Back to top"
+            }
           }
         }
       </script>
@@ -33,19 +81,74 @@ describe('site copy loader', () => {
     expect(readSiteSurfaceCopy()).toEqual({
       hero: {
         support: 'from-hugo',
-        primaryAction: { href: '/play', label: 'Play' },
+        primaryAction: { href: 'https://warp.undef.games', label: 'Explore WARP' },
+        secondaryAction: { href: '#projects', label: 'View projects' },
+        statusLabel: 'Shared play, digital and physical.',
       },
       projects: [
         {
-          description: 'desc',
-          href: '/warp',
-          label: 'Warp',
+          className: 'product-link--warp',
+          description:
+            'The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.',
+          href: 'https://warp.undef.games',
+          label: 'TradeWars: WARP Agent Runtime Platform',
           tag: 'warp',
+        },
+        {
+          className: 'product-link--dice',
+          description:
+            'Dice and table tools built to keep groups moving quickly at the table and on the network.',
+          href: 'https://undefdice.com',
+          label: 'Undef Dice',
+          tag: 'dice',
         },
       ],
       sections: {
-        projects: { kicker: 'k', title: 't' },
-        identity: { kicker: 'i', title: 'it', body: 'ib' },
+        signal: {
+          kicker: 'Interactive field',
+          title: 'Shared play needs strong systems underneath it.',
+          body:
+            'The site stays active and readable while pointing people toward the products, tools, and experiments that make play easier to share online and off.',
+        },
+        projects: {
+          kicker: 'Live routes',
+          title: 'Projects built to be used, watched, and played with.',
+        },
+        warp: {
+          kicker: 'Flagship route',
+          title: 'TradeWars: WARP Agent Runtime Platform.',
+          body:
+            'A live alpha platform for runtime control, automation, and operator tooling around TradeWars.',
+          linkLabel: 'Explore WARP',
+          href: 'https://warp.undef.games',
+        },
+        dice: {
+          kicker: 'Table tools',
+          title: 'Undef Dice keeps shared play moving.',
+          body:
+            'Fast dice and lightweight utilities for groups who want clearer game moments online and off.',
+          linkLabel: 'Open Undef Dice',
+          href: 'https://undefdice.com',
+        },
+        taybols: {
+          kicker: 'Small experiments',
+          title: 'Taybols keeps the smaller ideas in circulation.',
+          body:
+            'Generators, utility tools, and playful experiments that can grow into finished systems.',
+          linkLabel: 'Open Taybols',
+          href: 'https://taybols.undef.games',
+        },
+        identity: {
+          kicker: 'Company baseline',
+          title: 'Good systems should make shared play easier to reach.',
+          body:
+            'undef games builds the technical side of play so people can gather, operate, and have fun across digital and physical spaces.',
+        },
+        closing: {
+          kicker: 'undef.games',
+          title: 'Built for people to play together.',
+          action: 'Back to top',
+        },
       },
     })
   })
@@ -85,6 +188,53 @@ describe('site copy loader', () => {
           "hero": { "support": 42 },
           "projects": [],
           "sections": {}
+        }
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toBeNull()
+  })
+
+  it('returns null when a hero action link is malformed', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="application/json">
+        {
+          "hero": {
+            "support": "from-hugo",
+            "primaryAction": { "href": "https://warp.undef.games", "label": 42 }
+          },
+          "projects": [],
+          "sections": {
+            "signal": { "kicker": "Interactive field", "title": "Shared play needs strong systems underneath it.", "body": "signal body" },
+            "projects": { "kicker": "Live routes", "title": "Projects built to be used, watched, and played with." },
+            "warp": { "kicker": "Flagship route", "title": "TradeWars: WARP Agent Runtime Platform.", "body": "warp body", "linkLabel": "Explore WARP", "href": "https://warp.undef.games" },
+            "dice": { "kicker": "Table tools", "title": "Undef Dice keeps shared play moving.", "body": "dice body", "linkLabel": "Open Undef Dice", "href": "https://undefdice.com" },
+            "taybols": { "kicker": "Small experiments", "title": "Taybols keeps the smaller ideas in circulation.", "body": "taybols body", "linkLabel": "Open Taybols", "href": "https://taybols.undef.games" },
+            "identity": { "kicker": "Company baseline", "title": "Good systems should make shared play easier to reach.", "body": "identity body" },
+            "closing": { "kicker": "undef.games", "title": "Built for people to play together.", "action": "Back to top" }
+          }
+        }
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toBeNull()
+  })
+
+  it('returns null when a nested section project entry is malformed', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="application/json">
+        {
+          "hero": { "support": "from-hugo" },
+          "projects": [],
+          "sections": {
+            "signal": { "kicker": "Interactive field", "title": "Shared play needs strong systems underneath it.", "body": "signal body" },
+            "projects": { "kicker": "Live routes", "title": "Projects built to be used, watched, and played with." },
+            "warp": { "kicker": "Flagship route", "title": "TradeWars: WARP Agent Runtime Platform.", "body": "warp body", "linkLabel": "Explore WARP", "href": 7 },
+            "dice": { "kicker": "Table tools", "title": "Undef Dice keeps shared play moving.", "body": "dice body", "linkLabel": "Open Undef Dice", "href": "https://undefdice.com" },
+            "taybols": { "kicker": "Small experiments", "title": "Taybols keeps the smaller ideas in circulation.", "body": "taybols body", "linkLabel": "Open Taybols", "href": "https://taybols.undef.games" },
+            "identity": { "kicker": "Company baseline", "title": "Good systems should make shared play easier to reach.", "body": "identity body" },
+            "closing": { "kicker": "undef.games", "title": "Built for people to play together.", "action": "Back to top" }
+          }
         }
       </script>
     `
