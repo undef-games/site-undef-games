@@ -6,7 +6,7 @@
     </a>
     <nav class="site-header__nav" aria-label="Primary navigation">
       <a href="/games/" {{ if eq .RelPermalink "/games/" }}aria-current="page"{{ end }}>Games</a>
-      <a href="/blog/" {{ if eq .RelPermalink "/blog/" }}aria-current="page"{{ end }}>Logs</a>
+      <a href="/logs/" {{ if eq .RelPermalink "/logs/" }}aria-current="page"{{ end }}>Logs</a>
       <a href="/about/" {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>About</a>
     </nav>
     <a class="site-header__login" href="{{ site.Params.login_url }}">

@@ -13,7 +13,7 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   )
   await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /^Logs$/i })).toHaveAttribute(
     'href',
-    '/blog/',
+    '/logs/',
   )
   await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /about/i })).toHaveAttribute(
     'href',
@@ -64,7 +64,7 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
     },
     {
       heading: /^Logs$/i,
-      path: '/blog/',
+      path: '/logs/',
       description: /development logs, release notes, and project updates from undef games/i,
       intro: /this is where release notes, build updates, and project notes will collect/i,
     },
@@ -89,7 +89,7 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
 })
 
 test('keeps secondary page heroes tight to the header', async ({ page }) => {
-  for (const path of ['/games/', '/blog/', '/about/']) {
+  for (const path of ['/games/', '/logs/', '/about/']) {
     await page.goto(path)
 
     const spacing = await page.evaluate(() => {

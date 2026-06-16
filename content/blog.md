@@ -2,6 +2,9 @@
 title: "Logs"
 kicker: "Field notes"
 description: "Development logs, release notes, and project updates from undef games."
+url: "/logs/"
+aliases:
+  - "/blog/"
 ---
 
 ## Logs are coming online.
