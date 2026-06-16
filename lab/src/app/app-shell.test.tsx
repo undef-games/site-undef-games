@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AppShell } from './app-shell'
@@ -41,7 +41,11 @@ describe('AppShell', () => {
     expect(screen.getByRole('heading', { name: /undef games/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/interactive station signal/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/interactive station signal/i)).toHaveAttribute('data-signal', '50')
-    expect(screen.getAllByRole('link', { name: /explore warp/i })[0]).toHaveAttribute('href', 'https://warp.undef.games')
+    const landingActions = screen.getByLabelText(/landing actions/i)
+    expect(within(landingActions).getByRole('link', { name: /explore warp/i })).toHaveAttribute(
+      'href',
+      'https://warp.undef.games',
+    )
     expect(screen.getByRole('link', { name: /view projects/i })).toHaveAttribute('href', '#projects')
     expect(screen.queryByLabelText(/station tools and identity/i)).not.toBeInTheDocument()
     expect(screen.queryByLabelText(/station controls/i)).not.toBeInTheDocument()

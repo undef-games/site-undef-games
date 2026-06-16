@@ -1,6 +1,4 @@
 export const LAB_HERO_COPY = {
-  kicker: 'CH 00 / SIGNAL FIELD',
-  title: 'undef games',
   support:
     'Indie developer building game tools and systems for fun shared experiences online and off.',
   primaryAction: { href: 'https://warp.undef.games', label: 'Explore WARP' },
