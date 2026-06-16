@@ -9,13 +9,13 @@
         <h1>{{ $hero.title }}</h1>
         <p>{{ $hero.copy }}</p>
         <nav class="scan-fallback__actions" aria-label="landing actions">
-          <a href="/lab/">Open lab</a>
-          <a href="#projects">View projects</a>
+          <a href="{{ $hero.primary_href }}">{{ $hero.primary_label }}</a>
+          <a href="{{ $hero.secondary_href }}">{{ $hero.secondary_label }}</a>
         </nav>
       </section>
       <section class="scan-fallback__section" id="projects" aria-label="undef games projects">
         <p class="scan-fallback__kicker">Live routes</p>
-        <h2>Actual projects on the network.</h2>
+        <h2>Projects built to be used, watched, and played with.</h2>
         <div class="scan-fallback__products">
           {{ range $products }}
             <a href="{{ .href }}">

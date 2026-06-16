@@ -1,9 +1,9 @@
 ---
-title: "Blog"
+title: "Logs"
 kicker: "Field notes"
-description: "Notes on game infrastructure, table tools, runtime experiments, and the scanlines identity system."
+description: "Development logs, release notes, and project updates from undef games."
 ---
 
-## Notes are coming online.
+## Logs are coming online.
 
-This page is the landing zone for project logs, release notes, and design notes as the undef games network takes shape.
+This is where release notes, build updates, and project notes will collect as the company and its products keep moving.

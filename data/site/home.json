@@ -2,9 +2,9 @@
   "hero": {
     "kicker": "CH 00 / SIGNAL FIELD",
     "title": "undef games",
-    "copy": "Systems, toys, and game-shaped experiments tuned out of undefined space.",
-    "primary_label": "Open lab",
-    "primary_href": "/lab/",
+    "copy": "Indie developer building game tools and systems for fun shared experiences online and off.",
+    "primary_label": "Explore WARP",
+    "primary_href": "https://warp.undef.games",
     "secondary_label": "View projects",
     "secondary_href": "#projects"
   },
@@ -13,24 +13,24 @@
       "tag": "warp",
       "label": "TradeWars: WARP Agent Runtime Platform",
       "href": "https://warp.undef.games",
-      "description": "Agent runtime platform for TradeWars automation, tools, and live operators."
+      "description": "The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling."
     },
     {
       "tag": "dice",
       "label": "Undef Dice",
       "href": "https://undefdice.com",
-      "description": "Fast dice, table helpers, and lightweight play tools for groups."
+      "description": "Dice and table tools for shared play at the table and on the network."
     },
     {
       "tag": "taybols",
       "label": "Taybols",
       "href": "https://taybols.undef.games",
-      "description": "Table-shaped experiments, generators, and odd little game utilities."
+      "description": "Smaller experiments, generators, and odd little utilities with room to become bigger systems."
     }
   ],
   "identity": {
-    "kicker": "Identity baseline",
-    "title": "The mark stays quiet until the lockup needs it.",
-    "copy": "The Maze Gate U Cut is the saved mark. The landing page uses it as a dim background presence and an identity lockup, not as a hard centered emblem."
+    "kicker": "Company baseline",
+    "title": "Good systems should make shared play easier to reach.",
+    "copy": "undef games builds the technical side of play so people can gather, operate, and have fun across digital and physical spaces."
   }
 }

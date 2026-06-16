@@ -1,22 +1,21 @@
 import { expect, test } from '@playwright/test'
 
-test('renders the Hugo scanlines landing page', async ({ page }) => {
+test('renders the refreshed homepage copy and logs navigation', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page.getByRole('heading', { name: /^undef games$/i })).toBeVisible()
   await expect(page.getByRole('banner')).toBeVisible()
   await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /games/i })).toHaveAttribute(
     'href',
     '/games/',
   )
-  await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /blog/i })).toHaveAttribute(
-    'href',
-    '/blog/',
-  )
+  await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /^Logs$/i })).toBeVisible()
   await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /about/i })).toHaveAttribute(
     'href',
     '/about/',
   )
+  await expect(page.getByRole('heading', { name: /^undef games$/i })).toBeVisible()
+  await expect(page.getByText(/indie developer building game tools and systems/i)).toBeVisible()
+  await expect(page.getByLabel('landing actions').getByRole('link', { name: /explore warp/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
   await expect(page.getByRole('link', { name: /open lab/i }).last()).toHaveAttribute('href', '/lab/')
   await expect(page.locator('.station-shell')).toHaveAttribute('data-surface', 'site')
@@ -26,7 +25,7 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
   await expect(page.getByRole('link', { name: /open lab/i }).first()).toHaveAttribute('href', '/lab/')
   await expect(page.getByLabel('station tools and identity')).toHaveCount(0)
   await expect(page.getByLabel('effects controls')).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: /actual projects on the network/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /projects built to be used, watched, and played with/i })).toBeVisible()
   const projects = page.getByLabel('undef games projects')
   await expect(projects.getByRole('link', { name: /TradeWars: WARP Agent Runtime Platform/i })).toHaveAttribute(
     'href',
@@ -42,7 +41,7 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
 test('serves separate Hugo pages with the scanlines header', async ({ page }) => {
   for (const route of [
     { heading: /^Games$/i, path: '/games/' },
-    { heading: /^Blog$/i, path: '/blog/' },
+    { heading: /^Logs$/i, path: '/blog/' },
     { heading: /^About$/i, path: '/about/' },
   ]) {
     await page.goto(route.path)

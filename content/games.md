@@ -1,23 +1,23 @@
 ---
 title: "Games"
 kicker: "Live routes"
-description: "Published game systems, toys, and playable tools from undef games."
+description: "Active game tools, systems, and playable utilities from undef games."
 ---
 
 ## TradeWars: WARP Agent Runtime Platform
 
-Agent runtime, automation surfaces, and operator tooling for live TradeWars work.
+The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.
 
-[warp.undef.games](https://warp.undef.games)
+[Explore WARP](https://warp.undef.games)
 
 ## Undef Dice
 
-Fast dice, table helpers, and lightweight play tools for groups.
+Dice and table tools built to keep shared play moving quickly at the table and on the network.
 
-[undefdice.com](https://undefdice.com)
+[Open Undef Dice](https://undefdice.com)
 
 ## Taybols
 
-Table-shaped experiments, generators, and small game utilities.
+Smaller experiments, generators, and utility tools that can grow into finished systems.
 
-[taybols.undef.games](https://taybols.undef.games)
+[Open Taybols](https://taybols.undef.games)

@@ -1,4 +1,4 @@
 ---
 title: "undef games"
-description: "Systems, toys, and game-shaped experiments tuned out of undefined space."
+description: "Indie developer building game tools and systems for fun shared experiences online and off."
 ---
