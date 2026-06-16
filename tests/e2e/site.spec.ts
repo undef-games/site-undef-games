@@ -104,6 +104,25 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
   await expect
     .poll(() => page.locator('.scan-footer p').evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(17, 19, 13)')
+
+  const themeToggle = page.locator('[data-theme-toggle]')
+  const labLink = page.getByRole('link', { name: /open lab/i }).last()
+  await expect(themeToggle).toBeVisible()
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Switch to dark mode')
+  const toggleBox = await themeToggle.boundingBox()
+  const labBox = await labLink.boundingBox()
+  expect(toggleBox).not.toBeNull()
+  expect(labBox).not.toBeNull()
+  expect(labBox!.x - (toggleBox!.x + toggleBox!.width)).toBeGreaterThanOrEqual(0)
+  expect(labBox!.x - (toggleBox!.x + toggleBox!.width)).toBeLessThanOrEqual(6)
+
+  await themeToggle.click()
+
+  await expect(page.locator('html')).toHaveAttribute('data-scan-tone', 'dark')
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Switch to light mode')
+  await expect
+    .poll(() => page.evaluate(() => JSON.parse(window.localStorage.getItem('undef-logos-theme') ?? '{}').activeTone))
+    .toBe('dark')
 })
 
 test('keeps the site header responsive without pinning controls to wide viewport edges', async ({ page }) => {
@@ -142,5 +161,7 @@ test('serves the interactive lab below /lab/', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /undef games/i })).toBeVisible()
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-renderer', 'pixijs')
   await expect(page.getByLabel('effects controls')).toBeVisible()
-  await expect(page.getByRole('link', { name: /go home/i })).toHaveAttribute('href', '/')
+  const backLink = page.getByRole('link', { name: /back/i })
+  await expect(backLink).toHaveAttribute('href', '/')
+  await expect(backLink).toHaveText('< Back')
 })

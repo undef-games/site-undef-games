@@ -136,6 +136,21 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   }, [effectsSettings])
 
   useEffect(() => {
+    const syncThemeState = () => {
+      const nextTheme = readThemeState()
+      if (nextTheme) setThemeState(nextTheme)
+    }
+
+    window.addEventListener('storage', syncThemeState)
+    window.addEventListener('undef-theme-change', syncThemeState)
+
+    return () => {
+      window.removeEventListener('storage', syncThemeState)
+      window.removeEventListener('undef-theme-change', syncThemeState)
+    }
+  }, [])
+
+  useEffect(() => {
     let animationFrame = 0
     let currentScrollDepth = 0
     let targetScrollDepth = 0
@@ -329,12 +344,8 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
         </section>
       </main>
       {!isSiteSurface && (
-        <a className="home-quick-link" href="/" aria-label="Go home">
-          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-            <path d="M4 11.5 12 4l8 7.5" />
-            <path d="M6.5 10.5V20h11v-9.5" />
-            <path d="M10 20v-5h4v5" />
-          </svg>
+        <a className="home-quick-link" href="/">
+          {'< Back'}
         </a>
       )}
     </div>

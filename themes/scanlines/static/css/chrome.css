@@ -107,11 +107,18 @@
   color: var(--scan-text);
 }
 
-.lab-quick-link {
+.quick-cluster {
   position: fixed;
   z-index: 45;
   right: max(14px, env(safe-area-inset-right));
   bottom: max(14px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.theme-quick-toggle,
+.lab-quick-link {
   display: grid;
   width: 42px;
   height: 42px;
@@ -123,6 +130,25 @@
   transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
+.theme-quick-toggle {
+  appearance: none;
+  padding: 0;
+  border-radius: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.theme-quick-toggle__icon {
+  display: none;
+}
+
+html:not([data-scan-tone='light']) .theme-quick-toggle__icon--sun,
+html[data-scan-tone='light'] .theme-quick-toggle__icon--moon {
+  display: block;
+}
+
+.theme-quick-toggle:hover,
+.theme-quick-toggle:focus-visible,
 .lab-quick-link:hover,
 .lab-quick-link:focus-visible {
   border-color: rgb(var(--fx-signal-rgb, 216 255 53) / 0.82);
@@ -132,6 +158,7 @@
   transform: translateY(-2px);
 }
 
+.theme-quick-toggle svg,
 .lab-quick-link svg {
   width: 21px;
   height: 21px;

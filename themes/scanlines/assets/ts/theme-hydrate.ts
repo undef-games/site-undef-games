@@ -15,6 +15,53 @@ type PaletteSettings = {
 }
 
 const STORAGE_KEY = 'undef-logos-theme'
+const THEME_STATE_VERSION = 1
+
+const DEFAULT_PALETTES: Record<Tone, PaletteSettings> = {
+  dark: {
+    paletteBg: '#050607',
+    paletteGlow: '#d8ff35',
+    paletteMuted: '#f4f4f0',
+    palettePanel: '#08090a',
+    paletteSignal: '#d8ff35',
+    paletteSupport1: '#d8ff35',
+    paletteSupport2: '#d8ff35',
+    paletteSupport3: '#d8ff35',
+    paletteText: '#f4f4f0',
+    paletteTextOnDark: '#f4f4f0',
+    paletteTextOnLight: '#050607',
+  },
+  light: {
+    paletteBg: '#f4f0df',
+    paletteGlow: '#b0d000',
+    paletteMuted: '#11130d',
+    palettePanel: '#ddd7c1',
+    paletteSignal: '#405500',
+    paletteSupport1: '#b0d000',
+    paletteSupport2: '#213019',
+    paletteSupport3: '#f8fbef',
+    paletteText: '#11130d',
+    paletteTextOnDark: '#f4f4f0',
+    paletteTextOnLight: '#11130d',
+  },
+}
+
+const DEFAULT_SECTION_EFFECTS = {
+  dice: 'bars',
+  identity: 'tumble',
+  projects: 'tumble',
+  signal: 'bars',
+  taybols: 'bars',
+  warp: 'tumble',
+}
+
+type ThemeState = {
+  activeTone: Tone
+  scanlineLayers: Record<string, boolean>
+  sectionEffects: Record<string, string>
+  tones: Record<Tone, { presetId: string; settings: PaletteSettings }>
+  version: number
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object'
@@ -49,6 +96,63 @@ function getHexLuminance(hex: string) {
 
 function setVar(name: string, value: string) {
   document.documentElement.style.setProperty(name, value)
+}
+
+function createDefaultThemeState(activeTone: Tone = 'dark'): ThemeState {
+  return {
+    activeTone,
+    scanlineLayers: { crt: false, glitch: false, graph: false },
+    sectionEffects: { ...DEFAULT_SECTION_EFFECTS },
+    tones: {
+      dark: { presetId: 'current', settings: { ...DEFAULT_PALETTES.dark } },
+      light: { presetId: 'paper-terminal', settings: { ...DEFAULT_PALETTES.light } },
+    },
+    version: THEME_STATE_VERSION,
+  }
+}
+
+function readThemeState(): ThemeState | null {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed: unknown = JSON.parse(raw)
+    if (!isRecord(parsed)) return null
+    const activeTone: Tone = parsed.activeTone === 'light' ? 'light' : 'dark'
+    const defaults = createDefaultThemeState(activeTone)
+    const tones = isRecord(parsed.tones) ? parsed.tones : {}
+
+    const resolveTone = (tone: Tone) => {
+      const savedTone = isRecord(tones[tone]) ? tones[tone] : {}
+      const savedSettings = isRecord(savedTone.settings) ? savedTone.settings : {}
+      return {
+        presetId: typeof savedTone.presetId === 'string' ? savedTone.presetId : defaults.tones[tone].presetId,
+        settings: { ...defaults.tones[tone].settings, ...savedSettings },
+      }
+    }
+
+    return {
+      activeTone,
+      scanlineLayers: isRecord(parsed.scanlineLayers) ? (parsed.scanlineLayers as Record<string, boolean>) : defaults.scanlineLayers,
+      sectionEffects: isRecord(parsed.sectionEffects) ? (parsed.sectionEffects as Record<string, string>) : defaults.sectionEffects,
+      tones: {
+        dark: resolveTone('dark'),
+        light: resolveTone('light'),
+      },
+      version: THEME_STATE_VERSION,
+    }
+  } catch {
+    return null
+  }
+}
+
+function writeThemeState(theme: ThemeState) {
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(theme))
+}
+
+function updateThemeToggle(activeTone: Tone) {
+  const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')
+  if (!toggle) return
+  toggle.setAttribute('aria-label', activeTone === 'light' ? 'Switch to dark mode' : 'Switch to light mode')
 }
 
 function applyPalette(settings: PaletteSettings, preferredTone: Tone) {
@@ -112,19 +216,52 @@ function applyPalette(settings: PaletteSettings, preferredTone: Tone) {
 
 function hydrateTheme() {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return
-    const parsed: unknown = JSON.parse(raw)
-    if (!isRecord(parsed)) return
-    const activeTone = parsed.activeTone === 'light' ? 'light' : 'dark'
-    const tones = isRecord(parsed.tones) ? parsed.tones : {}
-    const toneState = isRecord(tones[activeTone]) ? tones[activeTone] : {}
-    const settings = isRecord(toneState.settings) ? toneState.settings : null
-    if (settings) applyPalette(settings, activeTone)
+    const theme = readThemeState()
+    const activeTone = theme?.activeTone ?? 'dark'
+    const settings = theme?.tones[activeTone].settings ?? DEFAULT_PALETTES[activeTone]
+    applyPalette(settings, activeTone)
+    updateThemeToggle(activeTone)
   } catch {
     document.documentElement.removeAttribute('data-scan-tone')
   }
 }
 
+function toggleTheme() {
+  const currentTheme = readThemeState() ?? createDefaultThemeState()
+  const currentTone = document.documentElement.dataset.scanTone === 'light' ? 'light' : currentTheme.activeTone
+  const nextTone: Tone = currentTone === 'light' ? 'dark' : 'light'
+  const nextTheme: ThemeState = {
+    ...currentTheme,
+    activeTone: nextTone,
+    tones: {
+      dark: {
+        ...currentTheme.tones.dark,
+        settings: { ...DEFAULT_PALETTES.dark, ...currentTheme.tones.dark.settings },
+      },
+      light: {
+        ...currentTheme.tones.light,
+        settings: { ...DEFAULT_PALETTES.light, ...currentTheme.tones.light.settings },
+      },
+    },
+    version: THEME_STATE_VERSION,
+  }
+
+  writeThemeState(nextTheme)
+  applyPalette(nextTheme.tones[nextTone].settings, nextTone)
+  updateThemeToggle(nextTone)
+  window.dispatchEvent(new CustomEvent('undef-theme-change'))
+}
+
+function initThemeToggle() {
+  document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.addEventListener('click', toggleTheme)
+  updateThemeToggle(document.documentElement.dataset.scanTone === 'light' ? 'light' : 'dark')
+}
+
 hydrateTheme()
 window.addEventListener('storage', hydrateTheme)
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initThemeToggle, { once: true })
+} else {
+  initThemeToggle()
+}
