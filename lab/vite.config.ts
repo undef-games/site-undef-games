@@ -9,7 +9,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(__dirname, 'index.html'),
-        site: resolve(__dirname, 'src/site-main.tsx'),
+        site: resolve(__dirname, '../themes/scanlines/assets/ts/site.ts'),
+        'theme-hydrate': resolve(__dirname, '../themes/scanlines/assets/ts/theme-hydrate.ts'),
       },
       output: {
         assetFileNames: (assetInfo) => {
@@ -23,6 +24,14 @@ export default defineConfig({
     },
   },
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@undef/scanlines-system': resolve(__dirname, '../packages/scanlines-system/src/index.ts'),
+      'pixi.js': resolve(__dirname, 'node_modules/pixi.js/lib/index.mjs'),
+      'react': resolve(__dirname, 'node_modules/react'),
+      'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+    },
+  },
   test: {
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',

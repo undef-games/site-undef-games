@@ -1,0 +1,54 @@
+body {
+  font-family: var(--font-body);
+  background: var(--fx-bg, #050607);
+  color: var(--fx-text, #f4f4f0);
+}
+
+.station-shell {
+  min-height: 100%;
+  background:
+    linear-gradient(90deg, rgb(var(--fx-signal-rgb, 216 255 53) / calc(0.08 * var(--fx-glow-strength, 1))), transparent 22%),
+    radial-gradient(circle at 74% 12%, rgba(91, 203, 255, 0.08), transparent 28%),
+    var(--fx-bg, #050607);
+  color: var(--fx-text, #f4f4f0);
+}
+
+.landing-page {
+  position: relative;
+  min-height: 100svh;
+  padding-right: 360px;
+  isolation: isolate;
+}
+
+.station-shell--site .landing-page {
+  padding-right: 0;
+}
+
+.landing-page > * {
+  position: relative;
+}
+
+.landing-hero {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.station-shell--site .station-broadcast {
+  border-right: 0;
+}
+
+.station-kicker,
+.station-status,
+.station-copy,
+.station-actions,
+.section-kicker,
+.control-label,
+.lock-readout,
+.identity-header,
+.station-lockup small,
+.channel-bug small {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}

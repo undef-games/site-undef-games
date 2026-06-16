@@ -1,0 +1,303 @@
+.landing-section,
+.landing-final {
+  --section-accent: var(--fx-signal, #d8ff35);
+  --section-accent-rgb: var(--fx-signal-rgb, 216 255 53);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  min-height: 72svh;
+  padding: 96px 92px;
+  border-top: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.14);
+  background:
+    linear-gradient(90deg, rgb(var(--section-accent-rgb) / calc(0.07 * var(--fx-glow-strength, 1))), transparent 30%),
+    var(--fx-bg, #050607);
+  color: var(--fx-text-on-dark, #f4f4f0);
+}
+
+.landing-section > :not(.section-toy),
+.landing-final > * {
+  position: relative;
+  z-index: 2;
+}
+
+.landing-section--signal {
+  --section-accent: var(--fx-support-1, #d8ff35);
+  --section-accent-rgb: var(--fx-support-1-rgb, 216 255 53);
+  background:
+    radial-gradient(circle at 18% 24%, rgb(var(--section-accent-rgb) / 0.09), transparent 30%),
+    linear-gradient(180deg, rgb(var(--section-accent-rgb) / 0.03), transparent 58%),
+    var(--fx-bg, #050607);
+}
+
+.landing-section--products {
+  --section-accent: var(--fx-support-2, #d8ff35);
+  --section-accent-rgb: var(--fx-support-2-rgb, 216 255 53);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(var(--fx-muted-rgb, 244 244 240) / var(--fx-section-scan-opacity, 0.035)) 0 1px,
+      transparent 1px var(--fx-scan-spacing, 12px)
+    ),
+    radial-gradient(circle at 72% 36%, rgb(var(--section-accent-rgb) / 0.14), transparent 36%),
+    var(--fx-panel, #08090a);
+}
+
+.landing-section--warp {
+  --section-accent: var(--fx-signal, #d8ff35);
+  --section-accent-rgb: var(--fx-signal-rgb, 216 255 53);
+  background:
+    linear-gradient(90deg, rgb(var(--section-accent-rgb) / 0.16), transparent 42%),
+    repeating-linear-gradient(0deg, rgb(var(--section-accent-rgb) / 0.035) 0 1px, transparent 1px 18px),
+    var(--fx-bg, #050607);
+}
+
+.landing-section--dice {
+  --section-accent: var(--fx-support-1, #d8ff35);
+  --section-accent-rgb: var(--fx-support-1-rgb, 216 255 53);
+  background:
+    radial-gradient(circle at 20% 44%, rgb(var(--section-accent-rgb) / 0.16), transparent 34%),
+    linear-gradient(90deg, transparent, rgb(var(--section-accent-rgb) / 0.08)),
+    var(--fx-panel, #07080a);
+}
+
+.landing-section--taybols {
+  --section-accent: var(--fx-support-2, #d8ff35);
+  --section-accent-rgb: var(--fx-support-2-rgb, 216 255 53);
+  background:
+    linear-gradient(135deg, rgb(var(--section-accent-rgb) / 0.12), transparent 38%),
+    radial-gradient(circle at 78% 24%, rgb(var(--fx-support-3-rgb, 216 255 53) / 0.1), transparent 32%),
+    var(--fx-bg, #050607);
+}
+
+.landing-section--identity {
+  --section-accent: var(--fx-support-3, #d8ff35);
+  --section-accent-rgb: var(--fx-support-3-rgb, 216 255 53);
+  background:
+    radial-gradient(circle at 76% 42%, rgb(var(--section-accent-rgb) / calc(0.08 * var(--fx-glow-strength, 1))), transparent 34%),
+    var(--fx-bg, #050607);
+}
+
+.station-shell[data-tone='light'] .landing-section,
+.station-shell[data-tone='light'] .landing-final {
+  color: var(--fx-text-on-light, #050607);
+  border-top-color: rgb(var(--fx-text-on-light-rgb, 5 6 7) / 0.14);
+  background:
+    linear-gradient(90deg, rgb(var(--section-accent-rgb) / 0.13), transparent 34%),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--signal {
+  background:
+    radial-gradient(circle at 18% 24%, rgb(var(--section-accent-rgb) / 0.14), transparent 31%),
+    linear-gradient(180deg, rgb(var(--section-accent-rgb) / 0.06), transparent 58%),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--products {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(var(--fx-text-on-light-rgb, 5 6 7) / calc(var(--fx-section-scan-opacity, 0.035) * 0.72)) 0 1px,
+      transparent 1px var(--fx-scan-spacing, 12px)
+    ),
+    radial-gradient(circle at 72% 36%, rgb(var(--section-accent-rgb) / 0.18), transparent 36%),
+    var(--fx-panel, #ddd7c1);
+}
+
+.station-shell[data-tone='light'] .landing-section--warp {
+  background:
+    linear-gradient(90deg, rgb(var(--section-accent-rgb) / 0.18), transparent 42%),
+    repeating-linear-gradient(0deg, rgb(var(--section-accent-rgb) / 0.055) 0 1px, transparent 1px 18px),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--dice {
+  background:
+    radial-gradient(circle at 20% 44%, rgb(var(--section-accent-rgb) / 0.2), transparent 34%),
+    linear-gradient(90deg, transparent, rgb(var(--section-accent-rgb) / 0.1)),
+    var(--fx-panel, #ddd7c1);
+}
+
+.station-shell[data-tone='light'] .landing-section--taybols {
+  background:
+    linear-gradient(135deg, rgb(var(--section-accent-rgb) / 0.15), transparent 38%),
+    radial-gradient(circle at 78% 24%, rgb(var(--fx-support-3-rgb, 216 255 53) / 0.13), transparent 32%),
+    var(--fx-bg, #f4f0df);
+}
+
+.station-shell[data-tone='light'] .landing-section--identity {
+  background:
+    radial-gradient(circle at 76% 42%, rgb(var(--section-accent-rgb) / calc(0.12 * var(--fx-glow-strength, 1))), transparent 34%),
+    var(--fx-bg, #f4f0df);
+}
+
+.section-kicker,
+.landing-final p {
+  margin: 0 0 18px;
+  color: var(--section-accent, var(--fx-signal, #d8ff35));
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.landing-section h2,
+.landing-final h2 {
+  max-width: 920px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 74px;
+  font-weight: 950;
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.product-link-list {
+  max-width: 1180px;
+  display: grid;
+  gap: 12px;
+  margin: 42px 0 0;
+}
+
+.product-link {
+  --product-accent: var(--fx-signal, #d8ff35);
+  --product-accent-rgb: var(--fx-signal-rgb, 216 255 53);
+  min-height: 118px;
+  display: grid;
+  grid-template-columns: 120px minmax(0, 0.85fr) minmax(260px, 1fr);
+  align-items: center;
+  gap: 22px;
+  padding: 20px 24px;
+  border-left: 5px solid var(--product-accent);
+  border-top: 1px solid rgb(var(--product-accent-rgb) / 0.34);
+  background:
+    linear-gradient(90deg, rgb(var(--product-accent-rgb) / 0.16), transparent 36%),
+    rgba(5, 6, 7, 0.58);
+  color: var(--fx-text, #f4f4f0);
+  text-decoration: none;
+}
+
+.product-link:hover {
+  background:
+    linear-gradient(90deg, rgb(var(--product-accent-rgb) / 0.28), transparent 48%),
+    rgba(5, 6, 7, 0.8);
+}
+
+.product-link--warp {
+  --product-accent: var(--fx-signal, #d8ff35);
+  --product-accent-rgb: var(--fx-signal-rgb, 216 255 53);
+}
+
+.product-link--dice {
+  --product-accent: var(--fx-support-1, #d8ff35);
+  --product-accent-rgb: var(--fx-support-1-rgb, 216 255 53);
+}
+
+.product-link--taybols {
+  --product-accent: var(--fx-support-2, #d8ff35);
+  --product-accent-rgb: var(--fx-support-2-rgb, 216 255 53);
+}
+
+.product-link span,
+.section-link {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-link span {
+  color: var(--product-accent);
+}
+
+.product-link strong {
+  font-size: 24px;
+  line-height: 1.05;
+}
+
+.product-link small {
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.72);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.station-shell[data-tone='light'] .product-link {
+  background:
+    linear-gradient(90deg, rgb(var(--product-accent-rgb) / 0.22), transparent 38%),
+    rgb(var(--fx-text-on-dark-rgb, 244 244 240) / 0.58);
+  color: var(--fx-text-on-light, #050607);
+}
+
+.station-shell[data-tone='light'] .product-link:hover {
+  background:
+    linear-gradient(90deg, rgb(var(--product-accent-rgb) / 0.32), transparent 48%),
+    rgb(var(--fx-text-on-dark-rgb, 244 244 240) / 0.78);
+}
+
+.station-shell[data-tone='light'] .product-link small {
+  color: rgb(var(--fx-text-on-light-rgb, 5 6 7) / 0.7);
+}
+
+.section-link {
+  width: fit-content;
+  min-height: 44px;
+  display: inline-grid;
+  place-items: center;
+  margin: 32px 0 0;
+  padding: 0 18px;
+  border: 1px solid var(--section-accent);
+  background: var(--section-accent);
+  color: var(--fx-bg, #050607);
+  text-decoration: none;
+}
+
+.section-link:hover {
+  border-color: var(--fx-text, #f4f4f0);
+  background: var(--fx-text, #f4f4f0);
+}
+
+.landing-section > p:not(.section-kicker) {
+  max-width: 720px;
+  margin: 28px 0 0;
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.72);
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.station-shell[data-tone='light'] .landing-section > p:not(.section-kicker),
+.station-shell[data-tone='light'] .landing-columns p {
+  color: rgb(var(--fx-text-on-light-rgb, 5 6 7) / 0.74);
+}
+
+.landing-columns {
+  max-width: 1180px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  margin: 44px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
+}
+
+.landing-columns p {
+  margin: 0;
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.74);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.landing-final {
+  min-height: 64svh;
+}
+
+.landing-final a {
+  width: fit-content;
+  margin: 34px 0 0;
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

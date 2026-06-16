@@ -6,7 +6,7 @@ import {
   duplicateScanlineLayer,
   removeScanlineLayer,
   updateScanlineLayer,
-} from './scanline-engine'
+} from '../../../packages/scanlines-system/src/station/scanline-engine'
 
 describe('scanline engine', () => {
   it('adds a new layer to hydrated state without reusing an existing id', () => {

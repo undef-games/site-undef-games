@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { readSiteSurfaceCopy, type SiteSurfaceCopy } from './site-copy-site'
+import { readSiteSurfaceCopy, type SiteSurfaceCopy } from '@undef/scanlines-system'
 
 const testFilePath = import.meta.url.startsWith('file:')
   ? fileURLToPath(import.meta.url)

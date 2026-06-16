@@ -150,7 +150,7 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
   await expect.poll(() => forwardToyLine.evaluate(getTranslateX)).toBeGreaterThan(initialForwardTravel + 100)
   await expect.poll(() => reverseToyLine.evaluate(getTranslateX)).toBeLessThan(initialReverseTravel - 100)
-  await expect(page.getByRole('heading', { name: /responsive by design, not by decoration/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /shared play needs strong systems underneath it/i })).toBeVisible()
 })
 
 test('advertises concrete undef games projects', async ({ page }) => {

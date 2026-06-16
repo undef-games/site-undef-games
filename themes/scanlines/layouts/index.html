@@ -14,14 +14,45 @@
     ) }}
   {{ end }}
   {{ $sections := dict
+    "signal" (dict
+      "kicker" hugo.Data.site.home.signal.kicker
+      "title" hugo.Data.site.home.signal.title
+      "body" hugo.Data.site.home.signal.copy
+    )
     "projects" (dict
       "kicker" $productsIntro.kicker
       "title" $productsIntro.title
+    )
+    "warp" (dict
+      "kicker" hugo.Data.site.home.warp.kicker
+      "title" hugo.Data.site.home.warp.title
+      "body" hugo.Data.site.home.warp.copy
+      "href" hugo.Data.site.home.warp.href
+      "linkLabel" hugo.Data.site.home.warp.link_label
+    )
+    "dice" (dict
+      "kicker" hugo.Data.site.home.dice.kicker
+      "title" hugo.Data.site.home.dice.title
+      "body" hugo.Data.site.home.dice.copy
+      "href" hugo.Data.site.home.dice.href
+      "linkLabel" hugo.Data.site.home.dice.link_label
+    )
+    "taybols" (dict
+      "kicker" hugo.Data.site.home.taybols.kicker
+      "title" hugo.Data.site.home.taybols.title
+      "body" hugo.Data.site.home.taybols.copy
+      "href" hugo.Data.site.home.taybols.href
+      "linkLabel" hugo.Data.site.home.taybols.link_label
     )
     "identity" (dict
       "kicker" $identity.kicker
       "title" $identity.title
       "body" $identity.copy
+    )
+    "closing" (dict
+      "kicker" hugo.Data.site.home.closing.kicker
+      "title" hugo.Data.site.home.closing.title
+      "action" hugo.Data.site.home.closing.action
     )
   }}
   {{ $siteCopy := dict
@@ -37,7 +68,7 @@
         "href" $hero.secondary_href
         "label" $hero.secondary_label
       )
-      "statusLabel" "Shared play, digital and physical."
+      "statusLabel" $hero.status_label
     )
     "sections" $sections
     "projects" $projectItems

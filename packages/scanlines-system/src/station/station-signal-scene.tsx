@@ -1,20 +1,14 @@
 import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
-import {
-  buildScanlineFrame,
-} from '../../../packages/scanlines-system/src/station/scanline-renderer'
-import type { ScanlineBlendMode, ScanlineEngineState } from '../../../packages/scanlines-system/src/station/scanline-engine'
-import {
-  getSignalFieldPlan,
-  type ChannelMode,
-} from '../../../packages/scanlines-system/src/station/signal-field-plan'
 import { BASELINE_EFFECTS, type EffectsSettings } from './effects-config'
 import { hexToPixiColor } from './effects-style'
+import type { ScanlineBlendMode, ScanlineEngineState } from './scanline-engine'
+import { buildScanlineFrame } from './scanline-renderer'
 import { getStationStatus, type StationState } from './station-state'
 
-type TraceGraphicsLayers = Record<ScanlineBlendMode, Graphics>
+export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
 
-export type { ChannelMode }
+type TraceGraphicsLayers = Record<ScanlineBlendMode, Graphics>
 
 export function StationSignalScene({
   state,
@@ -190,6 +184,31 @@ function canUsePixi() {
   if (/jsdom/i.test(window.navigator.userAgent)) return false
   const canvas = document.createElement('canvas')
   return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'))
+}
+
+export type SignalFieldPlan = {
+  activeScanlines: number
+  hasCenterMark: boolean
+  hasMast: boolean
+  mode: ChannelMode
+  shape: 'scan-field'
+  totalScanlines: number
+}
+
+export function getSignalFieldPlan(signal: number, channelMode: ChannelMode = 'baseline'): SignalFieldPlan {
+  const normalizedSignal = Math.min(100, Math.max(0, Math.round(Number.isFinite(signal) ? signal : 0)))
+  const clarity = normalizedSignal / 100
+  const modeBonus = channelMode === 'noise' ? 34 : channelMode === 'game' ? 18 : channelMode === 'lock' ? 10 : 0
+  const totalScanlines = 96 + modeBonus
+
+  return {
+    activeScanlines: Math.round(14 + clarity * 70 + modeBonus * 0.45),
+    hasCenterMark: false,
+    hasMast: false,
+    mode: channelMode,
+    shape: 'scan-field',
+    totalScanlines,
+  }
 }
 
 function drawSignalField(
