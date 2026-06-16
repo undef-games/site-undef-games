@@ -57,6 +57,7 @@ function isSiteSurfaceCopy(value: unknown): value is SiteSurfaceCopy {
 export function readSiteSurfaceCopy(): SiteSurfaceCopy | null {
   const node = document.getElementById('site-copy-data')
   if (!(node instanceof HTMLScriptElement)) return null
+  if (node.type !== 'application/json') return null
 
   try {
     const parsed = JSON.parse(node.textContent ?? '')

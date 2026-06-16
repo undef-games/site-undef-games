@@ -64,6 +64,20 @@ describe('site copy loader', () => {
     expect(readSiteSurfaceCopy()).toBeNull()
   })
 
+  it('returns null when the embedded payload script has the wrong type', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="text/plain">
+        {
+          "hero": { "support": "from-hugo" },
+          "projects": [],
+          "sections": {}
+        }
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toBeNull()
+  })
+
   it('returns null when the embedded payload does not match the expected shape', () => {
     document.body.innerHTML = `
       <script id="site-copy-data" type="application/json">
