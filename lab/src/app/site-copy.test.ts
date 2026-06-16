@@ -1,14 +1,80 @@
-import { describe, expect, it } from 'vitest'
-import { LAB_HERO_COPY, LAB_SECTIONS } from './site-copy'
+import { afterEach, describe, expect, it } from 'vitest'
+import { readSiteSurfaceCopy } from './site-copy-site'
 
-describe('site copy', () => {
-  it('keeps the hydrated homepage aligned with the production messaging', () => {
-    expect(LAB_HERO_COPY.support).toBe(
-      'Indie developer building game tools and systems for fun shared experiences online and off.',
-    )
-    expect(LAB_SECTIONS.signal.title).not.toBe('Responsive by design, not by decoration.')
-    expect(LAB_SECTIONS.signal.body).not.toContain('The scanline field stays alive under the cursor and the page')
-    expect(LAB_SECTIONS.projects.title).toBe('Projects built to be used, watched, and played with.')
-    expect(LAB_SECTIONS.identity.title).toBe('Good systems should make shared play easier to reach.')
+describe('site copy loader', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+  })
+
+  it('reads production site copy from embedded hugo json', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="application/json">
+        {
+          "hero": {
+            "support": "from-hugo",
+            "primaryAction": { "href": "/play", "label": "Play" }
+          },
+          "projects": [
+            {
+              "description": "desc",
+              "href": "/warp",
+              "label": "Warp",
+              "tag": "warp"
+            }
+          ],
+          "sections": {
+            "projects": { "kicker": "k", "title": "t" },
+            "identity": { "kicker": "i", "title": "it", "body": "ib" }
+          }
+        }
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toEqual({
+      hero: {
+        support: 'from-hugo',
+        primaryAction: { href: '/play', label: 'Play' },
+      },
+      projects: [
+        {
+          description: 'desc',
+          href: '/warp',
+          label: 'Warp',
+          tag: 'warp',
+        },
+      ],
+      sections: {
+        projects: { kicker: 'k', title: 't' },
+        identity: { kicker: 'i', title: 'it', body: 'ib' },
+      },
+    })
+  })
+
+  it('returns null when the embedded payload is missing', () => {
+    expect(readSiteSurfaceCopy()).toBeNull()
+  })
+
+  it('returns null when the embedded payload is invalid json', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="application/json">
+        {"hero":
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toBeNull()
+  })
+
+  it('returns null when the embedded payload does not match the expected shape', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="application/json">
+        {
+          "hero": { "support": 42 },
+          "projects": [],
+          "sections": {}
+        }
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toBeNull()
   })
 })
