@@ -1,19 +1,30 @@
 import { expect, test } from '@playwright/test'
 
-test('renders the refreshed homepage copy and logs navigation', async ({ page }) => {
+test('renders the refreshed homepage copy and logs navigation', async ({ page, request }) => {
   await page.goto('/')
+  const homeResponse = await request.get('/')
+  const homeHtml = await homeResponse.text()
 
   await expect(page.getByRole('banner')).toBeVisible()
   await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /games/i })).toHaveAttribute(
     'href',
     '/games/',
   )
-  await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /^Logs$/i })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /^Logs$/i })).toHaveAttribute(
+    'href',
+    '/blog/',
+  )
   await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /about/i })).toHaveAttribute(
     'href',
     '/about/',
   )
   await expect(page.getByRole('heading', { name: /^undef games$/i })).toBeVisible()
+  expect(homeHtml).toMatch(/<section class=scan-fallback__hero aria-label="undef games landing page">/i)
+  expect(homeHtml).toMatch(/<p class=scan-fallback__kicker>\s*CH 00 \/ SIGNAL FIELD\s*<\/p>/i)
+  expect(homeHtml).toMatch(/<h1>\s*undef games\s*<\/h1>/i)
+  expect(homeHtml).toMatch(/Indie developer building game tools and systems for fun shared experiences online and off\./i)
+  expect(homeHtml).toMatch(/<a href=https:\/\/warp\.undef\.games>\s*Explore WARP\s*<\/a>/i)
+  expect(homeHtml).toMatch(/<a href=#projects>\s*View projects\s*<\/a>/i)
   await expect(page.getByText(/indie developer building game tools and systems/i)).toBeVisible()
   await expect(page.getByLabel('landing actions').getByRole('link', { name: /explore warp/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
@@ -40,14 +51,31 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page })
 
 test('serves separate Hugo pages with the scanlines header', async ({ page }) => {
   for (const route of [
-    { heading: /^Games$/i, path: '/games/' },
-    { heading: /^Logs$/i, path: '/blog/' },
-    { heading: /^About$/i, path: '/about/' },
+    {
+      heading: /^Games$/i,
+      path: '/games/',
+      description: /active game tools, systems, and playable utilities from undef games/i,
+      intro: /the flagship route: a live alpha platform for tradewars runtime, automation, and operator tooling/i,
+    },
+    {
+      heading: /^Logs$/i,
+      path: '/blog/',
+      description: /development logs, release notes, and project updates from undef games/i,
+      intro: /this is where release notes, build updates, and project notes will collect/i,
+    },
+    {
+      heading: /^About$/i,
+      path: '/about/',
+      description: /undef games is an indie developer building game tools and systems for fun shared experiences/i,
+      intro: /undef games is an indie developer building strong game tools and systems to support fun shared experiences online and off/i,
+    },
   ]) {
     await page.goto(route.path)
 
     await expect(page.getByRole('banner')).toBeVisible()
     await expect(page.getByRole('heading', { name: route.heading })).toBeVisible()
+    await expect(page.locator('.scan-page__hero')).toContainText(route.description)
+    await expect(page.locator('.scan-page__body')).toContainText(route.intro)
     await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
     await expect(page.getByRole('link', { name: /open lab/i })).toHaveAttribute('href', '/lab/')
     await expect(page.getByRole('contentinfo')).toContainText(/undef\.games/i)
