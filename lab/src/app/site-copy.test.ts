@@ -11,9 +11,9 @@ describe('site copy loader', () => {
       <script id="site-copy-data" type="application/json">
         {
           "hero": {
-            "kicker": "Interactive field",
-            "title": "Built for people to play together.",
-            "support": "from-hugo",
+            "kicker": "CH 00 / SIGNAL FIELD",
+            "title": "undef games",
+            "support": "Indie developer building game tools and systems for fun shared experiences online and off.",
             "primaryAction": { "href": "https://warp.undef.games", "label": "Explore WARP" },
             "secondaryAction": { "href": "#projects", "label": "View projects" },
             "statusLabel": "Shared play, digital and physical."
@@ -28,10 +28,17 @@ describe('site copy loader', () => {
             },
             {
               "className": "product-link--dice",
-              "description": "Dice and table tools built to keep groups moving quickly at the table and on the network.",
+              "description": "Dice and table tools for shared play at the table and on the network.",
               "href": "https://undefdice.com",
               "label": "Undef Dice",
               "tag": "dice"
+            },
+            {
+              "className": "product-link--taybols",
+              "description": "Smaller experiments, generators, and odd little utilities with room to become bigger systems.",
+              "href": "https://taybols.undef.games",
+              "label": "Taybols",
+              "tag": "taybols"
             }
           ],
           "sections": {
@@ -51,9 +58,10 @@ describe('site copy loader', () => {
 
     expect(readSiteSurfaceCopy()).toEqual({
       hero: {
-        kicker: 'Interactive field',
-        title: 'Built for people to play together.',
-        support: 'from-hugo',
+        kicker: 'CH 00 / SIGNAL FIELD',
+        title: 'undef games',
+        support:
+          'Indie developer building game tools and systems for fun shared experiences online and off.',
         primaryAction: { href: 'https://warp.undef.games', label: 'Explore WARP' },
         secondaryAction: { href: '#projects', label: 'View projects' },
         statusLabel: 'Shared play, digital and physical.',
@@ -69,11 +77,18 @@ describe('site copy loader', () => {
         },
         {
           className: 'product-link--dice',
-          description:
-            'Dice and table tools built to keep groups moving quickly at the table and on the network.',
+          description: 'Dice and table tools for shared play at the table and on the network.',
           href: 'https://undefdice.com',
           label: 'Undef Dice',
           tag: 'dice',
+        },
+        {
+          className: 'product-link--taybols',
+          description:
+            'Smaller experiments, generators, and odd little utilities with room to become bigger systems.',
+          href: 'https://taybols.undef.games',
+          label: 'Taybols',
+          tag: 'taybols',
         },
       ],
       sections: {
@@ -155,14 +170,78 @@ describe('site copy loader', () => {
     expect(readSiteSurfaceCopy()).toBeNull()
   })
 
+  it('returns null when the embedded payload omits required hero fields', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="application/json">
+        {
+          "hero": {
+            "kicker": "CH 00 / SIGNAL FIELD",
+            "title": "undef games",
+            "support": "Indie developer building game tools and systems for fun shared experiences online and off.",
+            "primaryAction": { "href": "https://warp.undef.games", "label": "Explore WARP" }
+          },
+          "projects": [
+            {
+              "className": "product-link--warp",
+              "description": "The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.",
+              "href": "https://warp.undef.games",
+              "label": "TradeWars: WARP Agent Runtime Platform",
+              "tag": "warp"
+            }
+          ],
+          "sections": {
+            "projects": { "kicker": "Live routes", "title": "Projects built to be used, watched, and played with." },
+            "identity": { "kicker": "Company baseline", "title": "Good systems should make shared play easier to reach.", "body": "identity body" }
+          }
+        }
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toBeNull()
+  })
+
+  it('returns null when a project omits its required class name', () => {
+    document.body.innerHTML = `
+      <script id="site-copy-data" type="application/json">
+        {
+          "hero": {
+            "kicker": "CH 00 / SIGNAL FIELD",
+            "title": "undef games",
+            "support": "Indie developer building game tools and systems for fun shared experiences online and off.",
+            "primaryAction": { "href": "https://warp.undef.games", "label": "Explore WARP" },
+            "secondaryAction": { "href": "#projects", "label": "View projects" },
+            "statusLabel": "Shared play, digital and physical."
+          },
+          "projects": [
+            {
+              "description": "The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.",
+              "href": "https://warp.undef.games",
+              "label": "TradeWars: WARP Agent Runtime Platform",
+              "tag": "warp"
+            }
+          ],
+          "sections": {
+            "projects": { "kicker": "Live routes", "title": "Projects built to be used, watched, and played with." },
+            "identity": { "kicker": "Company baseline", "title": "Good systems should make shared play easier to reach.", "body": "identity body" }
+          }
+        }
+      </script>
+    `
+
+    expect(readSiteSurfaceCopy()).toBeNull()
+  })
+
   it('returns null when a nested identity section entry is malformed', () => {
     document.body.innerHTML = `
       <script id="site-copy-data" type="application/json">
         {
           "hero": {
-            "kicker": "Interactive field",
-            "title": "Built for people to play together.",
-            "support": "from-hugo"
+            "kicker": "CH 00 / SIGNAL FIELD",
+            "title": "undef games",
+            "support": "Indie developer building game tools and systems for fun shared experiences online and off.",
+            "primaryAction": { "href": "https://warp.undef.games", "label": "Explore WARP" },
+            "secondaryAction": { "href": "#projects", "label": "View projects" },
+            "statusLabel": "Shared play, digital and physical."
           },
           "projects": [],
           "sections": {

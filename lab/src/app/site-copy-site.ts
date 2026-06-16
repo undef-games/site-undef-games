@@ -17,12 +17,12 @@ export type SiteSurfaceCopy = {
     kicker: string
     title: string
     support: string
-    primaryAction?: { href: string; label: string }
-    secondaryAction?: { href: string; label: string }
-    statusLabel?: string
+    primaryAction: { href: string; label: string }
+    secondaryAction: { href: string; label: string }
+    statusLabel: string
   }
   projects: Array<{
-    className?: string
+    className: string
     description: string
     href: string
     label: string
@@ -48,11 +48,11 @@ function isLink(value: unknown): value is { href: string; label: string } {
 function isProject(value: unknown): value is SiteSurfaceCopy['projects'][number] {
   return (
     isRecord(value) &&
+    typeof value.className === 'string' &&
     typeof value.description === 'string' &&
     typeof value.href === 'string' &&
     typeof value.label === 'string' &&
-    typeof value.tag === 'string' &&
-    (value.className === undefined || typeof value.className === 'string')
+    typeof value.tag === 'string'
   )
 }
 
@@ -82,13 +82,13 @@ function isSiteSurfaceCopy(value: unknown): value is SiteSurfaceCopy {
     !isRecord(hero) ||
     typeof hero.kicker !== 'string' ||
     typeof hero.title !== 'string' ||
-    typeof hero.support !== 'string'
+    typeof hero.support !== 'string' ||
+    !isLink(hero.primaryAction) ||
+    !isLink(hero.secondaryAction) ||
+    typeof hero.statusLabel !== 'string'
   ) {
     return false
   }
-  if (hero.primaryAction !== undefined && !isLink(hero.primaryAction)) return false
-  if (hero.secondaryAction !== undefined && !isLink(hero.secondaryAction)) return false
-  if (hero.statusLabel !== undefined && typeof hero.statusLabel !== 'string') return false
   if (!Array.isArray(projects) || !projects.every(isProject)) return false
   if (!isSiteSurfaceSections(sections)) return false
 
