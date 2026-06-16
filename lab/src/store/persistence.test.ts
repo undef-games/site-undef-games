@@ -11,6 +11,15 @@ import {
 } from './persistence'
 
 describe('theme persistence', () => {
+  const createSavedTheme = (overrides: Record<string, unknown> = {}) => ({
+    version: 1,
+    activeTone: 'dark',
+    tones: createDefaultThemeState().tones,
+    scanlineLayers: { graph: false, crt: false, glitch: false },
+    sectionEffects: createDefaultThemeState().sectionEffects,
+    ...overrides,
+  })
+
   it('creates default theme state with the default scanline engine', () => {
     const theme = createDefaultThemeState()
 
@@ -22,12 +31,8 @@ describe('theme persistence', () => {
     const storage = window.localStorage
     storage.clear()
 
-    const saved = {
-      version: 1,
-      activeTone: 'dark',
-      tones: createDefaultThemeState().tones,
+    const saved = createSavedTheme({
       scanlineLayers: { graph: true, crt: false, glitch: false },
-      sectionEffects: createDefaultThemeState().sectionEffects,
       scanlineEngine: {
         basePattern: 'audit',
         layers: [
@@ -54,7 +59,7 @@ describe('theme persistence', () => {
           },
         ],
       },
-    }
+    })
 
     storage.setItem(STORAGE_KEY, JSON.stringify(saved))
     expect(readThemeState(storage)?.scanlineEngine.basePattern).toBe('audit')
@@ -63,16 +68,173 @@ describe('theme persistence', () => {
     storage.setItem(
       STORAGE_KEY,
       JSON.stringify({
-        version: 1,
-        activeTone: 'dark',
-        tones: createDefaultThemeState().tones,
+        ...createSavedTheme(),
         scanlineLayers: { graph: false, crt: true, glitch: false },
-        sectionEffects: createDefaultThemeState().sectionEffects,
       }),
     )
 
     expect(readThemeState(storage)?.scanlineEngine.basePattern).toBe('straight')
     expect(readThemeState(storage)?.scanlineEngine.layers).toEqual([])
+  })
+
+  it('falls back when persisted scanline engine fields are malformed', () => {
+    const storage = window.localStorage
+    storage.clear()
+
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        createSavedTheme({
+          scanlineEngine: {
+            basePattern: 'zigzag',
+            layers: [
+              {
+                id: 'layer-1',
+                enabled: 'yes',
+                kind: 'zigzag',
+                role: 'advanced',
+                opacity: '0.8',
+                speed: 'fast',
+                amplitude: null,
+                verticalOffset: 'top',
+                phase: {},
+                blendMode: 'multiply',
+                spacingInfluence: 'dense',
+                frequency: 'high',
+                thickness: 'thick',
+                jitter: 'noisy',
+                dashLength: 'long',
+                gapLength: 'wide',
+                stepSharpness: 'sharp',
+                scrollCoupling: 'linked',
+                pointerCoupling: 'linked',
+              },
+            ],
+          },
+        }),
+      ),
+    )
+
+    const theme = readThemeState(storage)
+    expect(theme?.scanlineEngine.basePattern).toBe('straight')
+    expect(theme?.scanlineEngine.layers).toEqual([
+      {
+        id: 'layer-1',
+        enabled: true,
+        kind: 'straight',
+        role: 'advanced',
+        opacity: 0.6,
+        speed: 0,
+        amplitude: 0.4,
+        verticalOffset: 0,
+        phase: 0,
+        blendMode: 'screen',
+        spacingInfluence: 0.5,
+        frequency: 1,
+        thickness: 1,
+        jitter: 0,
+        dashLength: 0,
+        gapLength: 0,
+        stepSharpness: 0.5,
+        scrollCoupling: 0,
+        pointerCoupling: 0,
+      },
+    ])
+  })
+
+  it('fills missing fields for partial advanced and support layers', () => {
+    const storage = window.localStorage
+    storage.clear()
+
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        createSavedTheme({
+          scanlineEngine: {
+            basePattern: 'broken',
+            layers: [
+              { id: 'advanced-partial', kind: 'audit' },
+              { id: 'support-partial', kind: 'broken', enabled: false },
+              { id: 'support-full', kind: 'sine', intensity: 0.9 },
+              { id: 'support-from-index-3', kind: 'straight' },
+            ],
+          },
+        }),
+      ),
+    )
+
+    const layers = readThemeState(storage)?.scanlineEngine.layers ?? []
+
+    expect(layers).toHaveLength(4)
+    expect(layers[0]).toMatchObject({
+      id: 'advanced-partial',
+      role: 'advanced',
+      kind: 'audit',
+      enabled: true,
+      blendMode: 'screen',
+      spacingInfluence: 0.5,
+    })
+    expect(layers[1]).toMatchObject({
+      id: 'support-partial',
+      role: 'advanced',
+      kind: 'broken',
+      enabled: false,
+      blendMode: 'screen',
+    })
+    expect(layers[2]).toMatchObject({
+      id: 'support-full',
+      role: 'advanced',
+      kind: 'sine',
+      spacingInfluence: 0.5,
+    })
+    expect(layers[3]).toMatchObject({
+      id: 'support-from-index-3',
+      role: 'support',
+      kind: 'straight',
+      enabled: true,
+      intensity: 0.5,
+    })
+  })
+
+  it('truncates over-cap saved layers and drops invalid ids', () => {
+    const storage = window.localStorage
+    storage.clear()
+
+    const layers = Array.from({ length: 20 }, (_, index) => ({
+      id: `layer-${index}`,
+      kind: index % 2 === 0 ? 'straight' : 'sine',
+    }))
+
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        createSavedTheme({
+          scanlineEngine: {
+            basePattern: 'audit',
+            layers: [{ id: 123, kind: 'broken' }, ...layers, { kind: 'audit' }],
+          },
+        }),
+      ),
+    )
+
+    const hydratedLayers = readThemeState(storage)?.scanlineEngine.layers ?? []
+
+    expect(hydratedLayers).toHaveLength(13)
+    expect(hydratedLayers.map((layer) => layer.id)).toEqual([
+      'layer-0',
+      'layer-1',
+      'layer-2',
+      'layer-3',
+      'layer-4',
+      'layer-5',
+      'layer-6',
+      'layer-7',
+      'layer-8',
+      'layer-9',
+      'layer-10',
+      'layer-11',
+      'layer-12',
+    ])
   })
 
   it('round-trips the saved theme state through localStorage', () => {

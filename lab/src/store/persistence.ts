@@ -7,7 +7,10 @@ import {
 import {
   createDefaultScanlineEngine,
   updateScanlineLayer,
+  type ScanlineBlendMode,
   type ScanlineEngineState,
+  type ScanlineLayerPatch,
+  type ScanlinePattern,
 } from '../station/scanline-engine'
 import type { SectionEffects } from '../station/station-toys'
 
@@ -100,14 +103,51 @@ function isTone(value: unknown): value is EffectsTone {
   return value === 'dark' || value === 'light'
 }
 
+function isNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value)
+}
+
+function isLayerPattern(value: unknown): value is ScanlinePattern {
+  return value === 'straight' || value === 'sine' || value === 'audit' || value === 'broken' || value === 'pulse'
+}
+
+function isBasePattern(value: unknown): value is ScanlineEngineState['basePattern'] {
+  return value === 'straight' || value === 'sine' || value === 'audit' || value === 'broken'
+}
+
+function isBlendMode(value: unknown): value is ScanlineBlendMode {
+  return value === 'add' || value === 'screen' || value === 'soft-light' || value === 'difference'
+}
+
+function resolveScanlineLayerPatch(value: Record<string, unknown>): ScanlineLayerPatch {
+  const patch: ScanlineLayerPatch = {}
+
+  if (typeof value.enabled === 'boolean') patch.enabled = value.enabled
+  if (isLayerPattern(value.kind)) patch.kind = value.kind
+  if (isNumber(value.opacity)) patch.opacity = value.opacity
+  if (isNumber(value.speed)) patch.speed = value.speed
+  if (isNumber(value.amplitude)) patch.amplitude = value.amplitude
+  if (isNumber(value.verticalOffset)) patch.verticalOffset = value.verticalOffset
+  if (isNumber(value.phase)) patch.phase = value.phase
+  if (isBlendMode(value.blendMode)) patch.blendMode = value.blendMode
+  if (isNumber(value.spacingInfluence)) patch.spacingInfluence = value.spacingInfluence
+  if (isNumber(value.frequency)) patch.frequency = value.frequency
+  if (isNumber(value.thickness)) patch.thickness = value.thickness
+  if (isNumber(value.jitter)) patch.jitter = value.jitter
+  if (isNumber(value.dashLength)) patch.dashLength = value.dashLength
+  if (isNumber(value.gapLength)) patch.gapLength = value.gapLength
+  if (isNumber(value.stepSharpness)) patch.stepSharpness = value.stepSharpness
+  if (isNumber(value.scrollCoupling)) patch.scrollCoupling = value.scrollCoupling
+  if (isNumber(value.pointerCoupling)) patch.pointerCoupling = value.pointerCoupling
+  if (isNumber(value.intensity)) patch.intensity = value.intensity
+
+  return patch
+}
+
 function resolveScanlineEngine(value: unknown, defaults: ScanlineEngineState): ScanlineEngineState {
   if (!isRecord(value)) return createDefaultScanlineEngine()
 
-  const basePattern = value.basePattern
-  const resolvedBasePattern =
-    basePattern === 'straight' || basePattern === 'sine' || basePattern === 'audit' || basePattern === 'broken'
-      ? basePattern
-      : defaults.basePattern
+  const resolvedBasePattern = isBasePattern(value.basePattern) ? value.basePattern : defaults.basePattern
 
   const layers = Array.isArray(value.layers) ? value.layers : []
   let engine: ScanlineEngineState = {
@@ -117,12 +157,12 @@ function resolveScanlineEngine(value: unknown, defaults: ScanlineEngineState): S
 
   for (const layer of layers) {
     if (!isRecord(layer) || typeof layer.id !== 'string') continue
-    const { id, role: _role, ...patch } = layer
+    const patch = resolveScanlineLayerPatch(layer)
     engine = {
       ...engine,
-      layers: [...engine.layers, { ...layer, id: layer.id }] as ScanlineEngineState['layers'],
+      layers: [...engine.layers, { id: layer.id }] as ScanlineEngineState['layers'],
     }
-    engine = updateScanlineLayer(engine, id, patch)
+    engine = updateScanlineLayer(engine, layer.id, patch)
   }
 
   return engine
