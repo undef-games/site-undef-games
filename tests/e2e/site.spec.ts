@@ -58,15 +58,33 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
       },
     },
   })
-  expect(payload.projects).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        href: 'https://warp.undef.games',
-        label: 'TradeWars: WARP Agent Runtime Platform',
-        tag: 'warp',
-      }),
-    ]),
-  )
+  expect(payload.projects).toEqual([
+    {
+      className: 'product-link--warp',
+      description:
+        'The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.',
+      href: 'https://warp.undef.games',
+      label: 'TradeWars: WARP Agent Runtime Platform',
+      tag: 'warp',
+    },
+    {
+      className: 'product-link--dice',
+      description: 'Dice and table tools for shared play at the table and on the network.',
+      href: 'https://undefdice.com',
+      label: 'Undef Dice',
+      tag: 'dice',
+    },
+    {
+      className: 'product-link--taybols',
+      description: 'Smaller experiments, generators, and odd little utilities with room to become bigger systems.',
+      href: 'https://taybols.undef.games',
+      label: 'Taybols',
+      tag: 'taybols',
+    },
+  ])
+  for (const project of payload.projects) {
+    expect(Object.keys(project).sort()).toEqual(['className', 'description', 'href', 'label', 'tag'])
+  }
   expect(payload.hero).not.toHaveProperty('copy')
   expect(payload.hero).not.toHaveProperty('primary_href')
   expect(payload.hero).not.toHaveProperty('primary_label')

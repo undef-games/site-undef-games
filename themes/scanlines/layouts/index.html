@@ -3,6 +3,16 @@
   {{ $productsIntro := hugo.Data.site.home.products_intro }}
   {{ $products := hugo.Data.site.home.products }}
   {{ $identity := hugo.Data.site.home.identity }}
+  {{ $projectItems := slice }}
+  {{ range $products }}
+    {{ $projectItems = $projectItems | append (dict
+      "className" (printf "product-link--%s" .tag)
+      "description" .description
+      "href" .href
+      "label" .label
+      "tag" .tag
+    ) }}
+  {{ end }}
   {{ $sections := dict
     "projects" (dict
       "kicker" $productsIntro.kicker
@@ -30,7 +40,7 @@
       "statusLabel" "Shared play, digital and physical."
     )
     "sections" $sections
-    "projects" $products
+    "projects" $projectItems
   }}
   <div id="scanlines-root">
     <script id="site-copy-data" type="application/json">{{ $siteCopy | jsonify | safeJS }}</script>
