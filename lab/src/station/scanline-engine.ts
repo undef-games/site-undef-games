@@ -45,8 +45,6 @@ export type ScanlineLayerPatch = Partial<Omit<ScanlineLayer, 'id' | 'role'>>
 
 const ADVANCED_LAYER_COUNT = 3
 
-let nextScanlineLayerId = 0
-
 export function createDefaultScanlineEngine(): ScanlineEngineState {
   return {
     basePattern: 'straight',
@@ -131,9 +129,7 @@ export function updateScanlineLayer(
 ): ScanlineEngineState {
   return {
     ...engine,
-    layers: normalizeLayers(
-      engine.layers.map((layer) => (layer.id === id ? createLayerFromTemplate({ ...layer, ...patch, id }, 0) : layer)),
-    ),
+    layers: normalizeLayers(engine.layers.map((layer) => (layer.id === id ? { ...layer, ...patch, id } : layer))),
   }
 }
 
@@ -178,6 +174,5 @@ function createLayerFromTemplate(template: Partial<ScanlineLayerBase> & Partial<
 }
 
 function createScanlineLayerId(): string {
-  nextScanlineLayerId += 1
-  return `scanline-layer-${nextScanlineLayerId}`
+  return `scanline-layer-${globalThis.crypto.randomUUID()}`
 }
