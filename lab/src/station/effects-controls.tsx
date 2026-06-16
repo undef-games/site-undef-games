@@ -258,22 +258,25 @@ export function EffectsControls({
         ))}
       </div>
 
-      <ScanlineEngineControls
-        engine={scanlineEngine}
-        onAddLayer={onAddScanlineEngineLayer}
-        onDuplicateLayer={onDuplicateScanlineEngineLayer}
-        onMoveLayer={onMoveScanlineEngineLayer}
-        onRemoveLayer={onRemoveScanlineEngineLayer}
-        onUpdateBasePattern={onUpdateScanlineBasePattern}
-        onUpdateLayer={onUpdateScanlineEngineLayer}
-      />
-
       {EFFECT_GROUPS.map((group) => (
-        <div key={group.label} className="effect-group">
-          <p className="control-label">{group.label}</p>
-          {group.controls.map((control) => (
-            <EffectNumberControl key={control.key} control={control} value={Number(settings[control.key])} onChange={onChange} />
-          ))}
+        <div key={group.label}>
+          <div className="effect-group">
+            <p className="control-label">{group.label}</p>
+            {group.controls.map((control) => (
+              <EffectNumberControl key={control.key} control={control} value={Number(settings[control.key])} onChange={onChange} />
+            ))}
+          </div>
+          {group.label === 'Scanlines' ? (
+            <ScanlineEngineControls
+              engine={scanlineEngine}
+              onAddLayer={onAddScanlineEngineLayer}
+              onDuplicateLayer={onDuplicateScanlineEngineLayer}
+              onMoveLayer={onMoveScanlineEngineLayer}
+              onRemoveLayer={onRemoveScanlineEngineLayer}
+              onUpdateBasePattern={onUpdateScanlineBasePattern}
+              onUpdateLayer={onUpdateScanlineEngineLayer}
+            />
+          ) : null}
         </div>
       ))}
     </section>
