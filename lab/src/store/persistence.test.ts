@@ -11,6 +11,70 @@ import {
 } from './persistence'
 
 describe('theme persistence', () => {
+  it('creates default theme state with the default scanline engine', () => {
+    const theme = createDefaultThemeState()
+
+    expect(theme.scanlineEngine.basePattern).toBe('straight')
+    expect(theme.scanlineEngine.layers).toEqual([])
+  })
+
+  it('hydrates saved scanline engine state and falls back safely for older saves', () => {
+    const storage = window.localStorage
+    storage.clear()
+
+    const saved = {
+      version: 1,
+      activeTone: 'dark',
+      tones: createDefaultThemeState().tones,
+      scanlineLayers: { graph: true, crt: false, glitch: false },
+      sectionEffects: createDefaultThemeState().sectionEffects,
+      scanlineEngine: {
+        basePattern: 'audit',
+        layers: [
+          {
+            id: 'layer-1',
+            enabled: true,
+            kind: 'sine',
+            role: 'advanced',
+            opacity: 1,
+            speed: 1,
+            amplitude: 1,
+            verticalOffset: 0,
+            phase: 0,
+            blendMode: 'screen',
+            spacingInfluence: 1,
+            frequency: 1,
+            thickness: 1,
+            jitter: 0,
+            dashLength: 0,
+            gapLength: 0,
+            stepSharpness: 0.5,
+            scrollCoupling: 1,
+            pointerCoupling: 1,
+          },
+        ],
+      },
+    }
+
+    storage.setItem(STORAGE_KEY, JSON.stringify(saved))
+    expect(readThemeState(storage)?.scanlineEngine.basePattern).toBe('audit')
+    expect(readThemeState(storage)?.scanlineEngine.layers).toHaveLength(1)
+
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        activeTone: 'dark',
+        tones: createDefaultThemeState().tones,
+        scanlineLayers: { graph: false, crt: true, glitch: false },
+        sectionEffects: createDefaultThemeState().sectionEffects,
+      }),
+    )
+
+    expect(readThemeState(storage)?.scanlineEngine.basePattern).toBe('straight')
+    expect(readThemeState(storage)?.scanlineEngine.layers).toEqual([])
+  })
+
   it('round-trips the saved theme state through localStorage', () => {
     const storage = window.localStorage
     storage.clear()
@@ -18,6 +82,10 @@ describe('theme persistence', () => {
       ...createDefaultThemeState(),
       activeTone: 'light',
       scanlineLayers: { graph: true, crt: false, glitch: true },
+      scanlineEngine: {
+        basePattern: 'audit',
+        layers: [],
+      },
       tones: {
         dark: {
           presetId: 'current',

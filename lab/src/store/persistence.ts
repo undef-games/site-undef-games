@@ -4,6 +4,11 @@ import {
   type EffectsSettings,
   type EffectsTone,
 } from '../station/effects-config'
+import {
+  createDefaultScanlineEngine,
+  updateScanlineLayer,
+  type ScanlineEngineState,
+} from '../station/scanline-engine'
 import type { SectionEffects } from '../station/station-toys'
 
 export const STORAGE_KEY = 'undef-logos-theme'
@@ -21,6 +26,7 @@ export type ThemePresetState = {
 
 export type ThemeState = {
   activeTone: EffectsTone
+  scanlineEngine: ScanlineEngineState
   scanlineLayers: ScanlineLayers
   sectionEffects: SectionEffects
   tones: Record<EffectsTone, ThemePresetState>
@@ -58,6 +64,7 @@ const defaultPresetState = (presetId: EffectsPresetId, tone: EffectsTone): Theme
 export function createDefaultThemeState(): ThemeState {
   return {
     activeTone: 'dark',
+    scanlineEngine: createDefaultScanlineEngine(),
     scanlineLayers: { ...DEFAULT_SCANLINE_LAYERS },
     sectionEffects: { ...DEFAULT_SECTION_EFFECTS },
     tones: {
@@ -93,11 +100,40 @@ function isTone(value: unknown): value is EffectsTone {
   return value === 'dark' || value === 'light'
 }
 
+function resolveScanlineEngine(value: unknown, defaults: ScanlineEngineState): ScanlineEngineState {
+  if (!isRecord(value)) return createDefaultScanlineEngine()
+
+  const basePattern = value.basePattern
+  const resolvedBasePattern =
+    basePattern === 'straight' || basePattern === 'sine' || basePattern === 'audit' || basePattern === 'broken'
+      ? basePattern
+      : defaults.basePattern
+
+  const layers = Array.isArray(value.layers) ? value.layers : []
+  let engine: ScanlineEngineState = {
+    basePattern: resolvedBasePattern,
+    layers: [],
+  }
+
+  for (const layer of layers) {
+    if (!isRecord(layer) || typeof layer.id !== 'string') continue
+    const { id, role: _role, ...patch } = layer
+    engine = {
+      ...engine,
+      layers: [...engine.layers, { ...layer, id: layer.id }] as ScanlineEngineState['layers'],
+    }
+    engine = updateScanlineLayer(engine, id, patch)
+  }
+
+  return engine
+}
+
 function mergeThemeState(value: Record<string, unknown>): ThemeState | null {
   if (value.version !== THEME_STATE_VERSION) return null
 
   const defaults = createDefaultThemeState()
   const activeTone = isTone(value.activeTone) ? value.activeTone : defaults.activeTone
+  const scanlineEngine = resolveScanlineEngine(value.scanlineEngine, defaults.scanlineEngine)
   const tones = isRecord(value.tones) ? value.tones : {}
   const scanlineLayers = isRecord(value.scanlineLayers) ? value.scanlineLayers : {}
   const sectionEffects = isRecord(value.sectionEffects) ? value.sectionEffects : {}
@@ -114,6 +150,7 @@ function mergeThemeState(value: Record<string, unknown>): ThemeState | null {
 
   return {
     activeTone,
+    scanlineEngine,
     scanlineLayers: {
       graph: typeof scanlineLayers.graph === 'boolean' ? scanlineLayers.graph : defaults.scanlineLayers.graph,
       crt: typeof scanlineLayers.crt === 'boolean' ? scanlineLayers.crt : defaults.scanlineLayers.crt,
