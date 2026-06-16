@@ -34,7 +34,7 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   expect(payload).toEqual(
     expect.objectContaining({
       hero: expect.any(Object),
-      sections: expect.any(Array),
+      sections: expect.any(Object),
       projects: expect.any(Array),
     }),
   )

@@ -3,14 +3,12 @@
   {{ $productsIntro := hugo.Data.site.home.products_intro }}
   {{ $products := hugo.Data.site.home.products }}
   {{ $identity := hugo.Data.site.home.identity }}
-  {{ $sections := slice
-    (dict
-      "id" "projects"
+  {{ $sections := dict
+    "projects" (dict
       "kicker" $productsIntro.kicker
       "title" $productsIntro.title
     )
-    (dict
-      "id" "identity"
+    "identity" (dict
       "kicker" $identity.kicker
       "title" $identity.title
       "copy" $identity.copy
