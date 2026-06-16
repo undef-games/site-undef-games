@@ -454,6 +454,91 @@ test('persists separate lab themes and hydrates the production surface', async (
   await expect(page.locator('.station-shell')).toHaveAttribute('data-tone', 'dark')
 })
 
+test('switches scanline base patterns and caps the engine at thirteen layers', async ({ page }) => {
+  await page.goto('/lab/')
+
+  const engine = page.getByLabel('scanline engine')
+  const basePattern = engine.getByLabel('Base pattern')
+  const addLayerButton = engine.getByRole('button', { name: /add scanline layer/i })
+  const patternCycle = [
+    { label: 'Straight', value: 'straight' },
+    { label: 'Sine', value: 'sine' },
+    { label: 'Audit', value: 'audit' },
+    { label: 'Broken', value: 'broken' },
+  ] as const
+
+  for (const [index, pattern] of patternCycle.entries()) {
+    await basePattern.selectOption(pattern.value)
+    await expect(basePattern).toHaveValue(pattern.value)
+    await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-scanline-base-pattern', pattern.value)
+
+    await addLayerButton.click()
+    const layer = engine.getByRole('listitem', { name: new RegExp(`Layer ${index + 1}`, 'i') })
+    await expect(layer).toBeVisible()
+    await expect(layer.getByLabel('Pattern')).toHaveValue(pattern.value)
+  }
+
+  for (let index = patternCycle.length; index < 13; index += 1) {
+    await addLayerButton.click()
+  }
+
+  await expect(engine.getByRole('listitem')).toHaveCount(13)
+  await expect(engine.getByText('13 / 13 layers')).toBeVisible()
+  await expect(engine.getByRole('listitem', { name: /Layer 13/i }).getByLabel('Pattern')).toHaveValue('broken')
+  await expect(addLayerButton).toBeDisabled()
+  await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-scanline-layer-count', '13')
+})
+
+test('persists scanline engine choices across reload and resets back to baseline', async ({ page }) => {
+  await page.goto('/lab/')
+  await page.evaluate(() => window.localStorage.clear())
+  await page.reload()
+
+  const engine = page.getByLabel('scanline engine')
+  const basePattern = engine.getByLabel('Base pattern')
+  const addLayerButton = engine.getByRole('button', { name: /add scanline layer/i })
+
+  await basePattern.selectOption('audit')
+  await addLayerButton.click()
+  await addLayerButton.click()
+
+  const secondLayer = engine.getByRole('listitem', { name: /Layer 2/i })
+  await secondLayer.getByLabel('Pattern').selectOption('sine')
+
+  await expect
+    .poll(() => readSavedTheme(page))
+    .toMatchObject({
+      scanlineEngine: {
+        basePattern: 'audit',
+        layers: [{ kind: 'audit' }, { kind: 'sine' }],
+      },
+    })
+
+  await page.reload()
+
+  await expect(basePattern).toHaveValue('audit')
+  await expect(engine.getByText('2 / 13 layers')).toBeVisible()
+  await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-scanline-base-pattern', 'audit')
+  await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-scanline-layer-count', '2')
+  await expect(engine.getByRole('listitem', { name: /Layer 1/i }).getByLabel('Pattern')).toHaveValue('audit')
+  await expect(engine.getByRole('listitem', { name: /Layer 2/i }).getByLabel('Pattern')).toHaveValue('sine')
+
+  await page.getByRole('button', { name: /reset theme/i }).click()
+
+  await expect(basePattern).toHaveValue('straight')
+  await expect(engine.getByText('0 / 13 layers')).toBeVisible()
+  await expect(engine.getByRole('listitem')).toHaveCount(0)
+  await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-scanline-base-pattern', 'straight')
+  await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-scanline-layer-count', '0')
+  await expect.poll(() => page.evaluate(() => window.localStorage.getItem('undef-logos-theme'))).toBeNull()
+
+  await page.reload()
+
+  await expect(basePattern).toHaveValue('straight')
+  await expect(engine.getByText('0 / 13 layers')).toBeVisible()
+  await expect(engine.getByRole('listitem')).toHaveCount(0)
+})
+
 test('switches section background effects independently', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 })
   await page.goto('/lab/')
@@ -746,6 +831,10 @@ function hasPaintedWebGlPixels(canvas: HTMLCanvasElement) {
 function getToyRectArea(element: Element) {
   const rect = element.getBoundingClientRect()
   return rect.width * rect.height
+}
+
+async function readSavedTheme(page: Page) {
+  return page.evaluate(() => JSON.parse(window.localStorage.getItem('undef-logos-theme') ?? '{}'))
 }
 
 function readToyRect(element: Element) {
