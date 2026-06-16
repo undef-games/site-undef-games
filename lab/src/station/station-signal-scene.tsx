@@ -1,17 +1,24 @@
 import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
-import { BASELINE_EFFECTS, hexToPixiColor, type EffectsSettings } from './effects-config'
+import { BASELINE_EFFECTS, type EffectsSettings } from './effects-config'
+import { hexToPixiColor } from './effects-style'
+import type { ScanlineBlendMode, ScanlineEngineState } from './scanline-engine'
+import { buildScanlineFrame } from './scanline-renderer'
 import { getStationStatus, type StationState } from './station-state'
 
 export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
 
+type TraceGraphicsLayers = Record<ScanlineBlendMode, Graphics>
+
 export function StationSignalScene({
   state,
+  scanlineEngine,
   scrollDepth = 0,
   channelMode = 'baseline',
   effects = BASELINE_EFFECTS,
 }: {
   state: StationState
+  scanlineEngine: ScanlineEngineState
   scrollDepth?: number
   channelMode?: ChannelMode
   effects?: EffectsSettings
@@ -20,6 +27,7 @@ export function StationSignalScene({
   const plan = getSignalFieldPlan(state.signal, channelMode)
   const hostRef = useRef<HTMLDivElement>(null)
   const signalRef = useRef(state.signal)
+  const scanlineEngineRef = useRef(scanlineEngine)
   const scrollDepthRef = useRef(scrollDepth)
   const channelModeRef = useRef(channelMode)
   const effectsRef = useRef(effects)
@@ -27,6 +35,10 @@ export function StationSignalScene({
   useEffect(() => {
     signalRef.current = state.signal
   }, [state.signal])
+
+  useEffect(() => {
+    scanlineEngineRef.current = scanlineEngine
+  }, [scanlineEngine])
 
   useEffect(() => {
     scrollDepthRef.current = scrollDepth
@@ -46,7 +58,8 @@ export function StationSignalScene({
     const target: HTMLElement = host
 
     let app: Application | null = null
-    let graphics: Graphics | null = null
+    let backgroundGraphics: Graphics | null = null
+    let traceGraphics: TraceGraphicsLayers | null = null
     let resizeObserver: ResizeObserver | null = null
     let disposed = false
     const pointer = { active: false, x: 0, y: 0 }
@@ -73,11 +86,13 @@ export function StationSignalScene({
       const width = Math.max(1, Math.round(rect.width))
       const height = Math.max(1, Math.round(rect.height))
       app.renderer.resize(width, height)
-      if (graphics) {
+      if (backgroundGraphics && traceGraphics) {
         drawSignalField(
-          graphics,
+          backgroundGraphics,
+          traceGraphics,
           app,
           signalRef.current,
+          scanlineEngineRef.current,
           pointer,
           scrollDepthRef.current,
           channelModeRef.current,
@@ -104,21 +119,26 @@ export function StationSignalScene({
         app.destroy(true)
         return
       }
+      const appInstance = app
 
-      graphics = new Graphics()
-      app.stage.addChild(graphics)
-      target.appendChild(app.canvas)
+      backgroundGraphics = new Graphics()
+      traceGraphics = createTraceGraphicsLayers(Graphics)
+      appInstance.stage.addChild(backgroundGraphics)
+      Object.values(traceGraphics).forEach((layer) => appInstance.stage.addChild(layer))
+      target.appendChild(appInstance.canvas)
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerleave', onPointerLeave)
       resizeObserver = new ResizeObserver(resizeToHost)
       resizeObserver.observe(target)
       requestAnimationFrame(resizeToHost)
-      app.ticker.add(() => {
-        if (graphics && app) {
+      appInstance.ticker.add(() => {
+        if (backgroundGraphics && traceGraphics) {
           drawSignalField(
-            graphics,
-            app,
+            backgroundGraphics,
+            traceGraphics,
+            appInstance,
             signalRef.current,
+            scanlineEngineRef.current,
             pointer,
             scrollDepthRef.current,
             channelModeRef.current,
@@ -150,6 +170,8 @@ export function StationSignalScene({
       data-resize-mode="observer"
       data-channel-mode={channelMode}
       data-pointer-active="false"
+      data-scanline-base-pattern={scanlineEngine.basePattern}
+      data-scanline-layer-count={scanlineEngine.layers.length}
       data-scroll-depth={scrollDepth}
       data-signal={state.signal}
       data-status={status.label}
@@ -190,9 +212,11 @@ export function getSignalFieldPlan(signal: number, channelMode: ChannelMode = 'b
 }
 
 function drawSignalField(
-  graphics: Graphics,
+  backgroundGraphics: Graphics,
+  traceGraphics: TraceGraphicsLayers,
   app: Application,
   signal: number,
+  scanlineEngine: ScanlineEngineState,
   pointer: { active: boolean; x: number; y: number },
   scrollDepth: number,
   channelMode: ChannelMode,
@@ -213,6 +237,7 @@ function drawSignalField(
   const mutedColor = hexToPixiColor(effects.paletteMuted)
   const backgroundColor = hexToPixiColor(effects.paletteBg)
   const activeColors = [signalColor, support1Color, support2Color, support3Color]
+  const traceColors = [signalColor, support1Color, support2Color, support3Color]
   const driftX =
     pointer.x *
     width *
@@ -221,8 +246,9 @@ function drawSignalField(
     effects.driftAmount
   const pointerY = (pointer.y + 0.5) * height
 
-  graphics.clear()
-  graphics.rect(0, 0, width, height).fill(backgroundColor)
+  backgroundGraphics.clear()
+  Object.values(traceGraphics).forEach((layer) => layer.clear())
+  backgroundGraphics.rect(0, 0, width, height).fill(backgroundColor)
 
   for (let index = 0; index < plan.totalScanlines; index += 1) {
     const y =
@@ -241,7 +267,7 @@ function drawSignalField(
     const x = active
       ? width * (0.03 + (index % 4) * 0.018) + driftX + jitter
       : width * (0.1 + ((index * 89) % Math.max(width * 0.22, 1)) / width)
-    graphics.rect(x, y, Math.min(lineWidth, width * 0.94), active ? 2.4 : 1).fill({
+    backgroundGraphics.rect(x, y, Math.min(lineWidth, width * 0.94), active ? 2.4 : 1).fill({
       color: active ? activeColors[index % activeColors.length] : mutedColor,
       alpha: active
         ? (0.075 + clarity * 0.28 + pointerBand * 0.22 + scrollEnergy * 0.08) * effects.scanOpacity
@@ -249,31 +275,67 @@ function drawSignalField(
     })
   }
 
+  const frame = buildScanlineFrame({
+    engine: scanlineEngine,
+    height,
+    pointer,
+    scrollDepth,
+    signal,
+    time,
+    width,
+  })
+
+  frame.traces.forEach((trace, index) => {
+    const layer = traceGraphics[trace.blendMode]
+    let drewSegment = false
+    let segmentOpen = false
+
+    trace.points.forEach((point) => {
+      if (!point) {
+        segmentOpen = false
+        return
+      }
+      if (!segmentOpen) {
+        layer.moveTo(point.x + driftX, point.y)
+        segmentOpen = true
+        drewSegment = true
+        return
+      }
+      layer.lineTo(point.x + driftX, point.y)
+    })
+    if (!drewSegment) return
+    layer.stroke({
+      alpha: trace.opacity * effects.scanOpacity,
+      color: traceColors[index % traceColors.length],
+      width: trace.thickness,
+    })
+  })
+
   const noiseCount = Math.round((130 + profile.noise) * Math.max(0.05, effects.noiseAmount))
   for (let index = 0; index < noiseCount; index += 1) {
     const noise = pseudoNoise(index, time)
     const x = (noise * width + index * 31) % width
     const y = (pseudoNoise(index + 91, time * 0.7) * height + index * 17) % height
     const size = 1 + ((index + Math.floor(time * 6)) % 3)
-    graphics.rect(x, y, size, 1).fill({
+    backgroundGraphics.rect(x, y, size, 1).fill({
       color: mutedColor,
       alpha: (0.024 + (1 - clarity) * 0.13 + scrollEnergy * 0.03) * effects.noiseAmount,
     })
   }
 
   if (pointer.active) {
-    graphics.rect(0, pointerY - 34, width, 68).fill({
+    backgroundGraphics.rect(0, pointerY - 34, width, 68).fill({
       color: support1Color,
       alpha: (0.025 + clarity * 0.03) * effects.pointerWake,
     })
-    graphics.rect(driftX - width * 0.08, pointerY, width * 1.08, 2).fill({
+    backgroundGraphics.rect(driftX - width * 0.08, pointerY, width * 1.08, 2).fill({
       color: support2Color,
       alpha: (0.16 + clarity * 0.16) * effects.pointerWake,
     })
   }
 
   const sweepY = (height * (0.12 + ((time * (0.14 + scrollEnergy * 0.26)) % 0.82))) | 0
-  graphics.rect(driftX, sweepY, width, lock ? 3 : 2).fill({
+  backgroundGraphics.rect(driftX, sweepY, width, lock ? 3 : 2).fill({
     color: support3Color,
     alpha: (0.18 + clarity * 0.22) * effects.sweepStrength,
   })
@@ -282,7 +344,7 @@ function drawSignalField(
     const blockY = (height * (0.18 + ((time * 0.07 + scrollEnergy * 0.4) % 0.58))) | 0
     for (let index = 0; index < 7; index += 1) {
       const blockX = width * (0.12 + index * 0.105) + driftX * 0.4
-      graphics.rect(blockX, blockY + (index % 3) * 18, width * 0.045, 8).fill({
+      backgroundGraphics.rect(blockX, blockY + (index % 3) * 18, width * 0.045, 8).fill({
         color: activeColors[(index + 1) % activeColors.length],
         alpha: (0.12 + clarity * 0.22) * effects.sweepStrength,
       })
@@ -306,4 +368,19 @@ function getChannelProfile(channelMode: ChannelMode) {
 function pseudoNoise(seed: number, time: number) {
   const raw = Math.sin(seed * 12.9898 + time * 78.233) * 43758.5453
   return raw - Math.floor(raw)
+}
+
+function createTraceGraphicsLayers(GraphicsCtor: typeof Graphics): TraceGraphicsLayers {
+  return {
+    add: createTraceLayer(GraphicsCtor, 'add'),
+    difference: createTraceLayer(GraphicsCtor, 'difference'),
+    screen: createTraceLayer(GraphicsCtor, 'screen'),
+    'soft-light': createTraceLayer(GraphicsCtor, 'soft-light'),
+  }
+}
+
+function createTraceLayer(GraphicsCtor: typeof Graphics, blendMode: ScanlineBlendMode) {
+  const layer = new GraphicsCtor()
+  layer.blendMode = blendMode as never
+  return layer
 }

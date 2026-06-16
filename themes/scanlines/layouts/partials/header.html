@@ -1,0 +1,16 @@
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+    <a class="site-header__brand" href="/" aria-label="{{ site.Params.site_name }} home">
+      <span class="site-header__mark" aria-hidden="true">UG</span>
+      <span>{{ site.Params.site_name }}</span>
+    </a>
+    <nav class="site-header__nav" aria-label="Primary navigation">
+      <a href="/games/" {{ if eq .RelPermalink "/games/" }}aria-current="page"{{ end }}>Games</a>
+      <a href="/blog/" {{ if eq .RelPermalink "/blog/" }}aria-current="page"{{ end }}>Blog</a>
+      <a href="/about/" {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>About</a>
+    </nav>
+    <a class="site-header__login" href="{{ site.Params.login_url }}">
+      Log in
+    </a>
+  </div>
+</header>

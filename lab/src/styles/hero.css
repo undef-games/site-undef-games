@@ -203,6 +203,14 @@
   mix-blend-mode: screen;
 }
 
+.station-shell[data-tone='light'] .hero-ghost-glyph {
+  color: var(--fx-signal, #405500);
+  opacity: calc(0.18 + var(--scroll-depth, 0) * 0.05);
+  filter: blur(calc((18px - var(--scroll-depth, 0) * 6px) * var(--fx-frost-blur, 1))) saturate(78%)
+    contrast(1.08);
+  mix-blend-mode: multiply;
+}
+
 .packet-drift {
   position: absolute;
   inset: 0;
@@ -252,6 +260,7 @@
 }
 
 .station-shell--site .station-hero {
+  padding-left: 64px;
   padding-right: min(14vw, 180px);
 }
 

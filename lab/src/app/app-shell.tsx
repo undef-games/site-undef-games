@@ -1,16 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { EffectsControls } from '../station/effects-controls'
-import type { ScanlineLayerId, ScanlineLayers } from '../station/effects-controls'
+import { PROMINENT_ENTRANCE_CONFIGS } from '../prominent/prominent-config'
+import { ProminentEntrance } from '../prominent/prominent-entrance'
+import { resetProminentEntrances } from '../prominent/prominent-storage'
 import {
-  BASELINE_EFFECTS,
   EFFECTS_PRESETS,
-  createEffectsStyle,
-  getEffectsTone,
   type EffectsPresetId,
   type EffectsSettings,
+  type EffectsTone,
 } from '../station/effects-config'
+import { createEffectsStyle } from '../station/effects-style'
 import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
+import {
+  addScanlineLayer,
+  duplicateScanlineLayer,
+  moveScanlineLayer,
+  removeScanlineLayer,
+  updateScanlineLayer as updateScanlineEngineLayerState,
+  type ScanlineEngineState,
+  type ScanlineLayerMoveDirection,
+  type ScanlineLayerPatch,
+} from '../station/scanline-engine'
 import { StationSignalScene } from '../station/station-signal-scene'
 import { createStationState, detuneSignal, getStationStatus, resetSignal, tuneSignal } from '../station/station-state'
 import {
@@ -20,9 +31,18 @@ import {
   SignalScope,
   STATION_CHANNELS,
   type SectionEffectId,
-  type SectionEffects,
   type SectionToyEffect,
 } from '../station/station-toys'
+import {
+  clearThemeState,
+  createDefaultThemeState,
+  getActiveThemeSettings,
+  readThemeState,
+  writeThemeState,
+  type ScanlineLayerId,
+  type ThemeState,
+} from '../store/persistence'
+import { attachButtonPressFeedback } from '../ui/button-press-feedback'
 
 const PRODUCT_LINKS = [
   {
@@ -48,58 +68,196 @@ const PRODUCT_LINKS = [
   },
 ]
 
-const DEFAULT_SECTION_EFFECTS: SectionEffects = {
-  dice: 'bars',
-  identity: 'tumble',
-  projects: 'tumble',
-  signal: 'bars',
-  taybols: 'bars',
-  warp: 'tumble',
-}
-
-const DEFAULT_SCANLINE_LAYERS: ScanlineLayers = {
-  graph: false,
-  crt: false,
-  glitch: false,
-}
-
 export type AppShellSurface = 'lab' | 'site'
+
+function resolveLabBackHref() {
+  try {
+    if (!document.referrer) return '/'
+    const referrer = new URL(document.referrer)
+    const current = new URL(window.location.href)
+    if (referrer.origin !== current.origin || referrer.pathname === current.pathname) return '/'
+    return `${referrer.pathname}${referrer.search}${referrer.hash}` || '/'
+  } catch {
+    return '/'
+  }
+}
 
 export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const isSiteSurface = surface === 'site'
+  const [labBackHref, setLabBackHref] = useState('/')
+  const [prominentReplaySeed, setProminentReplaySeed] = useState(0)
+  const [prominentOriginReady, setProminentOriginReady] = useState(false)
+  const [prominentOrigin, setProminentOrigin] = useState({ bottom: '50vh', left: '50vw' })
   const [stationState, setStationState] = useState(() => createStationState({ signal: isSiteSurface ? 50 : 0 }))
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
-  const [effectsSettings, setEffectsSettings] = useState<EffectsSettings>(BASELINE_EFFECTS)
-  const [activePresetId, setActivePresetId] = useState<EffectsPresetId | 'custom'>('current')
-  const [sectionEffects, setSectionEffects] = useState<SectionEffects>(DEFAULT_SECTION_EFFECTS)
-  const [scanlineLayers, setScanlineLayers] = useState<ScanlineLayers>(DEFAULT_SCANLINE_LAYERS)
+  const [themeState, setThemeState] = useState<ThemeState>(() => readThemeState() ?? createDefaultThemeState())
+  const effectsSettings = getActiveThemeSettings(themeState)
+  const activePresetId = themeState.tones[themeState.activeTone].presetId
+  const darkPresetId = themeState.tones.dark.presetId
+  const lightPresetId = themeState.tones.light.presetId
+  const sectionEffects = themeState.sectionEffects
+  const scanlineEngine = themeState.scanlineEngine
+  const scanlineLayers = themeState.scanlineLayers
   const effectsSettingsRef = useRef(effectsSettings)
+  const stationBroadcastRef = useRef<HTMLDivElement | null>(null)
+  const stationSidebarRef = useRef<HTMLElement | null>(null)
   const status = getStationStatus(stationState)
 
   const tune = () => setStationState((current) => tuneSignal(current, 25))
   const detune = () => setStationState((current) => detuneSignal(current, 25))
   const reset = () => setStationState(resetSignal)
-  const applyEffectsPreset = (presetId: EffectsPresetId) => {
-    const preset = EFFECTS_PRESETS.find((candidate) => candidate.id === presetId)
+
+  const updateThemeState = (updater: (current: ThemeState) => ThemeState) => {
+    setThemeState((current) => {
+      const next = updater(current)
+      if (!isSiteSurface) {
+        writeThemeState(next)
+      }
+      return next
+    })
+  }
+
+  const applyEffectsPreset = (tone: EffectsTone, presetId: EffectsPresetId) => {
+    const preset = EFFECTS_PRESETS.find((candidate) => candidate.id === presetId && candidate.tone === tone)
     if (!preset) return
-    setEffectsSettings({ ...preset.settings })
-    setActivePresetId(presetId)
+    updateThemeState((current) => ({
+      ...current,
+      tones: {
+        ...current.tones,
+        [tone]: {
+          presetId,
+          settings: { ...preset.settings },
+        },
+      },
+    }))
+  }
+  const updateActiveTone = (tone: EffectsTone) => {
+    updateThemeState((current) => ({ ...current, activeTone: tone }))
   }
   const updateEffect = (key: keyof EffectsSettings, value: number | string) => {
-    setEffectsSettings((current) => ({ ...current, [key]: value }))
-    setActivePresetId('custom')
+    updateThemeState((current) => ({
+      ...current,
+      tones: {
+        ...current.tones,
+        [current.activeTone]: {
+          presetId: 'custom',
+          settings: { ...current.tones[current.activeTone].settings, [key]: value },
+        },
+      },
+    }))
   }
   const updateSectionEffect = (sectionId: SectionEffectId, effect: SectionToyEffect) => {
-    setSectionEffects((current) => ({ ...current, [sectionId]: effect }))
+    updateThemeState((current) => ({
+      ...current,
+      sectionEffects: { ...current.sectionEffects, [sectionId]: effect },
+    }))
+  }
+  const updateScanlineBasePattern = (basePattern: ScanlineEngineState['basePattern']) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: { ...current.scanlineEngine, basePattern },
+    }))
+  }
+  const addScanlineEngineLayer = () => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: addScanlineLayer(current.scanlineEngine, current.scanlineEngine.basePattern),
+    }))
+  }
+  const duplicateScanlineEngineLayer = (id: string) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: duplicateScanlineLayer(current.scanlineEngine, id),
+    }))
+  }
+  const removeScanlineEngineLayer = (id: string) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: removeScanlineLayer(current.scanlineEngine, id),
+    }))
+  }
+  const moveScanlineEngineLayer = (id: string, direction: ScanlineLayerMoveDirection) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: moveScanlineLayer(current.scanlineEngine, id, direction),
+    }))
+  }
+  const updateScanlineEngineLayer = (id: string, patch: ScanlineLayerPatch) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: updateScanlineEngineLayerState(current.scanlineEngine, id, patch),
+    }))
   }
   const updateScanlineLayer = (layerId: ScanlineLayerId, active: boolean) => {
-    setScanlineLayers((current) => ({ ...current, [layerId]: active }))
+    updateThemeState((current) => ({
+      ...current,
+      scanlineLayers: { ...current.scanlineLayers, [layerId]: active },
+    }))
+  }
+  const resetTheme = () => {
+    clearThemeState()
+    setThemeState(createDefaultThemeState())
+  }
+  const resetProminent = () => {
+    resetProminentEntrances([PROMINENT_ENTRANCE_CONFIGS.labBack])
+    setProminentReplaySeed((current) => current + 1)
   }
 
   useEffect(() => {
     effectsSettingsRef.current = effectsSettings
   }, [effectsSettings])
+
+  useEffect(() => {
+    if (!isSiteSurface) setLabBackHref(resolveLabBackHref())
+  }, [isSiteSurface])
+
+  useLayoutEffect(() => {
+    const broadcast = stationBroadcastRef.current
+    if (!broadcast) return
+
+    const updateProminentOrigin = () => {
+      const rect = broadcast.getBoundingClientRect()
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
+      setProminentOrigin({
+        bottom: `${Math.max(0, window.innerHeight - centerY)}px`,
+        left: `${centerX}px`,
+      })
+      setProminentOriginReady(rect.width > 0 && rect.height > 0)
+    }
+
+    updateProminentOrigin()
+
+    const observer = new ResizeObserver(updateProminentOrigin)
+    observer.observe(broadcast)
+    window.addEventListener('resize', updateProminentOrigin)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateProminentOrigin)
+    }
+  }, [])
+
+  useEffect(() => {
+    const sidebar = stationSidebarRef.current
+    if (!sidebar) return
+    return attachButtonPressFeedback(sidebar)
+  }, [])
+
+  useEffect(() => {
+    const syncThemeState = () => {
+      const nextTheme = readThemeState()
+      if (nextTheme) setThemeState(nextTheme)
+    }
+
+    window.addEventListener('storage', syncThemeState)
+    window.addEventListener('undef-theme-change', syncThemeState)
+
+    return () => {
+      window.removeEventListener('storage', syncThemeState)
+      window.removeEventListener('undef-theme-change', syncThemeState)
+    }
+  }, [])
 
   useEffect(() => {
     let animationFrame = 0
@@ -149,10 +307,12 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   }, [])
 
   const landingStyle = createEffectsStyle(effectsSettings, scrollDepth)
-  const activeTone =
-    activePresetId === 'custom'
-      ? getEffectsTone(effectsSettings)
-      : (EFFECTS_PRESETS.find((preset) => preset.id === activePresetId)?.tone ?? getEffectsTone(effectsSettings))
+  const activeTone = themeState.activeTone
+  const shellStyle = {
+    ...landingStyle,
+    '--prominent-origin-bottom': prominentOrigin.bottom,
+    '--prominent-origin-left': prominentOrigin.left,
+  } as CSSProperties
 
   return (
     <div
@@ -163,13 +323,14 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
       data-surface={surface}
       data-status={status.label.toLowerCase().replaceAll(' ', '-')}
       data-tone={activeTone}
-      style={landingStyle}
+      style={shellStyle}
     >
       <main className="landing-page">
         <section className="landing-hero" aria-label="undef games landing page">
-          <div className="station-broadcast" aria-label="static station identity">
+          <div ref={stationBroadcastRef} className="station-broadcast" aria-label="static station identity">
             <StationSignalScene
               state={stationState}
+              scanlineEngine={scanlineEngine}
               scrollDepth={scrollDepth}
               channelMode={activeChannel.mode}
               effects={effectsSettings}
@@ -200,19 +361,32 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
             </div>
           </div>
           {!isSiteSurface && (
-            <aside className="station-sidebar" aria-label="station tools and identity">
+            <aside ref={stationSidebarRef} className="station-sidebar" aria-label="station tools and identity">
               <StationControls state={stationState} onTune={tune} onDetune={detune} onReset={reset} />
               <ChannelSelector activeChannel={activeChannel} channels={STATION_CHANNELS} onSelect={setActiveChannel} />
               <SignalScope signal={stationState.signal} scrollDepth={scrollDepth} activeChannel={activeChannel} />
               <EffectsControls
                 activePresetId={activePresetId}
+                activeTone={themeState.activeTone}
+                darkPresetId={darkPresetId}
+                lightPresetId={lightPresetId}
+                scanlineEngine={scanlineEngine}
                 scanlineLayers={scanlineLayers}
                 settings={effectsSettings}
                 sectionEffects={sectionEffects}
+                onAddScanlineEngineLayer={addScanlineEngineLayer}
                 onChange={updateEffect}
+                onActiveTone={updateActiveTone}
+                onDuplicateScanlineEngineLayer={duplicateScanlineEngineLayer}
+                onMoveScanlineEngineLayer={moveScanlineEngineLayer}
                 onPreset={applyEffectsPreset}
+                onResetProminent={resetProminent}
+                onResetTheme={resetTheme}
+                onRemoveScanlineEngineLayer={removeScanlineEngineLayer}
                 onScanlineLayerChange={updateScanlineLayer}
                 onSectionEffect={updateSectionEffect}
+                onUpdateScanlineBasePattern={updateScanlineBasePattern}
+                onUpdateScanlineEngineLayer={updateScanlineEngineLayer}
               />
               <StationIdentity state={stationState} />
             </aside>
@@ -292,6 +466,21 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
           </a>
         </section>
       </main>
+      {!isSiteSurface && (
+        <ProminentEntrance
+          key={`lab-back:${prominentReplaySeed}`}
+          config={PROMINENT_ENTRANCE_CONFIGS.labBack}
+          enabled={prominentOriginReady}
+          activeClassName="home-quick-link--intro"
+        >
+          <a
+            className="home-quick-link"
+            href={labBackHref}
+          >
+            {'< Back'}
+          </a>
+        </ProminentEntrance>
+      )}
     </div>
   )
 }

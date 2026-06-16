@@ -2,7 +2,9 @@
 <html lang="{{ or site.Language.Locale site.Language.Lang "en-us" }}">
 {{- partial "head.html" . -}}
 <body class="{{ if .IsHome }}page-home{{ else }}page-{{ or .Section .Type "interior" }}{{ end }}">
+  {{- partial "header.html" . -}}
   {{- block "main" . }}{{- end }}
+  {{- partial "lab-link.html" . -}}
   {{ if not .IsHome -}}
     {{- partial "footer.html" . -}}
   {{- end }}

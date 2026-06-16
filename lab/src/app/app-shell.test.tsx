@@ -1,9 +1,15 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AppShell } from './app-shell'
+import { createDefaultThemeState, STORAGE_KEY } from '../store/persistence'
+import { PROMINENT_ENTRANCE_CONFIGS } from '../prominent/prominent-config'
+import { getProminentEntranceStorageKey } from '../prominent/prominent-storage'
 
-afterEach(() => cleanup())
+afterEach(() => {
+  cleanup()
+  window.localStorage.clear()
+})
 
 describe('AppShell', () => {
   it('renders the static station identity surface', () => {
@@ -42,6 +48,109 @@ describe('AppShell', () => {
     expect(screen.queryByLabelText(/effects controls/i)).not.toBeInTheDocument()
   })
 
+  it('hydrates the production site surface from the saved lab theme', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...createDefaultThemeState(),
+        activeTone: 'light',
+        scanlineLayers: { graph: true, crt: true, glitch: false },
+        tones: {
+          ...createDefaultThemeState().tones,
+          light: {
+            presetId: 'custom',
+            settings: {
+              ...createDefaultThemeState().tones.light.settings,
+              paletteBg: '#ffffff',
+              paletteSignal: '#123456',
+            },
+          },
+        },
+      }),
+    )
+
+    render(<AppShell surface="site" />)
+
+    const shell = screen.getByRole('main').parentElement!
+    expect(shell).toHaveAttribute('data-tone', 'light')
+    expect(shell).toHaveAttribute('data-scan-graph', 'true')
+    expect(shell).toHaveAttribute('data-scan-crt', 'true')
+  })
+
+  it('passes persisted scanline engine state into the scene metadata', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...createDefaultThemeState(),
+        scanlineEngine: {
+          basePattern: 'audit',
+          layers: [
+            {
+              amplitude: 0.4,
+              blendMode: 'screen',
+              dashLength: 0,
+              enabled: true,
+              frequency: 1,
+              gapLength: 0,
+              id: 'layer-a',
+              jitter: 0,
+              kind: 'sine',
+              opacity: 0.6,
+              phase: 0,
+              pointerCoupling: 0,
+              role: 'advanced',
+              scrollCoupling: 0,
+              spacingInfluence: 0.5,
+              speed: 0,
+              stepSharpness: 0.5,
+              thickness: 1,
+              verticalOffset: 0,
+            },
+          ],
+        },
+      }),
+    )
+
+    render(<AppShell />)
+
+    const scene = screen.getByLabelText(/interactive station signal/i)
+    expect(scene).toHaveAttribute('data-scanline-base-pattern', 'audit')
+    expect(scene).toHaveAttribute('data-scanline-layer-count', '1')
+  })
+
+  it('saves separate dark and light theme choices and clears them with reset theme', async () => {
+    const user = userEvent.setup()
+    render(<AppShell />)
+
+    await user.selectOptions(screen.getByLabelText(/dark theme preset/i), 'cyan-ice')
+    await user.selectOptions(screen.getByLabelText(/light theme preset/i), 'paper-terminal')
+    await user.click(screen.getByRole('button', { name: /light mode/i }))
+
+    expect(JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')).toMatchObject({
+      activeTone: 'light',
+      tones: {
+        dark: { presetId: 'cyan-ice' },
+        light: { presetId: 'paper-terminal' },
+      },
+      version: 1,
+    })
+
+    await user.click(screen.getByRole('button', { name: /reset theme/i }))
+
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull()
+    expect(screen.getByLabelText(/dark theme preset/i)).toHaveValue('current')
+    expect(screen.getByLabelText(/light theme preset/i)).toHaveValue('paper-terminal')
+  })
+
+  it('wires the scanline engine controls through app state', async () => {
+    const user = userEvent.setup()
+    render(<AppShell />)
+
+    await user.click(screen.getByRole('button', { name: /add scanline layer/i }))
+
+    expect(screen.getByText('Layer 1')).toBeInTheDocument()
+  })
+
   it('keeps the identity rail focused on the selected mark instead of exploration boards', () => {
     render(<AppShell />)
 
@@ -74,7 +183,7 @@ describe('AppShell', () => {
     expect(screen.getAllByText(/NO SIGNAL/i).length).toBeGreaterThan(0)
 
     await user.click(screen.getByRole('button', { name: /tune signal/i }))
-    await user.click(screen.getByRole('button', { name: /reset/i }))
+    await user.click(screen.getByRole('button', { name: /^reset$/i }))
     expect(screen.getByLabelText(/signal 0/i)).toBeInTheDocument()
   })
 
@@ -86,5 +195,33 @@ describe('AppShell', () => {
 
     expect(screen.getByLabelText(/signal 0/i)).toBeInTheDocument()
     expect(screen.getAllByText(/NO SIGNAL/i).length).toBeGreaterThan(0)
+  })
+
+  it('resets saved prominent entrances from the lab rail and replays the back control intro', async () => {
+    const user = userEvent.setup()
+    const storageKey = getProminentEntranceStorageKey(PROMINENT_ENTRANCE_CONFIGS.labBack)
+    window.localStorage.setItem(storageKey, 'true')
+    const getBoundingClientRectSpy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      if (this.getAttribute('aria-label') === 'static station identity') {
+        return new DOMRect(0, 0, 1200, 720)
+      }
+      return new DOMRect(0, 0, 160, 48)
+    })
+
+    try {
+      render(<AppShell />)
+
+      const backLink = screen.getByRole('link', { name: /back/i })
+      expect(backLink).not.toHaveClass('prominent-entrance--active')
+
+      await user.click(screen.getByRole('button', { name: /reset intros/i }))
+
+      const replayedBackLink = screen.getByRole('link', { name: /back/i })
+      expect(window.localStorage.getItem(storageKey)).toBeNull()
+      expect(replayedBackLink).toHaveClass('prominent-entrance--active')
+      expect(replayedBackLink).toHaveAttribute('data-prominent-effect', 'geometric-genie')
+    } finally {
+      getBoundingClientRectSpy.mockRestore()
+    }
   })
 })

@@ -1,10 +1,11 @@
 import type { EffectsPresetId, EffectsSettings, EffectsTone } from './effects-config'
 import { EFFECTS_PRESETS } from './effects-config'
+import { ScanlineEngineControls } from './scanline-engine-controls'
+import type { ScanlineEngineState, ScanlineLayerMoveDirection, ScanlineLayerPatch } from './scanline-engine'
 import type { SectionEffectId, SectionEffects, SectionToyEffect } from './station-toys'
+import type { ScanlineLayerId, ScanlineLayers } from '../store/persistence'
 
 type EffectsControlKey = keyof EffectsSettings
-export type ScanlineLayerId = 'graph' | 'crt' | 'glitch'
-export type ScanlineLayers = Record<ScanlineLayerId, boolean>
 
 type NumberControl = {
   key: EffectsControlKey
@@ -72,10 +73,10 @@ const PALETTE_CONTROLS: { key: EffectsControlKey; label: string }[] = [
   { key: 'paletteSupport3', label: 'Support 3' },
 ]
 
-const PRESET_GROUPS: { icon: string; label: string; tone: EffectsTone }[] = [
-  { icon: '🌙', label: 'Dark presets', tone: 'dark' },
-  { icon: '☀️', label: 'Light presets', tone: 'light' },
-]
+const TONE_LABELS: Record<EffectsTone, { icon: string; label: string }> = {
+  dark: { icon: 'Moon', label: 'Dark' },
+  light: { icon: 'Sun', label: 'Light' },
+}
 
 const SECTION_EFFECT_OPTIONS: { label: string; value: SectionToyEffect }[] = [
   { label: 'Skinny bars', value: 'bars' },
@@ -106,49 +107,111 @@ const SECTION_EFFECT_CONTROLS: { id: SectionEffectId; label: string }[] = [
 
 export function EffectsControls({
   activePresetId,
+  activeTone,
+  darkPresetId,
+  lightPresetId,
+  onActiveTone,
+  onAddScanlineEngineLayer,
+  onResetProminent,
   onScanlineLayerChange,
+  onDuplicateScanlineEngineLayer,
+  onMoveScanlineEngineLayer,
+  onResetTheme,
   sectionEffects,
+  scanlineEngine,
   scanlineLayers,
   settings,
   onChange,
   onPreset,
   onSectionEffect,
+  onRemoveScanlineEngineLayer,
+  onUpdateScanlineBasePattern,
+  onUpdateScanlineEngineLayer,
 }: {
   activePresetId: EffectsPresetId | 'custom'
+  activeTone: EffectsTone
+  darkPresetId: EffectsPresetId | 'custom'
+  lightPresetId: EffectsPresetId | 'custom'
+  onActiveTone: (tone: EffectsTone) => void
+  onAddScanlineEngineLayer: () => void
+  onResetProminent: () => void
   onScanlineLayerChange: (layerId: ScanlineLayerId, active: boolean) => void
+  onDuplicateScanlineEngineLayer: (id: string) => void
+  onMoveScanlineEngineLayer: (id: string, direction: ScanlineLayerMoveDirection) => void
+  onResetTheme: () => void
   sectionEffects: SectionEffects
+  scanlineEngine: ScanlineEngineState
   scanlineLayers: ScanlineLayers
   settings: EffectsSettings
   onChange: (key: EffectsControlKey, value: string | number) => void
-  onPreset: (presetId: EffectsPresetId) => void
+  onPreset: (tone: EffectsTone, presetId: EffectsPresetId) => void
   onSectionEffect: (sectionId: SectionEffectId, effect: SectionToyEffect) => void
+  onRemoveScanlineEngineLayer: (id: string) => void
+  onUpdateScanlineBasePattern: (basePattern: ScanlineEngineState['basePattern']) => void
+  onUpdateScanlineEngineLayer: (id: string, patch: ScanlineLayerPatch) => void
 }) {
+  const renderPresetSelect = (tone: EffectsTone, presetId: EffectsPresetId | 'custom') => (
+    <label className="preset-select-control">
+      <span>{TONE_LABELS[tone].label} theme preset</span>
+      <select
+        aria-label={`${TONE_LABELS[tone].label} theme preset`}
+        value={presetId === 'custom' ? 'custom' : presetId}
+        onChange={(event) => {
+          if (event.currentTarget.value !== 'custom') {
+            onPreset(tone, event.currentTarget.value)
+          }
+        }}
+      >
+        {presetId === 'custom' ? <option value="custom">Custom</option> : null}
+        {EFFECTS_PRESETS.filter((preset) => preset.tone === tone).map((preset) => (
+          <option key={preset.id} value={preset.id}>
+            {preset.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+
   return (
     <section className="effects-controls" aria-label="effects controls">
       <div className="identity-header">
         <p>Effects</p>
-        <span>{activePresetId === 'custom' ? 'custom' : 'preset'}</span>
+        <span>{activePresetId === 'custom' ? `${activeTone} custom` : `${activeTone} preset`}</span>
       </div>
 
-      <label className="preset-select-control">
-        <span>Preset</span>
-        <select
-          aria-label="Effect preset"
-          value={activePresetId === 'custom' ? 'custom' : activePresetId}
-          onChange={(event) => onPreset(event.currentTarget.value)}
+      <div className="theme-mode-control" aria-label="theme mode">
+        {(['dark', 'light'] as const).map((tone) => (
+          <button
+            key={tone}
+            type="button"
+            aria-label={`${TONE_LABELS[tone].label} mode`}
+            aria-pressed={activeTone === tone}
+            onClick={() => onActiveTone(tone)}
+          >
+            <span aria-hidden="true">{TONE_LABELS[tone].icon}</span>
+            {TONE_LABELS[tone].label}
+          </button>
+        ))}
+      </div>
+
+      <div className="theme-preset-grid" aria-label="theme presets">
+        {renderPresetSelect('dark', darkPresetId)}
+        {renderPresetSelect('light', lightPresetId)}
+        <button
+          className="reset-theme-button"
+          type="button"
+          onClick={onResetTheme}
         >
-          {activePresetId === 'custom' ? <option value="custom">Custom</option> : null}
-          {PRESET_GROUPS.map((group) => (
-            <optgroup key={group.tone} label={`${group.icon} ${group.label}`}>
-              {EFFECTS_PRESETS.filter((preset) => preset.tone === group.tone).map((preset) => (
-                <option key={preset.id} value={preset.id}>
-                  {group.icon} {preset.label}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-      </label>
+          Reset theme
+        </button>
+        <button
+          className="reset-prominent-button"
+          type="button"
+          onClick={onResetProminent}
+        >
+          Reset intros
+        </button>
+      </div>
 
       <div className="palette-controls" aria-label="palette controls">
         {PALETTE_CONTROLS.map((control) => (
@@ -196,11 +259,24 @@ export function EffectsControls({
       </div>
 
       {EFFECT_GROUPS.map((group) => (
-        <div key={group.label} className="effect-group">
-          <p className="control-label">{group.label}</p>
-          {group.controls.map((control) => (
-            <EffectNumberControl key={control.key} control={control} value={Number(settings[control.key])} onChange={onChange} />
-          ))}
+        <div key={group.label}>
+          <div className="effect-group">
+            <p className="control-label">{group.label}</p>
+            {group.controls.map((control) => (
+              <EffectNumberControl key={control.key} control={control} value={Number(settings[control.key])} onChange={onChange} />
+            ))}
+          </div>
+          {group.label === 'Scanlines' ? (
+            <ScanlineEngineControls
+              engine={scanlineEngine}
+              onAddLayer={onAddScanlineEngineLayer}
+              onDuplicateLayer={onDuplicateScanlineEngineLayer}
+              onMoveLayer={onMoveScanlineEngineLayer}
+              onRemoveLayer={onRemoveScanlineEngineLayer}
+              onUpdateBasePattern={onUpdateScanlineBasePattern}
+              onUpdateLayer={onUpdateScanlineEngineLayer}
+            />
+          ) : null}
         </div>
       ))}
     </section>

@@ -27,6 +27,10 @@
     padding: 48px 34px;
   }
 
+  .station-shell--site .station-hero {
+    padding: 48px 34px;
+  }
+
   .station-hero h1 {
     font-size: 118px;
   }
@@ -68,6 +72,10 @@
 
   .station-hero {
     min-height: 78svh;
+    padding: 34px 18px;
+  }
+
+  .station-shell--site .station-hero {
     padding: 34px 18px;
   }
 
