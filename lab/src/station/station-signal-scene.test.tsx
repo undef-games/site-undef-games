@@ -1,7 +1,8 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
-import { getSignalFieldPlan, StationSignalScene } from './station-signal-scene'
-import { createDefaultScanlineEngine } from './scanline-engine'
+import { createDefaultScanlineEngine } from '../../../packages/scanlines-system/src/station/scanline-engine'
+import { getSignalFieldPlan } from '../../../packages/scanlines-system/src/station/signal-field-plan'
+import { StationSignalScene } from './station-signal-scene'
 import { createStationState } from './station-state'
 
 afterEach(() => cleanup())

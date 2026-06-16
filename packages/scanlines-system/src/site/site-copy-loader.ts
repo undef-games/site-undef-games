@@ -7,9 +7,23 @@ type BodySectionCopy = SectionCopy & {
   body: string
 }
 
+type LinkSectionCopy = BodySectionCopy & {
+  href: string
+  linkLabel: string
+}
+
+type ClosingSectionCopy = SectionCopy & {
+  action: string
+}
+
 type SiteSurfaceSections = {
+  signal: BodySectionCopy
   projects: SectionCopy
+  warp: LinkSectionCopy
+  dice: LinkSectionCopy
+  taybols: LinkSectionCopy
   identity: BodySectionCopy
+  closing: ClosingSectionCopy
 }
 
 export type SiteSurfaceCopy = {
@@ -66,7 +80,31 @@ function isBodySectionCopy(value: unknown): value is BodySectionCopy {
 }
 
 function isSiteSurfaceSections(value: unknown): value is SiteSurfaceSections {
-  return isRecord(value) && isSectionCopy(value.projects) && isBodySectionCopy(value.identity)
+  return (
+    isRecord(value) &&
+    isBodySectionCopy(value.signal) &&
+    isSectionCopy(value.projects) &&
+    isLinkSectionCopy(value.warp) &&
+    isLinkSectionCopy(value.dice) &&
+    isLinkSectionCopy(value.taybols) &&
+    isBodySectionCopy(value.identity) &&
+    isClosingSectionCopy(value.closing)
+  )
+}
+
+function isLinkSectionCopy(value: unknown): value is LinkSectionCopy {
+  return (
+    isRecord(value) &&
+    typeof value.kicker === 'string' &&
+    typeof value.title === 'string' &&
+    typeof value.body === 'string' &&
+    typeof value.href === 'string' &&
+    typeof value.linkLabel === 'string'
+  )
+}
+
+function isClosingSectionCopy(value: unknown): value is ClosingSectionCopy {
+  return isRecord(value) && typeof value.kicker === 'string' && typeof value.title === 'string' && typeof value.action === 'string'
 }
 
 function isSiteSurfaceCopy(value: unknown): value is SiteSurfaceCopy {

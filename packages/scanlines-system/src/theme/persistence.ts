@@ -11,7 +11,7 @@ import {
   type ScanlineEngineState,
   type ScanlineLayerPatch,
   type ScanlinePattern,
-} from '../../../../lab/src/station/scanline-engine'
+} from '../station/scanline-engine'
 import type { SectionEffects } from '../../../../lab/src/station/station-toys'
 
 export const STORAGE_KEY = 'undef-logos-theme'
