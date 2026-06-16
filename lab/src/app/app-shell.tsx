@@ -12,6 +12,16 @@ import {
 import { createEffectsStyle } from '../station/effects-style'
 import { StationControls } from '../station/station-controls'
 import { StationGlyph, StationIdentity } from '../station/station-identity'
+import {
+  addScanlineLayer,
+  duplicateScanlineLayer,
+  moveScanlineLayer,
+  removeScanlineLayer,
+  updateScanlineLayer as updateScanlineEngineLayerState,
+  type ScanlineEngineState,
+  type ScanlineLayerMoveDirection,
+  type ScanlineLayerPatch,
+} from '../station/scanline-engine'
 import { StationSignalScene } from '../station/station-signal-scene'
 import { createStationState, detuneSignal, getStationStatus, resetSignal, tuneSignal } from '../station/station-state'
 import {
@@ -87,6 +97,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const darkPresetId = themeState.tones.dark.presetId
   const lightPresetId = themeState.tones.light.presetId
   const sectionEffects = themeState.sectionEffects
+  const scanlineEngine = themeState.scanlineEngine
   const scanlineLayers = themeState.scanlineLayers
   const effectsSettingsRef = useRef(effectsSettings)
   const stationBroadcastRef = useRef<HTMLDivElement | null>(null)
@@ -140,6 +151,42 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
     updateThemeState((current) => ({
       ...current,
       sectionEffects: { ...current.sectionEffects, [sectionId]: effect },
+    }))
+  }
+  const updateScanlineBasePattern = (basePattern: ScanlineEngineState['basePattern']) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: { ...current.scanlineEngine, basePattern },
+    }))
+  }
+  const addScanlineEngineLayer = () => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: addScanlineLayer(current.scanlineEngine, current.scanlineEngine.basePattern),
+    }))
+  }
+  const duplicateScanlineEngineLayer = (id: string) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: duplicateScanlineLayer(current.scanlineEngine, id),
+    }))
+  }
+  const removeScanlineEngineLayer = (id: string) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: removeScanlineLayer(current.scanlineEngine, id),
+    }))
+  }
+  const moveScanlineEngineLayer = (id: string, direction: ScanlineLayerMoveDirection) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: moveScanlineLayer(current.scanlineEngine, id, direction),
+    }))
+  }
+  const updateScanlineEngineLayer = (id: string, patch: ScanlineLayerPatch) => {
+    updateThemeState((current) => ({
+      ...current,
+      scanlineEngine: updateScanlineEngineLayerState(current.scanlineEngine, id, patch),
     }))
   }
   const updateScanlineLayer = (layerId: ScanlineLayerId, active: boolean) => {
@@ -322,16 +369,23 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
                 activeTone={themeState.activeTone}
                 darkPresetId={darkPresetId}
                 lightPresetId={lightPresetId}
+                scanlineEngine={scanlineEngine}
                 scanlineLayers={scanlineLayers}
                 settings={effectsSettings}
                 sectionEffects={sectionEffects}
+                onAddScanlineEngineLayer={addScanlineEngineLayer}
                 onChange={updateEffect}
                 onActiveTone={updateActiveTone}
+                onDuplicateScanlineEngineLayer={duplicateScanlineEngineLayer}
+                onMoveScanlineEngineLayer={moveScanlineEngineLayer}
                 onPreset={applyEffectsPreset}
                 onResetProminent={resetProminent}
                 onResetTheme={resetTheme}
+                onRemoveScanlineEngineLayer={removeScanlineEngineLayer}
                 onScanlineLayerChange={updateScanlineLayer}
                 onSectionEffect={updateSectionEffect}
+                onUpdateScanlineBasePattern={updateScanlineBasePattern}
+                onUpdateScanlineEngineLayer={updateScanlineEngineLayer}
               />
               <StationIdentity state={stationState} />
             </aside>

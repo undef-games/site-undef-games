@@ -1,5 +1,7 @@
 import type { EffectsPresetId, EffectsSettings, EffectsTone } from './effects-config'
 import { EFFECTS_PRESETS } from './effects-config'
+import { ScanlineEngineControls } from './scanline-engine-controls'
+import type { ScanlineEngineState, ScanlineLayerMoveDirection, ScanlineLayerPatch } from './scanline-engine'
 import type { SectionEffectId, SectionEffects, SectionToyEffect } from './station-toys'
 import type { ScanlineLayerId, ScanlineLayers } from '../store/persistence'
 
@@ -109,30 +111,44 @@ export function EffectsControls({
   darkPresetId,
   lightPresetId,
   onActiveTone,
+  onAddScanlineEngineLayer,
   onResetProminent,
   onScanlineLayerChange,
+  onDuplicateScanlineEngineLayer,
+  onMoveScanlineEngineLayer,
   onResetTheme,
   sectionEffects,
+  scanlineEngine,
   scanlineLayers,
   settings,
   onChange,
   onPreset,
   onSectionEffect,
+  onRemoveScanlineEngineLayer,
+  onUpdateScanlineBasePattern,
+  onUpdateScanlineEngineLayer,
 }: {
   activePresetId: EffectsPresetId | 'custom'
   activeTone: EffectsTone
   darkPresetId: EffectsPresetId | 'custom'
   lightPresetId: EffectsPresetId | 'custom'
   onActiveTone: (tone: EffectsTone) => void
+  onAddScanlineEngineLayer: () => void
   onResetProminent: () => void
   onScanlineLayerChange: (layerId: ScanlineLayerId, active: boolean) => void
+  onDuplicateScanlineEngineLayer: (id: string) => void
+  onMoveScanlineEngineLayer: (id: string, direction: ScanlineLayerMoveDirection) => void
   onResetTheme: () => void
   sectionEffects: SectionEffects
+  scanlineEngine: ScanlineEngineState
   scanlineLayers: ScanlineLayers
   settings: EffectsSettings
   onChange: (key: EffectsControlKey, value: string | number) => void
   onPreset: (tone: EffectsTone, presetId: EffectsPresetId) => void
   onSectionEffect: (sectionId: SectionEffectId, effect: SectionToyEffect) => void
+  onRemoveScanlineEngineLayer: (id: string) => void
+  onUpdateScanlineBasePattern: (basePattern: ScanlineEngineState['basePattern']) => void
+  onUpdateScanlineEngineLayer: (id: string, patch: ScanlineLayerPatch) => void
 }) {
   const renderPresetSelect = (tone: EffectsTone, presetId: EffectsPresetId | 'custom') => (
     <label className="preset-select-control">
@@ -241,6 +257,16 @@ export function EffectsControls({
           </label>
         ))}
       </div>
+
+      <ScanlineEngineControls
+        engine={scanlineEngine}
+        onAddLayer={onAddScanlineEngineLayer}
+        onDuplicateLayer={onDuplicateScanlineEngineLayer}
+        onMoveLayer={onMoveScanlineEngineLayer}
+        onRemoveLayer={onRemoveScanlineEngineLayer}
+        onUpdateBasePattern={onUpdateScanlineBasePattern}
+        onUpdateLayer={onUpdateScanlineEngineLayer}
+      />
 
       {EFFECT_GROUPS.map((group) => (
         <div key={group.label} className="effect-group">

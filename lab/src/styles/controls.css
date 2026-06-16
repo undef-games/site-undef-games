@@ -620,6 +620,149 @@
   border-color: var(--fx-text-on-light, #11130d);
 }
 
+.scanline-engine-controls {
+  display: grid;
+  gap: 10px;
+}
+
+.scanline-engine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 10px;
+}
+
+.scanline-engine-header .control-label {
+  margin-bottom: 2px;
+}
+
+.scanline-engine-count {
+  margin: 0;
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.64);
+  font: 800 10px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.scanline-engine-add,
+.scanline-engine-row-actions button {
+  min-height: 34px;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
+  border-radius: 0;
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.32);
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.82);
+  font: 900 10px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.scanline-engine-add:hover,
+.scanline-engine-row-actions button:hover {
+  border-color: var(--fx-signal, #d8ff35);
+  color: var(--fx-signal, #d8ff35);
+}
+
+.scanline-engine-add:disabled,
+.scanline-engine-row-actions button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.scanline-engine-base-pattern,
+.scanline-engine-control-grid label {
+  display: grid;
+  gap: 7px;
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.68);
+  font: 800 10px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.scanline-engine-base-pattern select,
+.scanline-engine-control-grid select,
+.scanline-engine-control-grid input[type='number'] {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
+  border-radius: 0;
+  background: rgba(5, 6, 7, 0.7);
+  color: var(--fx-text, #f4f4f0);
+  font: 900 11px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+.scanline-engine-base-pattern select,
+.scanline-engine-control-grid select {
+  padding-right: 34px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--fx-signal, #d8ff35) 50%) calc(100% - 17px) 15px / 6px 6px no-repeat,
+    linear-gradient(135deg, var(--fx-signal, #d8ff35) 50%, transparent 50%) calc(100% - 11px) 15px / 6px 6px no-repeat,
+    rgba(5, 6, 7, 0.7);
+}
+
+.scanline-engine-layer-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scanline-engine-layer {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.18);
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.42);
+}
+
+.scanline-engine-layer-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.scanline-engine-layer-topline h3,
+.scanline-engine-layer-topline span {
+  margin: 0;
+  font: 900 11px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.scanline-engine-layer-topline span {
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.64);
+}
+
+.scanline-engine-row-actions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.scanline-engine-row-actions button {
+  min-height: 30px;
+  padding: 0 8px;
+}
+
+.scanline-engine-control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.station-shell[data-tone='light'] .scanline-engine-add,
+.station-shell[data-tone='light'] .scanline-engine-row-actions button,
+.station-shell[data-tone='light'] .scanline-engine-base-pattern select,
+.station-shell[data-tone='light'] .scanline-engine-control-grid select,
+.station-shell[data-tone='light'] .scanline-engine-control-grid input[type='number'] {
+  background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
+  color: var(--fx-text-on-dark, #f4f4f0);
+}
+
+.station-shell[data-tone='light'] .scanline-engine-layer {
+  border-color: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.24);
+  background: rgb(255 255 255 / 0.12);
+}
+
 .effect-group {
   display: grid;
   gap: 10px;

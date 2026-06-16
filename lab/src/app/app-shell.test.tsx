@@ -101,6 +101,15 @@ describe('AppShell', () => {
     expect(screen.getByLabelText(/light theme preset/i)).toHaveValue('paper-terminal')
   })
 
+  it('wires the scanline engine controls through app state', async () => {
+    const user = userEvent.setup()
+    render(<AppShell />)
+
+    await user.click(screen.getByRole('button', { name: /add scanline layer/i }))
+
+    expect(screen.getByText('Layer 1')).toBeInTheDocument()
+  })
+
   it('keeps the identity rail focused on the selected mark instead of exploration boards', () => {
     render(<AppShell />)
 
