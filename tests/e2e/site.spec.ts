@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readFileSync } from 'node:fs'
 
 test('renders the refreshed homepage copy and logs navigation', async ({ page, request }) => {
   await page.goto('/')
@@ -85,6 +86,33 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
     await expect(page.getByRole('contentinfo')).toContainText(/undef\.games/i)
     await expect(page.getByLabel('effects controls')).toHaveCount(0)
   }
+})
+
+test('keeps secondary page heroes tight to the header', async ({ page }) => {
+  for (const path of ['/games/', '/blog/', '/about/']) {
+    await page.goto(path)
+
+    const spacing = await page.evaluate(() => {
+      const header = document.querySelector('.site-header')!.getBoundingClientRect()
+      const kicker = document.querySelector('.scan-page__hero .scan-fallback__kicker')!.getBoundingClientRect()
+      const title = document.querySelector('.scan-page__hero h1')!.getBoundingClientRect()
+      return {
+        kickerGap: kicker.top - header.bottom,
+        titleGap: title.top - header.bottom,
+      }
+    })
+
+    expect(spacing.kickerGap).toBeLessThanOrEqual(96)
+    expect(spacing.titleGap).toBeLessThanOrEqual(140)
+  }
+})
+
+test('ships a production CORS allowlist header artifact', async () => {
+  const headersFile = readFileSync('public/_headers', 'utf8')
+
+  expect(headersFile).toContain('Access-Control-Allow-Origin: *')
+  expect(headersFile).toContain('Access-Control-Allow-Methods: GET, HEAD, OPTIONS')
+  expect(headersFile).toContain('Access-Control-Allow-Headers: Origin, Content-Type, Accept')
 })
 
 test('keeps the home mark alive with a subtle theme chase', async ({ page }) => {

@@ -185,9 +185,9 @@ a {
 
 .scan-page__hero {
   display: grid;
-  align-content: end;
-  min-height: 52svh;
-  padding-block: clamp(84px, 16vw, 168px) 52px;
+  align-content: start;
+  min-height: auto;
+  padding-block: 44px 40px;
   border-bottom: 1px solid var(--scan-line);
 }
 
