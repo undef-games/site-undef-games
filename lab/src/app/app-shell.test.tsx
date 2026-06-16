@@ -41,11 +41,22 @@ describe('AppShell', () => {
     expect(screen.getByRole('heading', { name: /undef games/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/interactive station signal/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/interactive station signal/i)).toHaveAttribute('data-signal', '50')
-    expect(screen.getByRole('link', { name: /open lab/i })).toHaveAttribute('href', '/lab/')
+    expect(screen.getAllByRole('link', { name: /explore warp/i })[0]).toHaveAttribute('href', 'https://warp.undef.games')
     expect(screen.getByRole('link', { name: /view projects/i })).toHaveAttribute('href', '#projects')
     expect(screen.queryByLabelText(/station tools and identity/i)).not.toBeInTheDocument()
     expect(screen.queryByLabelText(/station controls/i)).not.toBeInTheDocument()
     expect(screen.queryByLabelText(/effects controls/i)).not.toBeInTheDocument()
+  })
+
+  it('renders the refreshed company and flagship copy on the landing surface', () => {
+    render(<AppShell />)
+
+    expect(
+      screen.getByText(/indie developer building game tools and systems for fun shared experiences/i),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /explore warp/i })).toBeInTheDocument()
+    expect(screen.getAllByText(/TradeWars: WARP Agent Runtime Platform/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/at the table and on the network/i)).toBeInTheDocument()
   })
 
   it('hydrates the production site surface from the saved lab theme', () => {
@@ -211,12 +222,12 @@ describe('AppShell', () => {
     try {
       render(<AppShell />)
 
-      const backLink = screen.getByRole('link', { name: /back/i })
+      const backLink = screen.getByRole('link', { name: /^< back$/i })
       expect(backLink).not.toHaveClass('prominent-entrance--active')
 
       await user.click(screen.getByRole('button', { name: /reset intros/i }))
 
-      const replayedBackLink = screen.getByRole('link', { name: /back/i })
+      const replayedBackLink = screen.getByRole('link', { name: /^< back$/i })
       expect(window.localStorage.getItem(storageKey)).toBeNull()
       expect(replayedBackLink).toHaveClass('prominent-entrance--active')
       expect(replayedBackLink).toHaveAttribute('data-prominent-effect', 'geometric-genie')

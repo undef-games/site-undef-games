@@ -43,30 +43,7 @@ import {
   type ThemeState,
 } from '../store/persistence'
 import { attachButtonPressFeedback } from '../ui/button-press-feedback'
-
-const PRODUCT_LINKS = [
-  {
-    className: 'product-link--warp',
-    description: 'Agent runtime platform for TradeWars automation, tools, and live operators.',
-    href: 'https://warp.undef.games',
-    label: 'TradeWars: WARP Agent Runtime Platform',
-    tag: 'warp',
-  },
-  {
-    className: 'product-link--dice',
-    description: 'Fast dice, table helpers, and lightweight play tools for groups.',
-    href: 'https://undefdice.com',
-    label: 'Undef Dice',
-    tag: 'dice',
-  },
-  {
-    className: 'product-link--taybols',
-    description: 'Table-shaped experiments, generators, and odd little game utilities.',
-    href: 'https://taybols.undef.games',
-    label: 'Taybols',
-    tag: 'taybols',
-  },
-]
+import { LAB_HERO_COPY, LAB_PROJECTS, LAB_SECTIONS } from './site-copy'
 
 export type AppShellSurface = 'lab' | 'site'
 
@@ -352,12 +329,14 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
                 <span>undef</span>
                 <span>games</span>
               </h1>
-              <p className="station-copy">Systems, toys, and game-shaped experiments tuned out of undefined space.</p>
+              <p className="station-copy">{LAB_HERO_COPY.support}</p>
               <div className="station-actions" aria-label="landing actions">
-                <a href={isSiteSurface ? '/lab/' : '#signal'}>{isSiteSurface ? 'Open lab' : 'Tune signal'}</a>
-                <a href="#projects">View projects</a>
+                <a href={isSiteSurface ? LAB_HERO_COPY.primaryAction.href : '#signal'}>
+                  {isSiteSurface ? LAB_HERO_COPY.primaryAction.label : 'Tune signal'}
+                </a>
+                <a href={LAB_HERO_COPY.secondaryAction.href}>{LAB_HERO_COPY.secondaryAction.label}</a>
               </div>
-              <p className="station-status">{status.lock ? 'Signal locked' : status.label}</p>
+              <p className="station-status">{status.lock ? 'Signal locked' : LAB_HERO_COPY.statusLabel}</p>
             </div>
           </div>
           {!isSiteSurface && (
@@ -395,20 +374,17 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
 
         <section className="landing-section landing-section--signal" id="signal" aria-label="signal behavior">
           <SectionToy variant="signal" effect={sectionEffects.signal} />
-          <p className="section-kicker">Interactive field</p>
-          <h2>Scanlines react to the hand and the page.</h2>
-          <p>
-            Move across the surface, scroll through the page, and tune the station. The signal field should feel alive
-            without adding another symbol on top of the brand.
-          </p>
+          <p className="section-kicker">{LAB_SECTIONS.signal.kicker}</p>
+          <h2>{LAB_SECTIONS.signal.title}</h2>
+          <p>{LAB_SECTIONS.signal.body}</p>
         </section>
 
         <section className="landing-section landing-section--products" id="projects" aria-label="undef games projects">
           <SectionToy variant="system" effect={sectionEffects.projects} />
-          <p className="section-kicker">Live routes</p>
-          <h2>Actual projects on the network.</h2>
+          <p className="section-kicker">{LAB_SECTIONS.projects.kicker}</p>
+          <h2>{LAB_SECTIONS.projects.title}</h2>
           <div className="product-link-list" aria-label="undef games project links">
-            {PRODUCT_LINKS.map((product) => (
+            {LAB_PROJECTS.map((product) => (
               <a key={product.href} className={`product-link ${product.className}`} href={product.href}>
                 <span>{product.tag}</span>
                 <strong>{product.label}</strong>
@@ -420,49 +396,46 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
 
         <section className="landing-section landing-section--warp" aria-label="TradeWars WARP Agent Runtime Platform">
           <SectionToy variant="signal" effect={sectionEffects.warp} />
-          <p className="section-kicker">Runtime platform</p>
-          <h2>TradeWars: WARP Agent Runtime Platform.</h2>
-          <p>Agents, automation, and operator surfaces for a live TradeWars environment.</p>
-          <a className="section-link" href="https://warp.undef.games">
-            warp.undef.games
+          <p className="section-kicker">{LAB_SECTIONS.warp.kicker}</p>
+          <h2>{LAB_SECTIONS.warp.title}</h2>
+          <p>{LAB_SECTIONS.warp.body}</p>
+          <a className="section-link" href={LAB_SECTIONS.warp.href}>
+            {LAB_SECTIONS.warp.linkLabel}
           </a>
         </section>
 
         <section className="landing-section landing-section--dice" aria-label="Undef Dice">
           <SectionToy variant="system" effect={sectionEffects.dice} />
-          <p className="section-kicker">Table tools</p>
-          <h2>Undef Dice keeps the table moving.</h2>
-          <p>Dice and tabletop utilities that feel quick, readable, and useful during play.</p>
-          <a className="section-link" href="https://undefdice.com">
-            undefdice.com
+          <p className="section-kicker">{LAB_SECTIONS.dice.kicker}</p>
+          <h2>{LAB_SECTIONS.dice.title}</h2>
+          <p>{LAB_SECTIONS.dice.body}</p>
+          <a className="section-link" href={LAB_SECTIONS.dice.href}>
+            {LAB_SECTIONS.dice.linkLabel}
           </a>
         </section>
 
         <section className="landing-section landing-section--taybols" aria-label="Taybols">
           <SectionToy variant="signal" effect={sectionEffects.taybols} />
-          <p className="section-kicker">Game utilities</p>
-          <h2>Taybols is where the smaller tools can stay strange.</h2>
-          <p>Generators, table experiments, and playable oddities with room to become finished systems.</p>
-          <a className="section-link" href="https://taybols.undef.games">
-            taybols.undef.games
+          <p className="section-kicker">{LAB_SECTIONS.taybols.kicker}</p>
+          <h2>{LAB_SECTIONS.taybols.title}</h2>
+          <p>{LAB_SECTIONS.taybols.body}</p>
+          <a className="section-link" href={LAB_SECTIONS.taybols.href}>
+            {LAB_SECTIONS.taybols.linkLabel}
           </a>
         </section>
 
         <section className="landing-section landing-section--identity" id="identity" aria-label="identity baseline">
           <SectionToy variant="identity" effect={sectionEffects.identity} />
-          <p className="section-kicker">Identity baseline</p>
-          <h2>The mark stays quiet until the lockup needs it.</h2>
-          <p>
-            The Maze Gate U Cut is the saved mark. On the landing page, it lives as the identity lockup and as a dim,
-            frosted background presence behind the broadcast, never as a hard symbol in the center of the scene.
-          </p>
+          <p className="section-kicker">{LAB_SECTIONS.identity.kicker}</p>
+          <h2>{LAB_SECTIONS.identity.title}</h2>
+          <p>{LAB_SECTIONS.identity.body}</p>
         </section>
 
         <section className="landing-final" aria-label="final call to action">
-          <p>undef.games</p>
-          <h2>More signal. Less explanation.</h2>
+          <p>{LAB_SECTIONS.closing.kicker}</p>
+          <h2>{LAB_SECTIONS.closing.title}</h2>
           <a href="#top" onClick={(event) => event.preventDefault()}>
-            Station baseline saved
+            {LAB_SECTIONS.closing.action}
           </a>
         </section>
       </main>
