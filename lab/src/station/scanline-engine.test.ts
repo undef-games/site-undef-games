@@ -107,4 +107,25 @@ describe('scanline engine', () => {
       opacity: 0.25,
     })
   })
+
+  it('updates an advanced layer without losing its advanced fields', () => {
+    let engine = createDefaultScanlineEngine()
+    engine = addScanlineLayer(engine, 'audit')
+
+    const advancedId = engine.layers[0].id
+    engine = updateScanlineLayer(engine, advancedId, {
+      blendMode: 'difference',
+      spacingInfluence: 0.8,
+      opacity: 0.4,
+    })
+
+    expect(engine.layers[0]).toMatchObject({
+      id: advancedId,
+      role: 'advanced',
+      kind: 'audit',
+      blendMode: 'difference',
+      spacingInfluence: 0.8,
+      opacity: 0.4,
+    })
+  })
 })

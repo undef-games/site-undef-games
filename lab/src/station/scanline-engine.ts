@@ -41,7 +41,21 @@ export type ScanlineEngineState = {
 }
 
 export type ScanlineLayerMoveDirection = 'up' | 'down'
-export type ScanlineLayerPatch = Partial<Omit<ScanlineLayer, 'id' | 'role'>>
+
+type AdvancedScanlineLayerFields = Omit<AdvancedScanlineLayer, keyof ScanlineLayerBase | 'role'>
+type SupportingScanlineLayerFields = Omit<SupportingScanlineLayer, keyof ScanlineLayerBase | 'role'>
+
+export type ScanlineLayerPatch =
+  Partial<Omit<ScanlineLayerBase, 'id'>> &
+  Partial<AdvancedScanlineLayerFields> &
+  Partial<SupportingScanlineLayerFields>
+
+type ScanlineLayerTemplate =
+  Partial<ScanlineLayerBase> &
+  Partial<AdvancedScanlineLayerFields> &
+  Partial<SupportingScanlineLayerFields> & {
+    role?: ScanlineLayer['role']
+  }
 
 const ADVANCED_LAYER_COUNT = 3
 
@@ -137,7 +151,7 @@ function normalizeLayers(layers: ScanlineLayer[]): ScanlineLayer[] {
   return layers.slice(0, MAX_SCANLINE_ENGINE_LAYERS).map((layer, index) => createLayerFromTemplate(layer, index))
 }
 
-function createLayerFromTemplate(template: Partial<ScanlineLayerBase> & Partial<AdvancedScanlineLayer> & Partial<SupportingScanlineLayer>, index: number): ScanlineLayer {
+function createLayerFromTemplate(template: ScanlineLayerTemplate, index: number): ScanlineLayer {
   const base: ScanlineLayerBase = {
     id: template.id ?? createScanlineLayerId(),
     enabled: template.enabled ?? true,
