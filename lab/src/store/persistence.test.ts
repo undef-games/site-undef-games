@@ -8,7 +8,7 @@ import {
   STORAGE_KEY,
   writeThemeState,
   type ThemeState,
-} from './persistence'
+} from '@undef/scanlines-system'
 
 describe('theme persistence', () => {
   const createSavedTheme = (overrides: Record<string, unknown> = {}) => ({

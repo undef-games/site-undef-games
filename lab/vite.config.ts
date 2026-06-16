@@ -23,6 +23,11 @@ export default defineConfig({
     },
   },
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@undef/scanlines-system': resolve(__dirname, '../packages/scanlines-system/src/index.ts'),
+    },
+  },
   test: {
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',
