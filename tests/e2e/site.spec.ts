@@ -164,4 +164,34 @@ test('serves the interactive lab below /lab/', async ({ page }) => {
   const backLink = page.getByRole('link', { name: /back/i })
   await expect(backLink).toHaveAttribute('href', '/')
   await expect(backLink).toHaveText('< Back')
+  await expect
+    .poll(() =>
+      backLink.evaluate((element) => {
+        const style = getComputedStyle(element, '::before')
+        return {
+          animationName: style.animationName,
+          backgroundImage: style.backgroundImage,
+        }
+      }),
+    )
+    .toMatchObject({
+      animationName: 'back-link-chase',
+      backgroundImage: expect.stringContaining('conic-gradient'),
+    })
+  await expect
+    .poll(() => backLink.evaluate((element) => getComputedStyle(element).boxShadow))
+    .not.toBe('none')
+})
+
+test('returns from the lab to the previous undef games page when available', async ({ page }) => {
+  await page.goto('/games/')
+  await page.getByRole('link', { name: /open lab/i }).last().click()
+
+  await expect(page).toHaveURL(/\/lab\/$/)
+  const backLink = page.getByRole('link', { name: /back/i })
+  await expect(backLink).toHaveAttribute('href', '/games/')
+
+  await backLink.click()
+
+  await expect(page).toHaveURL(/\/games\/$/)
 })

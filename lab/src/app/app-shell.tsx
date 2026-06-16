@@ -56,8 +56,21 @@ const PRODUCT_LINKS = [
 
 export type AppShellSurface = 'lab' | 'site'
 
+function resolveLabBackHref() {
+  try {
+    if (!document.referrer) return '/'
+    const referrer = new URL(document.referrer)
+    const current = new URL(window.location.href)
+    if (referrer.origin !== current.origin || referrer.pathname === current.pathname) return '/'
+    return `${referrer.pathname}${referrer.search}${referrer.hash}` || '/'
+  } catch {
+    return '/'
+  }
+}
+
 export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const isSiteSurface = surface === 'site'
+  const [labBackHref, setLabBackHref] = useState('/')
   const [stationState, setStationState] = useState(() => createStationState({ signal: isSiteSurface ? 50 : 0 }))
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
@@ -134,6 +147,10 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   useEffect(() => {
     effectsSettingsRef.current = effectsSettings
   }, [effectsSettings])
+
+  useEffect(() => {
+    if (!isSiteSurface) setLabBackHref(resolveLabBackHref())
+  }, [isSiteSurface])
 
   useEffect(() => {
     const syncThemeState = () => {
@@ -344,7 +361,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
         </section>
       </main>
       {!isSiteSurface && (
-        <a className="home-quick-link" href="/">
+        <a className="home-quick-link" href={labBackHref}>
           {'< Back'}
         </a>
       )}
