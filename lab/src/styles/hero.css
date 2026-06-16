@@ -255,11 +255,12 @@
   min-height: 100svh;
   display: grid;
   align-content: center;
-  padding: 56px 92px;
+  padding: 36px 92px 56px;
   text-shadow: 0 3px 24px rgba(5, 6, 7, calc(0.9 * var(--fx-occlusion-strength, 1)));
 }
 
 .station-shell--site .station-hero {
+  padding-top: 16px;
   padding-left: 64px;
   padding-right: min(14vw, 180px);
 }

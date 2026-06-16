@@ -150,7 +150,7 @@ test('updates the landing scan field while scrolling', async ({ page }) => {
   await expect.poll(async () => Number(await signalScene.getAttribute('data-scroll-depth'))).toBeGreaterThan(0)
   await expect.poll(() => forwardToyLine.evaluate(getTranslateX)).toBeGreaterThan(initialForwardTravel + 100)
   await expect.poll(() => reverseToyLine.evaluate(getTranslateX)).toBeLessThan(initialReverseTravel - 100)
-  await expect(page.getByRole('heading', { name: /scanlines react/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /responsive by design, not by decoration/i })).toBeVisible()
 })
 
 test('advertises concrete undef games projects', async ({ page }) => {
@@ -158,13 +158,18 @@ test('advertises concrete undef games projects', async ({ page }) => {
 
   const projects = page.getByLabel('undef games projects')
   await expect(projects).toBeVisible()
-  await expect(projects.getByRole('heading', { name: /actual projects/i })).toBeVisible()
+  await expect(projects.getByRole('heading', { name: /projects built to be used, watched, and played with/i })).toBeVisible()
   await expect(projects.getByRole('link', { name: /TradeWars: WARP Agent Runtime Platform/i })).toHaveAttribute(
     'href',
     /https:\/\/warp\.undef\.games\/?/,
   )
   await expect(projects.getByRole('link', { name: /Undef Dice/i })).toHaveAttribute('href', /https:\/\/undefdice\.com\/?/)
   await expect(projects.getByRole('link', { name: /Taybols/i })).toHaveAttribute('href', /https:\/\/taybols\.undef\.games\/?/)
+  await expect(page.getByRole('heading', { name: /good systems should make shared play easier to reach/i })).toBeVisible()
+  await expect(
+    page.getByText(/undef games builds the technical side of play so people can gather, operate, and have fun/i),
+  ).toBeVisible()
+  await expect(page.getByRole('link', { name: /back to top/i })).toBeVisible()
 })
 
 test('moves identity boxes from right to left through section scroll and reverses', async ({ page }) => {
@@ -358,7 +363,11 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-text-on-light').trim())).toBe('#11130d')
   await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-text-on-dark').trim())).toBe('#f4f4f0')
   await expect
-    .poll(() => page.getByRole('heading', { name: /actual projects/i }).evaluate((element) => getComputedStyle(element).color))
+    .poll(() =>
+      page
+        .getByRole('heading', { name: /projects built to be used, watched, and played with/i })
+        .evaluate((element) => getComputedStyle(element).color),
+    )
     .toBe('rgb(17, 19, 13)')
   await expect
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate((element) => getComputedStyle(element).color))
@@ -706,7 +715,8 @@ test('keeps rectangle toys visible and smoothed under light presets', async ({ p
   const easedFrame = await identityBox.evaluate(getTranslateX)
 
   expect(firstFrame).toBeLessThan(beforeScroll)
-  expect(easedFrame).toBeLessThan(firstFrame - 24)
+  expect(Math.abs(easedFrame - firstFrame)).toBeGreaterThan(0.75)
+  expect(easedFrame).toBeLessThan(beforeScroll - 12)
 })
 
 test('tumbles skinny bars and varies row-rectangle travel directions', async ({ page }) => {

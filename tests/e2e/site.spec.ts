@@ -37,6 +37,10 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   await expect(page.getByLabel('station tools and identity')).toHaveCount(0)
   await expect(page.getByLabel('effects controls')).toHaveCount(0)
   await expect(page.getByRole('heading', { name: /projects built to be used, watched, and played with/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /good systems should make shared play easier to reach/i })).toBeVisible()
+  await expect(
+    page.getByText(/undef games builds the technical side of play so people can gather, operate, and have fun/i),
+  ).toBeVisible()
   const projects = page.getByLabel('undef games projects')
   await expect(projects.getByRole('link', { name: /TradeWars: WARP Agent Runtime Platform/i })).toHaveAttribute(
     'href',
@@ -208,13 +212,26 @@ test('keeps the site header responsive without pinning controls to wide viewport
   expect(overflow).toBe(false)
 })
 
+test('keeps the homepage hero copy tight to the header', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('.station-kicker')).toBeVisible()
+
+  const heroGap = await page.evaluate(() => {
+    const header = document.querySelector('.site-header')!.getBoundingClientRect()
+    const kicker = document.querySelector('.station-shell--site .station-kicker')!.getBoundingClientRect()
+    return kicker.top - header.bottom
+  })
+
+  expect(heroGap).toBeLessThanOrEqual(24)
+})
+
 test('serves the interactive lab below /lab/', async ({ page }) => {
   await page.goto('/lab/')
 
   await expect(page.getByRole('heading', { name: /undef games/i })).toBeVisible()
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-renderer', 'pixijs')
   await expect(page.getByLabel('effects controls')).toBeVisible()
-  const backLink = page.getByRole('link', { name: /back/i })
+  const backLink = page.getByRole('link', { name: /^< Back$/ })
   await expect(backLink).toHaveAttribute('href', '/')
   await expect(backLink).toHaveText('< Back')
   await expect
@@ -242,7 +259,7 @@ test('plays the prominent back control entrance once on first lab load', async (
   await page.reload()
 
   const veil = page.locator('.prominent-control-veil')
-  const backLink = page.getByRole('link', { name: /back/i })
+  const backLink = page.getByRole('link', { name: /^< Back$/ })
   const broadcast = page.getByLabel('static station identity')
   await expect(veil).toBeVisible()
   await expect(backLink).toHaveAttribute('data-prominent-effect', 'geometric-genie')
@@ -287,7 +304,7 @@ test('plays the prominent back control entrance once on first lab load', async (
   await page.reload()
 
   await expect(page.locator('.prominent-control-veil')).toHaveCount(0)
-  await expect(page.getByRole('link', { name: /back/i })).not.toHaveClass(/home-quick-link--intro/)
+  await expect(page.getByRole('link', { name: /^< Back$/ })).not.toHaveClass(/home-quick-link--intro/)
 })
 
 test('returns from the lab to the previous undef games page when available', async ({ page }) => {
@@ -295,7 +312,7 @@ test('returns from the lab to the previous undef games page when available', asy
   await page.getByRole('link', { name: /open lab/i }).last().click()
 
   await expect(page).toHaveURL(/\/lab\/$/)
-  const backLink = page.getByRole('link', { name: /back/i })
+  const backLink = page.getByRole('link', { name: /^< Back$/ })
   await expect(backLink).toHaveAttribute('href', '/games/')
 
   await backLink.click()
