@@ -323,6 +323,39 @@
   gap: 16px;
 }
 
+.effect-group-section {
+  position: relative;
+  display: grid;
+  gap: 10px;
+}
+
+.effect-group-section + .effect-group-section {
+  margin-top: 2px;
+}
+
+.effect-group-section--scene-effects {
+  margin-top: 14px;
+  padding-top: 18px;
+}
+
+.effect-group-section--scene-effects::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(var(--fx-support-3-rgb, 216 255 53) / 0.38),
+      rgb(var(--fx-muted-rgb, 244 244 240) / 0.12) 42%,
+      transparent 100%
+    );
+}
+
+.effect-group-section--scene-effects .control-label {
+  margin-bottom: 12px;
+}
+
 .theme-mode-control,
 .theme-preset-grid {
   display: grid;
@@ -618,6 +651,16 @@
 
 .station-shell[data-tone='light'] .scanline-layer-control input:checked + .scanline-check::after {
   border-color: var(--fx-text-on-light, #11130d);
+}
+
+.station-shell[data-tone='light'] .effect-group-section--scene-effects::before {
+  background:
+    linear-gradient(
+      90deg,
+      rgb(var(--fx-support-3-rgb, 64 85 0) / 0.32),
+      rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.1) 42%,
+      transparent 100%
+    );
 }
 
 .scanline-engine-controls {

@@ -259,7 +259,10 @@ export function EffectsControls({
       </div>
 
       {EFFECT_GROUPS.map((group) => (
-        <div key={group.label}>
+        <div
+          key={group.label}
+          className={`effect-group-section effect-group-section--${group.label.toLowerCase().replace(/\s+/g, '-')}`}
+        >
           <div className="effect-group">
             <p className="control-label">{group.label}</p>
             {group.controls.map((control) => (
