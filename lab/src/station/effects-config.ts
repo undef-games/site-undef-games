@@ -1,1 +1,1 @@
-export * from '../../../packages/scanlines-system/src/station/effects-config'
+export * from '@undef/scanlines-system'

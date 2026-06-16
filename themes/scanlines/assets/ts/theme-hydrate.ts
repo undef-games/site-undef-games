@@ -1,3 +1,3 @@
-import { initThemeHydration } from '../../../../packages/scanlines-system/src/index'
+import { initThemeHydration } from '@undef/scanlines-system'
 
 initThemeHydration()

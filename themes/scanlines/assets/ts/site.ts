@@ -1,5 +1,5 @@
-import { mountSiteSurface } from '../../../../packages/scanlines-system/src/index'
-import '../../../../packages/scanlines-system/src/styles/site.css'
+import { mountSiteSurface } from '@undef/scanlines-system'
+import '@undef/scanlines-system/styles/site.css'
 
 const root = document.getElementById('scanlines-root')
 

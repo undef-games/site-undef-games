@@ -2,12 +2,11 @@ import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
 import {
   buildScanlineFrame,
-} from '../../../packages/scanlines-system/src/station/scanline-renderer'
-import type { ScanlineBlendMode, ScanlineEngineState } from '../../../packages/scanlines-system/src/station/scanline-engine'
-import {
   getSignalFieldPlan,
+  type ScanlineBlendMode,
+  type ScanlineEngineState,
   type ChannelMode,
-} from '../../../packages/scanlines-system/src/station/signal-field-plan'
+} from '@undef/scanlines-system'
 import { BASELINE_EFFECTS, type EffectsSettings } from './effects-config'
 import { hexToPixiColor } from './effects-style'
 import { getStationStatus, type StationState } from './station-state'

@@ -1,1 +1,1 @@
-export * from '../../../packages/scanlines-system/src/station/scanline-renderer'
+export * from '@undef/scanlines-system'

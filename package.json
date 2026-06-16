@@ -8,10 +8,12 @@
   ],
   "scripts": {
     "build": "make build",
+    "check:scanlines-system": "make check-system-boundary",
     "deploy": "make deploy",
     "preview": "make deploy-preview",
     "deploy-preview": "make deploy-preview",
     "e2e": "make e2e",
+    "typecheck:scanlines-system": "make typecheck-system",
     "test:lab": "make test",
     "typecheck:lab": "make typecheck"
   },

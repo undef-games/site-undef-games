@@ -26,7 +26,6 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@undef/scanlines-system': resolve(__dirname, '../packages/scanlines-system/src/index.ts'),
       'pixi.js': resolve(__dirname, 'node_modules/pixi.js/lib/index.mjs'),
       'react': resolve(__dirname, 'node_modules/react'),
       'react-dom': resolve(__dirname, 'node_modules/react-dom'),

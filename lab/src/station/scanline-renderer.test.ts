@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ScanlineEngineState } from '../../../packages/scanlines-system/src/station/scanline-engine'
+import type { ScanlineEngineState } from '@undef/scanlines-system'
 import {
   buildBasePatternTraces,
   buildLayerTraces,
@@ -9,7 +9,7 @@ import {
   samplePulseTrace,
   sampleSineTrace,
   sampleStraightTrace,
-} from '../../../packages/scanlines-system/src/station/scanline-renderer'
+} from '@undef/scanlines-system'
 
 const SAMPLE_INPUT = {
   amplitude: 12,

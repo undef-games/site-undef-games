@@ -1,1 +1,1 @@
-export * from '../../../packages/scanlines-system/src/station/station-toys'
+export * from '@undef/scanlines-system'

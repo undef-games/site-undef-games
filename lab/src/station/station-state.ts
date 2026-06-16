@@ -1,1 +1,1 @@
-export * from '../../../packages/scanlines-system/src/station/station-state'
+export * from '@undef/scanlines-system'
