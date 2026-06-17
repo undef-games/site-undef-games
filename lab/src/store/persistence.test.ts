@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { BASELINE_EFFECTS } from '../station/effects-config'
 import {
   clearThemeState,
@@ -11,6 +11,11 @@ import {
 } from '@undef/scanlines-system'
 
 describe('theme persistence', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+    document.cookie = `${STORAGE_KEY}=; Path=/; Max-Age=0`
+  })
+
   const createSavedTheme = (overrides: Record<string, unknown> = {}) => ({
     version: 1,
     activeTone: 'dark',
@@ -270,6 +275,31 @@ describe('theme persistence', () => {
     expect(JSON.parse(storage.getItem(STORAGE_KEY) ?? '{}')).toMatchObject({ version: 1 })
     expect(readThemeState(storage)).toMatchObject(theme)
     expect(getActiveThemeSettings(theme)).toMatchObject(theme.tones.light.settings)
+  })
+
+  it('falls back to the shared theme cookie when localStorage is empty', () => {
+    const storage = window.localStorage
+    storage.clear()
+    const theme = createDefaultThemeState()
+    theme.tones.dark.settings.paletteSignal = '#69a7ff'
+
+    document.cookie = `${STORAGE_KEY}=${encodeURIComponent(JSON.stringify(theme))}; Path=/`
+
+    expect(readThemeState(storage)).toMatchObject(theme)
+  })
+
+  it('writes and clears the shared theme cookie alongside localStorage', () => {
+    const storage = window.localStorage
+    storage.clear()
+    const theme = createDefaultThemeState()
+
+    writeThemeState(theme, storage)
+
+    expect(document.cookie).toContain(`${STORAGE_KEY}=`)
+
+    clearThemeState(storage)
+
+    expect(document.cookie).not.toContain(`${STORAGE_KEY}=`)
   })
 
   it('returns null for missing malformed or wrong-version theme state', () => {

@@ -18,6 +18,7 @@ export const STORAGE_KEY = 'undef-logos-theme'
 export const THEME_STATE_VERSION = 1
 export const DEFAULT_DARK_PRESET_ID: EffectsPresetId = 'current'
 export const DEFAULT_LIGHT_PRESET_ID: EffectsPresetId = 'paper-terminal'
+export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
 export type ScanlineLayerId = 'graph' | 'crt' | 'glitch'
 export type ScanlineLayers = Record<ScanlineLayerId, boolean>
@@ -93,6 +94,44 @@ function getStorage(): Storage | undefined {
   } catch {
     return undefined
   }
+}
+
+function getCookieDomain(hostname: string): string | null {
+  return hostname === 'undef.games' || hostname.endsWith('.undef.games') ? '.undef.games' : null
+}
+
+function readThemeCookie(): string | null {
+  if (typeof document === 'undefined') return null
+  const prefix = `${STORAGE_KEY}=`
+  const cookies = document.cookie.split(';')
+  for (const entry of cookies) {
+    const trimmed = entry.trim()
+    if (!trimmed.startsWith(prefix)) continue
+    const value = trimmed.slice(prefix.length)
+    try {
+      return decodeURIComponent(value)
+    } catch {
+      return null
+    }
+  }
+  return null
+}
+
+function writeThemeCookie(value: string) {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return
+  const domain = getCookieDomain(window.location.hostname)
+  const domainAttr = domain ? `; Domain=${domain}` : ''
+  const secureAttr = window.location.protocol === 'https:' ? '; Secure' : ''
+  document.cookie =
+    `${STORAGE_KEY}=${encodeURIComponent(value)}; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax${domainAttr}${secureAttr}`
+}
+
+function clearThemeCookie() {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return
+  const domain = getCookieDomain(window.location.hostname)
+  const domainAttr = domain ? `; Domain=${domain}` : ''
+  const secureAttr = window.location.protocol === 'https:' ? '; Secure' : ''
+  document.cookie = `${STORAGE_KEY}=; Path=/; Max-Age=0; SameSite=Lax${domainAttr}${secureAttr}`
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -209,9 +248,8 @@ function mergeThemeState(value: Record<string, unknown>): ThemeState | null {
 }
 
 export function readThemeState(storage = getStorage()): ThemeState | null {
-  if (!storage) return null
   try {
-    const raw = storage.getItem(STORAGE_KEY)
+    const raw = storage?.getItem(STORAGE_KEY) ?? readThemeCookie()
     if (!raw) return null
     const parsed: unknown = JSON.parse(raw)
     if (!isRecord(parsed)) return null
@@ -222,10 +260,12 @@ export function readThemeState(storage = getStorage()): ThemeState | null {
 }
 
 export function writeThemeState(theme: ThemeState, storage = getStorage()) {
-  if (!storage) return
-  storage.setItem(STORAGE_KEY, JSON.stringify(theme))
+  const serialized = JSON.stringify(theme)
+  storage?.setItem(STORAGE_KEY, serialized)
+  writeThemeCookie(serialized)
 }
 
 export function clearThemeState(storage = getStorage()) {
   storage?.removeItem(STORAGE_KEY)
+  clearThemeCookie()
 }
