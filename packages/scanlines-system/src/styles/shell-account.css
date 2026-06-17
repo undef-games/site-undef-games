@@ -1,0 +1,14 @@
+.scanlines-header--account {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+}
+
+.scanlines-header--account .scanlines-header__nav {
+  justify-content: flex-start;
+}
+
+.scanlines-header--account .scanlines-header__utilities {
+  justify-content: flex-end;
+}

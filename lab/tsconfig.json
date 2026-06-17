@@ -14,6 +14,8 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
+      "@undef/scanlines-system": ["../packages/scanlines-system/src/index.ts"],
+      "@undef/scanlines-system/styles/site.css": ["../packages/scanlines-system/src/styles/site.css"],
       "pixi.js": ["./node_modules/pixi.js/lib/index.d.ts"],
       "react": ["./node_modules/@types/react/index.d.ts"],
       "react-dom/client": ["./node_modules/@types/react-dom/client.d.ts"],

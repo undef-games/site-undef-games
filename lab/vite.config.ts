@@ -26,13 +26,17 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      '@undef/scanlines-system/styles/site.css': resolve(__dirname, '../packages/scanlines-system/src/styles/site.css'),
+      '@undef/scanlines-system': resolve(__dirname, '../packages/scanlines-system/src/index.ts'),
+      '@testing-library/jest-dom/vitest': resolve(__dirname, 'node_modules/@testing-library/jest-dom/vitest.js'),
+      '@testing-library/react': resolve(__dirname, 'node_modules/@testing-library/react'),
       'pixi.js': resolve(__dirname, 'node_modules/pixi.js/lib/index.mjs'),
       'react': resolve(__dirname, 'node_modules/react'),
       'react-dom': resolve(__dirname, 'node_modules/react-dom'),
     },
   },
   test: {
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts']
   }

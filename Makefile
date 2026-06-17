@@ -13,7 +13,7 @@ install-root: ## Install root tool dependencies
 	@npm ci
 
 install-lab: ## Install Vite lab dependencies
-	@npm --prefix lab ci
+	@npm --prefix lab ci --include=dev
 
 check-system-boundary: ## Fail on direct src imports or package -> lab coupling
 	@bash scripts/check_scanlines_system_boundary.sh
