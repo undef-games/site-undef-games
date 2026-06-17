@@ -146,6 +146,9 @@ export function hydrateTheme() {
     const theme = readThemeState()
     const activeTone = theme?.activeTone ?? 'dark'
     const settings = theme?.tones[activeTone].settings ?? DEFAULT_PALETTES[activeTone]
+    if (theme) {
+      writeThemeState(theme)
+    }
     applyPalette(settings, activeTone)
     updateThemeToggle(activeTone)
   } catch {
