@@ -222,10 +222,10 @@ enableRobotsTXT = true
   tagline = "Systems, toys, and game-shaped experiments tuned out of undefined space."
 `)
 
-  expect(html).not.toContain('data-testid=site-brand-home')
-  expect(html).not.toContain('data-testid=site-login-link')
-  expect(html).not.toContain('data-testid=site-theme-toggle')
-  expect(html).not.toContain('data-testid=site-lab-link')
+  expect(html).not.toContain('data-testid="site-brand-home"')
+  expect(html).not.toContain('data-testid="site-login-link"')
+  expect(html).not.toContain('data-testid="site-theme-toggle"')
+  expect(html).not.toContain('data-testid="site-lab-link"')
 })
 
 test('keeps the home mark alive with a subtle theme chase', async ({ page }) => {
