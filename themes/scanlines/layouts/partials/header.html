@@ -1,6 +1,11 @@
 <header class="site-header" role="banner">
   <div class="site-header__inner">
-    <a class="site-header__brand" href="/" aria-label="{{ site.Params.site_name }} home">
+    <a
+      class="site-header__brand"
+      href="/"
+      aria-label="{{ site.Params.site_name }} home"
+      {{ partial "testid.html" (dict "value" "site-brand-home") | safeHTMLAttr }}
+    >
       <span class="site-header__mark" aria-hidden="true">UG</span>
       <span>{{ site.Params.site_name }}</span>
     </a>
@@ -9,7 +14,11 @@
       <a href="/logs/" {{ if eq .RelPermalink "/logs/" }}aria-current="page"{{ end }}>Logs</a>
       <a href="/about/" {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>About</a>
     </nav>
-    <a class="site-header__login" href="{{ site.Params.login_url }}">
+    <a
+      class="site-header__login"
+      href="{{ site.Params.login_url }}"
+      {{ partial "testid.html" (dict "value" "site-login-link") | safeHTMLAttr }}
+    >
       Log in
     </a>
   </div>

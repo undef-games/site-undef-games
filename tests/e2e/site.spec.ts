@@ -255,10 +255,14 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
     .poll(() => page.locator('.scan-footer p').evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(17, 19, 13)')
 
-  const themeToggle = page.locator('[data-theme-toggle]')
-  const labLink = page.getByRole('link', { name: /open lab/i }).last()
+  const themeToggle = page.getByTestId('site-theme-toggle')
+  const loginLink = page.getByTestId('site-login-link')
+  const labLink = page.getByTestId('site-lab-link').last()
   await expect(themeToggle).toBeVisible()
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'false')
   await expect(themeToggle).toHaveAttribute('aria-label', 'Switch to dark mode')
+  await expect(loginLink).toHaveAttribute('href', 'https://account.undef.games/')
+  await expect(labLink).toHaveAttribute('href', '/lab/')
   const toggleBox = await themeToggle.boundingBox()
   const labBox = await labLink.boundingBox()
   expect(toggleBox).not.toBeNull()
@@ -269,6 +273,7 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
   await themeToggle.click()
 
   await expect(page.locator('html')).toHaveAttribute('data-scan-tone', 'dark')
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'true')
   await expect(themeToggle).toHaveAttribute('aria-label', 'Switch to light mode')
   await expect
     .poll(() => page.evaluate(() => JSON.parse(window.localStorage.getItem('undef-logos-theme') ?? '{}').activeTone))
