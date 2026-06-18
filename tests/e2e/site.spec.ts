@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { scanlinesSelectorContract } from '@undef/scanlines-system'
 import { execFileSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -222,10 +223,17 @@ enableRobotsTXT = true
   tagline = "Systems, toys, and game-shaped experiments tuned out of undefined space."
 `)
 
-  expect(html).not.toContain('data-testid="site-brand-home"')
-  expect(html).not.toContain('data-testid="site-login-link"')
-  expect(html).not.toContain('data-testid="site-theme-toggle"')
-  expect(html).not.toContain('data-testid="site-lab-link"')
+  for (const hook of scanlinesSelectorContract.surfaces.site.hooks.shared) {
+    expect(html).not.toContain(`data-testid="${hook}"`)
+  }
+})
+
+test('emits the shared site selector contract when the Hugo flag is enabled', async ({ request }) => {
+  const html = await (await request.get('/')).text()
+
+  for (const hook of scanlinesSelectorContract.surfaces.site.hooks.shared) {
+    expect(html).toContain(`data-testid=${hook}`)
+  }
 })
 
 test('keeps the home mark alive with a subtle theme chase', async ({ page }) => {

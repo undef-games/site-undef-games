@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e check-system-boundary typecheck-system
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e check-system-boundary typecheck-system sync-selector-contract
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -55,3 +55,6 @@ deploy-preview: install-root build ## Build then deploy public/ to a Cloudflare 
 	@./node_modules/.bin/wrangler pages deploy public --project-name=undef-logos --branch=staging
 
 preview: deploy-preview ## Alias for deploy-preview
+
+sync-selector-contract: ## Copy the shared selector contract into auth/account vendor paths
+	@python scripts/sync_selector_contract.py
