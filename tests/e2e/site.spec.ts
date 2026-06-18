@@ -1,5 +1,29 @@
 import { expect, test } from '@playwright/test'
-import { readFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+
+function buildHugoHtml(configToml: string, relativePath = 'index.html') {
+  const workspaceRoot = process.cwd()
+  const tempRoot = mkdtempSync(join(tmpdir(), 'scanlines-testids-'))
+  const configPath = join(tempRoot, 'hugo.test.toml')
+  const destination = join(tempRoot, 'public')
+
+  writeFileSync(configPath, configToml)
+
+  try {
+    execFileSync(
+      'hugo',
+      ['--minify', '--config', configPath, '--destination', destination],
+      { cwd: workspaceRoot, stdio: 'pipe' },
+    )
+
+    return readFileSync(join(destination, relativePath), 'utf8')
+  } finally {
+    rmSync(tempRoot, { force: true, recursive: true })
+  }
+}
 
 test('renders the refreshed homepage copy and logs navigation', async ({ page, request }) => {
   await page.goto('/')
@@ -178,6 +202,30 @@ test('ships a production CORS allowlist header artifact', async () => {
   expect(headersFile).toContain('Access-Control-Allow-Origin: *')
   expect(headersFile).toContain('Access-Control-Allow-Methods: GET, HEAD, OPTIONS')
   expect(headersFile).toContain('Access-Control-Allow-Headers: Origin, Content-Type, Accept')
+})
+
+test('omits shared shell test ids when the Hugo flag is omitted', async () => {
+  const html = buildHugoHtml(`baseURL = "https://undef.games/"
+locale = "en-us"
+title = "undef games"
+theme = "scanlines"
+enableGitInfo = false
+enableRobotsTXT = true
+
+[taxonomies]
+
+[params]
+  description = "Systems, toys, and game-shaped experiments tuned out of undefined space."
+  site_name = "undef games"
+  lab = "/lab/"
+  login_url = "https://account.undef.games/"
+  tagline = "Systems, toys, and game-shaped experiments tuned out of undefined space."
+`)
+
+  expect(html).not.toContain('data-testid=site-brand-home')
+  expect(html).not.toContain('data-testid=site-login-link')
+  expect(html).not.toContain('data-testid=site-theme-toggle')
+  expect(html).not.toContain('data-testid=site-lab-link')
 })
 
 test('keeps the home mark alive with a subtle theme chase', async ({ page }) => {
