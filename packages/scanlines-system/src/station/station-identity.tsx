@@ -1,4 +1,5 @@
 import { getStationStatus, type StationState } from './station-state'
+import { MAZE_GATE_BASELINE_PATH, MAZE_GATE_INNER_PATH, MAZE_GATE_OUTER_PATH } from '../shell/mark-geometry'
 
 export function StationIdentity({ state }: { state: StationState }) {
   const status = getStationStatus(state)
@@ -49,9 +50,9 @@ export function StationGlyph({
       aria-label={decorative ? undefined : 'undef games maze gate u cut mark'}
       focusable="false"
     >
-      <path d="M30 24v48c0 18 12 30 30 30s30-12 30-30V24" stroke="currentColor" strokeWidth="7" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
-      <path d="M46 24v46c0 9 5 14 14 14s14-5 14-14V24" stroke="currentColor" strokeWidth="7" strokeLinecap="square" strokeLinejoin="miter" fill="none" opacity={lock ? 0.72 : 0.4} />
-      <path d="M30 44h18M72 44h18M44 98h32" stroke="currentColor" strokeWidth="7" strokeLinecap="square" fill="none" opacity={0.34 + signal / 150} />
+      <path d={MAZE_GATE_OUTER_PATH} stroke="currentColor" strokeWidth="7" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+      <path d={MAZE_GATE_INNER_PATH} stroke="currentColor" strokeWidth="7" strokeLinecap="square" strokeLinejoin="miter" fill="none" opacity={lock ? 0.72 : 0.4} />
+      <path d={MAZE_GATE_BASELINE_PATH} stroke="currentColor" strokeWidth="7" strokeLinecap="square" fill="none" opacity={0.34 + signal / 150} />
     </svg>
   )
 }
