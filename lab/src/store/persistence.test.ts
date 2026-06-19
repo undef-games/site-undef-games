@@ -255,7 +255,7 @@ describe('theme persistence', () => {
       },
       tones: {
         dark: {
-          presetId: 'current',
+          presetId: 'blue-noise',
           settings: BASELINE_EFFECTS,
         },
         light: {

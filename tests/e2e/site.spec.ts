@@ -21,7 +21,7 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   )
   await expect(page.getByRole('heading', { name: /^undef games$/i })).toBeVisible()
   expect(homeHtml).toMatch(/<section class=scan-fallback__hero aria-label="undef games landing page">/i)
-  expect(homeHtml).toMatch(/<p class=scan-fallback__kicker>\s*CH 00 \/ SIGNAL FIELD\s*<\/p>/i)
+  expect(homeHtml).toMatch(/<p class=scan-fallback__kicker>\s*CH 13 \/ SIGNAL FIELD\s*<\/p>/i)
   expect(homeHtml).toMatch(/<h1>\s*undef games\s*<\/h1>/i)
   expect(homeHtml).toMatch(/Indie developer building game tools and systems for fun shared experiences online and off\./i)
   expect(homeHtml).toMatch(/<a href=https:\/\/warp\.undef\.games>\s*Explore WARP\s*<\/a>/i)
@@ -33,7 +33,7 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   const payload = JSON.parse(payloadMatch?.[1] ?? '{}')
   expect(payload).toMatchObject({
     hero: {
-      kicker: 'CH 00 / SIGNAL FIELD',
+      kicker: 'CH 13 / SIGNAL FIELD',
       title: 'undef games',
       support: 'Indie developer building game tools and systems for fun shared experiences online and off.',
       primaryAction: {
@@ -222,7 +222,7 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
           warp: 'tumble',
         },
         tones: {
-          dark: { presetId: 'current', settings: {} },
+          dark: { presetId: 'blue-noise', settings: {} },
           light: {
             presetId: 'custom',
             settings: {

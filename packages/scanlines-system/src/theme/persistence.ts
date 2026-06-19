@@ -16,7 +16,7 @@ import type { SectionEffects } from '../station/station-toys'
 
 export const STORAGE_KEY = 'undef-logos-theme'
 export const THEME_STATE_VERSION = 1
-export const DEFAULT_DARK_PRESET_ID: EffectsPresetId = 'current'
+export const DEFAULT_DARK_PRESET_ID: EffectsPresetId = 'blue-noise'
 export const DEFAULT_LIGHT_PRESET_ID: EffectsPresetId = 'paper-terminal'
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 

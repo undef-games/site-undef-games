@@ -38,7 +38,7 @@ export const LAB_SECTIONS = {
     kicker: 'Interactive field',
     title: 'Shared play needs strong systems underneath it.',
     body:
-      'The site stays active and readable while pointing people toward the products, tools, and experiments that make play easier to share online and off.',
+      'The work here spans products, tools, and experiments built for shared play online and off.',
   },
   projects: {
     kicker: 'Live routes',
