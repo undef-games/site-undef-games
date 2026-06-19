@@ -153,7 +153,7 @@ describe('AppShell', () => {
     await user.click(screen.getByRole('button', { name: /reset theme/i }))
 
     expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull()
-    expect(screen.getByLabelText(/dark theme preset/i)).toHaveValue('current')
+    expect(screen.getByLabelText(/dark theme preset/i)).toHaveValue('blue-noise')
     expect(screen.getByLabelText(/light theme preset/i)).toHaveValue('paper-terminal')
   })
 

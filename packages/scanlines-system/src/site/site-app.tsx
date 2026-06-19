@@ -20,7 +20,7 @@ export function SiteApp() {
   const stationBroadcastRef = useRef<HTMLDivElement | null>(null)
   const effectsSettings = getActiveThemeSettings(themeState)
   const effectsSettingsRef = useRef(effectsSettings)
-  const activeChannel = STATION_CHANNELS[0]
+  const activeChannel = STATION_CHANNELS[1]
   const sectionEffects = themeState.sectionEffects
   const scanlineEngine = themeState.scanlineEngine
   const scanlineLayers = themeState.scanlineLayers

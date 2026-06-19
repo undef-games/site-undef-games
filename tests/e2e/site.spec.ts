@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { scanlinesSelectorContract } from '@undef/scanlines-system'
+import { scanlinesSelectorContract } from '@undef/scanlines-system/testing/selector-contract'
 import { execFileSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -81,6 +81,11 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
         title: 'Good systems should make shared play easier to reach.',
         body: 'undef games builds the technical side of play so people can gather, operate, and have fun across digital and physical spaces.',
       },
+      signal: {
+        kicker: 'Interactive field',
+        title: 'Shared play needs strong systems underneath it.',
+        body: 'The work here spans products, tools, and experiments built for shared play online and off.',
+      },
     },
   })
   expect(payload.projects).toEqual([
@@ -116,6 +121,10 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   expect(payload.hero).not.toHaveProperty('secondary_href')
   expect(payload.hero).not.toHaveProperty('secondary_label')
   expect(payload.sections.identity).not.toHaveProperty('copy')
+  expect(homeHtml).toContain('The work here spans products, tools, and experiments built for shared play online and off.')
+  expect(homeHtml).not.toContain(
+    'The site stays active and readable while pointing people toward the products, tools, and experiments that make play easier to share online and off.',
+  )
   await expect(page.getByText(/indie developer building game tools and systems/i)).toBeVisible()
   await expect(page.getByLabel('landing actions').getByRole('link', { name: /explore warp/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
@@ -123,6 +132,7 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   await expect(page.locator('.station-shell')).toHaveAttribute('data-surface', 'site')
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-renderer', 'pixijs')
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-signal', '50')
+  await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-channel-mode', 'game')
   await expect(page.getByLabel('interactive station signal').locator('canvas')).toHaveCount(1)
   await expect(page.getByRole('link', { name: /open lab/i }).first()).toHaveAttribute('href', '/lab/')
   await expect(page.getByLabel('station tools and identity')).toHaveCount(0)
