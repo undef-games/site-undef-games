@@ -14,23 +14,23 @@ test('tunes the static station identity to signal lock', async ({ page }) => {
   await expect
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgba(5, 6, 7, 0.84)',
-      borderColor: 'rgba(244, 244, 240, 0.22)',
+      backgroundColor: 'rgba(5, 8, 18, 0.84)',
+      borderColor: 'rgba(229, 237, 255, 0.22)',
       color: 'rgb(244, 244, 240)',
     })
   await expect
     .poll(() => page.getByRole('button', { name: /CH 00/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgba(216, 255, 53, 0.12)',
-      borderColor: 'rgb(216, 255, 53)',
-      color: 'rgb(216, 255, 53)',
+      backgroundColor: 'rgba(75, 131, 255, 0.12)',
+      borderColor: 'rgb(75, 131, 255)',
+      color: 'rgb(75, 131, 255)',
     })
   await expect
     .poll(() => page.getByRole('button', { name: /CH 13/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgb(5, 6, 7)',
-      borderColor: 'rgba(244, 244, 240, 0.2)',
-      color: 'rgba(244, 244, 240, 0.78)',
+      backgroundColor: 'rgb(5, 8, 18)',
+      borderColor: 'rgba(229, 237, 255, 0.2)',
+      color: 'rgba(229, 237, 255, 0.78)',
     })
 
   for (let index = 0; index < 4; index += 1) {
@@ -50,6 +50,14 @@ test('keeps the station surface usable on mobile', async ({ page }) => {
   await page.goto('/lab/')
 
   await expect(page.getByLabel('interactive station signal')).toBeVisible()
+  await expect
+    .poll(() =>
+      page
+        .getByLabel('interactive station signal')
+        .locator('canvas')
+        .evaluate((element) => getComputedStyle(element).touchAction),
+    )
+    .toBe('pan-y')
   await expect(page.getByRole('button', { name: /tune signal/i })).toBeVisible()
   const colorSwatch = page.locator('.color-control input[type="color"]').first()
   const swatchBox = await colorSwatch.boundingBox()
@@ -306,7 +314,7 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
   const signalBackground = effects.getByLabel('Signal background')
   await expect(rail).toBeVisible()
   await expect(effects).toBeVisible()
-  await expect(darkPresetSelect).toHaveValue('current')
+  await expect(darkPresetSelect).toHaveValue('blue-noise')
   await expect(lightPresetSelect).toHaveValue('paper-terminal')
   await expect.poll(() => darkPresetSelect.locator('option').count()).toBeGreaterThanOrEqual(20)
   await expect.poll(() => lightPresetSelect.locator('option').count()).toBeGreaterThanOrEqual(12)
@@ -334,8 +342,8 @@ test('exposes right-rail effect presets and live parameters', async ({ page }) =
     ]),
   )
 
-  await expect(effects.getByLabel('Scan opacity', { exact: true })).toHaveValue('1')
-  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.055')
+  await expect(effects.getByLabel('Scan opacity', { exact: true })).toHaveValue('1.05')
+  await expect.poll(() => page.locator('.station-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--fx-scan-opacity').trim())).toBe('0.0578')
   await expect(effects.getByLabel('Scan scroll impact', { exact: true })).toHaveValue('0.35')
   await expect(effects.getByLabel('Scroll inertia', { exact: true })).toHaveValue('0.16')
   await expect(effects.getByLabel('Rectangle wobble', { exact: true })).toHaveValue('0.45')
@@ -565,12 +573,12 @@ test('switches section background effects independently', async ({ page }) => {
   await expect
     .poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyVisuals))
     .toMatchObject({
-      backgroundColor: 'rgba(244, 244, 240, 0.4)',
+      backgroundColor: 'rgba(229, 237, 255, 0.4)',
     })
   await expect
     .poll(() => page.locator('.landing-section--signal .section-toy span').nth(1).evaluate(readToyVisuals))
     .toMatchObject({
-      backgroundColor: 'rgba(216, 255, 53, 0.58)',
+      backgroundColor: 'rgba(53, 213, 255, 0.58)',
     })
   await expect(identityToy).toHaveClass(/section-toy--effect-tumble/)
 
@@ -587,7 +595,7 @@ test('switches section background effects independently', async ({ page }) => {
   await expect
     .poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyVisuals))
     .toMatchObject({
-      backgroundColor: 'rgba(244, 244, 240, 0.3)',
+      backgroundColor: 'rgba(229, 237, 255, 0.3)',
     })
 
   await effects.getByLabel('Signal background').selectOption('notes')

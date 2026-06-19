@@ -1,0 +1,3 @@
+{{- $value := .value -}}
+{{- $enabled := default false site.Params.enable_test_ids -}}
+{{- if and $enabled $value -}}data-testid="{{ $value }}"{{- end -}}

@@ -1,5 +1,30 @@
 import { expect, test } from '@playwright/test'
-import { readFileSync } from 'node:fs'
+import { scanlinesSelectorContract } from '@undef/scanlines-system/testing/selector-contract'
+import { execFileSync } from 'node:child_process'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+
+function buildHugoHtml(configToml: string, relativePath = 'index.html') {
+  const workspaceRoot = process.cwd()
+  const tempRoot = mkdtempSync(join(tmpdir(), 'scanlines-testids-'))
+  const configPath = join(tempRoot, 'hugo.test.toml')
+  const destination = join(tempRoot, 'public')
+
+  writeFileSync(configPath, configToml)
+
+  try {
+    execFileSync(
+      'hugo',
+      ['--minify', '--config', configPath, '--destination', destination],
+      { cwd: workspaceRoot, stdio: 'pipe' },
+    )
+
+    return readFileSync(join(destination, relativePath), 'utf8')
+  } finally {
+    rmSync(tempRoot, { force: true, recursive: true })
+  }
+}
 
 test('renders the refreshed homepage copy and logs navigation', async ({ page, request }) => {
   await page.goto('/')
@@ -56,6 +81,11 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
         title: 'Good systems should make shared play easier to reach.',
         body: 'undef games builds the technical side of play so people can gather, operate, and have fun across digital and physical spaces.',
       },
+      signal: {
+        kicker: 'Interactive field',
+        title: 'Shared play needs strong systems underneath it.',
+        body: 'The work here spans products, tools, and experiments built for shared play online and off.',
+      },
     },
   })
   expect(payload.projects).toEqual([
@@ -91,6 +121,10 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   expect(payload.hero).not.toHaveProperty('secondary_href')
   expect(payload.hero).not.toHaveProperty('secondary_label')
   expect(payload.sections.identity).not.toHaveProperty('copy')
+  expect(homeHtml).toContain('The work here spans products, tools, and experiments built for shared play online and off.')
+  expect(homeHtml).not.toContain(
+    'The site stays active and readable while pointing people toward the products, tools, and experiments that make play easier to share online and off.',
+  )
   await expect(page.getByText(/indie developer building game tools and systems/i)).toBeVisible()
   await expect(page.getByLabel('landing actions').getByRole('link', { name: /explore warp/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
@@ -98,7 +132,16 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   await expect(page.locator('.station-shell')).toHaveAttribute('data-surface', 'site')
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-renderer', 'pixijs')
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-signal', '50')
+  await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-channel-mode', 'game')
   await expect(page.getByLabel('interactive station signal').locator('canvas')).toHaveCount(1)
+  await expect
+    .poll(() =>
+      page
+        .getByLabel('interactive station signal')
+        .locator('canvas')
+        .evaluate((element) => getComputedStyle(element).touchAction),
+    )
+    .toBe('pan-y')
   await expect(page.getByRole('link', { name: /open lab/i }).first()).toHaveAttribute('href', '/lab/')
   await expect(page.getByLabel('station tools and identity')).toHaveCount(0)
   await expect(page.getByLabel('effects controls')).toHaveCount(0)
@@ -180,6 +223,37 @@ test('ships a production CORS allowlist header artifact', async () => {
   expect(headersFile).toContain('Access-Control-Allow-Headers: Origin, Content-Type, Accept')
 })
 
+test('omits shared shell test ids when the Hugo flag is omitted', async () => {
+  const html = buildHugoHtml(`baseURL = "https://undef.games/"
+locale = "en-us"
+title = "undef games"
+theme = "scanlines"
+enableGitInfo = false
+enableRobotsTXT = true
+
+[taxonomies]
+
+[params]
+  description = "Systems, toys, and game-shaped experiments tuned out of undefined space."
+  site_name = "undef games"
+  lab = "/lab/"
+  login_url = "https://account.undef.games/"
+  tagline = "Systems, toys, and game-shaped experiments tuned out of undefined space."
+`)
+
+  for (const hook of scanlinesSelectorContract.surfaces.site.hooks.shared) {
+    expect(html).not.toContain(`data-testid="${hook}"`)
+  }
+})
+
+test('emits the shared site selector contract when the Hugo flag is enabled', async ({ request }) => {
+  const html = await (await request.get('/')).text()
+
+  for (const hook of scanlinesSelectorContract.surfaces.site.hooks.shared) {
+    expect(html).toContain(`data-testid=${hook}`)
+  }
+})
+
 test('keeps the home mark alive with a subtle theme chase', async ({ page }) => {
   await page.goto('/games/')
 
@@ -255,10 +329,14 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
     .poll(() => page.locator('.scan-footer p').evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(17, 19, 13)')
 
-  const themeToggle = page.locator('[data-theme-toggle]')
-  const labLink = page.getByRole('link', { name: /open lab/i }).last()
+  const themeToggle = page.getByTestId('site-theme-toggle')
+  const loginLink = page.getByTestId('site-login-link')
+  const labLink = page.getByTestId('site-lab-link').last()
   await expect(themeToggle).toBeVisible()
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'false')
   await expect(themeToggle).toHaveAttribute('aria-label', 'Switch to dark mode')
+  await expect(loginLink).toHaveAttribute('href', 'https://account.undef.games/')
+  await expect(labLink).toHaveAttribute('href', '/lab/')
   const toggleBox = await themeToggle.boundingBox()
   const labBox = await labLink.boundingBox()
   expect(toggleBox).not.toBeNull()
@@ -269,6 +347,7 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
   await themeToggle.click()
 
   await expect(page.locator('html')).toHaveAttribute('data-scan-tone', 'dark')
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'true')
   await expect(themeToggle).toHaveAttribute('aria-label', 'Switch to light mode')
   await expect
     .poll(() => page.evaluate(() => JSON.parse(window.localStorage.getItem('undef-logos-theme') ?? '{}').activeTone))

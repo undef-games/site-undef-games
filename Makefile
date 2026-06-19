@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e check-system-boundary typecheck-system
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e check-system-boundary typecheck-system sync-selector-contract
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -13,7 +13,7 @@ install-root: ## Install root tool dependencies
 	@npm ci
 
 install-lab: ## Install Vite lab dependencies
-	@npm --prefix lab ci
+	@npm --prefix lab ci --include=dev
 
 check-system-boundary: ## Fail on direct src imports or package -> lab coupling
 	@bash scripts/check_scanlines_system_boundary.sh
@@ -55,3 +55,6 @@ deploy-preview: install-root build ## Build then deploy public/ to a Cloudflare 
 	@./node_modules/.bin/wrangler pages deploy public --project-name=undef-logos --branch=staging
 
 preview: deploy-preview ## Alias for deploy-preview
+
+sync-selector-contract: ## Copy the shared selector contract into auth/account vendor paths
+	@python scripts/sync_selector_contract.py

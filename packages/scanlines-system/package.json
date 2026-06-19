@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./styles/site.css": "./src/styles/site.css"
+    "./styles/site.css": "./src/styles/site.css",
+    "./testing/selector-contract": "./src/testing/selector-contract.ts"
   }
 }

@@ -9,6 +9,7 @@ enableRobotsTXT = true
 
 [params]
   description = "Systems, toys, and game-shaped experiments tuned out of undefined space."
+  enable_test_ids = true
   site_name = "undef games"
   lab = "/lab/"
   login_url = "https://account.undef.games/"

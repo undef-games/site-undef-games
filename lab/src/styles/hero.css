@@ -19,8 +19,9 @@
   height: 100%;
 }
 
+.station-signal-scene,
 .station-signal-scene canvas {
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .station-overlay {

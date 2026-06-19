@@ -13,11 +13,12 @@
     "moduleResolution": "Bundler",
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
+    "typeRoots": ["../../lab/node_modules/@types"],
     "paths": {
-      "pixi.js": ["../../lab/node_modules/pixi.js/lib/index.d.ts"],
-      "react": ["../../lab/node_modules/@types/react/index.d.ts"],
-      "react-dom/client": ["../../lab/node_modules/@types/react-dom/client.d.ts"],
-      "react/jsx-runtime": ["../../lab/node_modules/@types/react/jsx-runtime.d.ts"]
+      "@testing-library/jest-dom/vitest": ["../../lab/node_modules/@testing-library/jest-dom/vitest"],
+      "@testing-library/react": ["../../lab/node_modules/@testing-library/react"],
+      "pixi.js": ["../../lab/node_modules/pixi.js"],
+      "vitest": ["../../lab/node_modules/vitest"]
     },
     "resolveJsonModule": true,
     "isolatedModules": true,
