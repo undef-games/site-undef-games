@@ -125,6 +125,7 @@ export function StationSignalScene({
       traceGraphics = createTraceGraphicsLayers(Graphics)
       appInstance.stage.addChild(backgroundGraphics)
       Object.values(traceGraphics).forEach((layer) => appInstance.stage.addChild(layer))
+      appInstance.canvas.style.touchAction = 'pan-y'
       target.appendChild(appInstance.canvas)
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerleave', onPointerLeave)

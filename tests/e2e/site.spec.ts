@@ -134,6 +134,14 @@ test('renders the refreshed homepage copy and logs navigation', async ({ page, r
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-signal', '50')
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-channel-mode', 'game')
   await expect(page.getByLabel('interactive station signal').locator('canvas')).toHaveCount(1)
+  await expect
+    .poll(() =>
+      page
+        .getByLabel('interactive station signal')
+        .locator('canvas')
+        .evaluate((element) => getComputedStyle(element).touchAction),
+    )
+    .toBe('pan-y')
   await expect(page.getByRole('link', { name: /open lab/i }).first()).toHaveAttribute('href', '/lab/')
   await expect(page.getByLabel('station tools and identity')).toHaveCount(0)
   await expect(page.getByLabel('effects controls')).toHaveCount(0)

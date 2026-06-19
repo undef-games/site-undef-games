@@ -50,6 +50,14 @@ test('keeps the station surface usable on mobile', async ({ page }) => {
   await page.goto('/lab/')
 
   await expect(page.getByLabel('interactive station signal')).toBeVisible()
+  await expect
+    .poll(() =>
+      page
+        .getByLabel('interactive station signal')
+        .locator('canvas')
+        .evaluate((element) => getComputedStyle(element).touchAction),
+    )
+    .toBe('pan-y')
   await expect(page.getByRole('button', { name: /tune signal/i })).toBeVisible()
   const colorSwatch = page.locator('.color-control input[type="color"]').first()
   const swatchBox = await colorSwatch.boundingBox()
