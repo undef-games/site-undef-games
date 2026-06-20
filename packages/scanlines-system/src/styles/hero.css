@@ -1,6 +1,5 @@
 .station-broadcast {
   position: relative;
-  min-height: 100svh;
   overflow: hidden;
   border-right: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.14);
   isolation: isolate;
@@ -253,7 +252,6 @@
 .station-hero {
   position: relative;
   z-index: 2;
-  min-height: 100svh;
   display: grid;
   align-content: center;
   padding: 36px 92px 56px;

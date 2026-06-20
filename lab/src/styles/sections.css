@@ -6,7 +6,6 @@
   overflow: hidden;
   display: grid;
   align-content: center;
-  min-height: 72svh;
   padding: 96px 92px;
   border-top: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.14);
   background:
@@ -286,10 +285,6 @@
   color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.74);
   font-size: 18px;
   line-height: 1.5;
-}
-
-.landing-final {
-  min-height: 64svh;
 }
 
 .landing-final a {
