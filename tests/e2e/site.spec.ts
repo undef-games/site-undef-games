@@ -26,10 +26,15 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
   await expect(page.getByRole('link', { name: /open lab/i }).first()).toHaveAttribute('href', '/lab/')
   await expect(page.getByLabel('station tools and identity')).toHaveCount(0)
   await expect(page.getByLabel('effects controls')).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: /actual projects on the network/i })).toBeVisible()
+  await expect(
+    page.getByText(/indie developer building game tools and systems for fun shared experiences/i),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: /projects built to be used, watched, and played with/i }),
+  ).toBeVisible()
   await expect(
     page.getByText(
-      /The Maze Gate U Cut is the saved mark\. On the landing page, it lives as the identity lockup and as a dim, frosted background presence behind the broadcast, never as a hard symbol in the center of the scene\./i,
+      /undef games builds the technical side of play so people can gather, operate, and have fun/i,
     ),
   ).toBeVisible()
   const projects = page.getByLabel('undef games projects')

@@ -18,6 +18,6 @@ Dice and table tools built to keep shared play moving quickly at the table and o
 
 ## Taybols
 
-Smaller experiments, generators, and utility tools that can grow into finished systems.
+Random tables for tabletop play. Roll weighted tables for NPCs, encounters, and rumors, build your own, or drop in a PDF to turn a sourcebook into rollable tables — and everything stays on your device.
 
 [Open Taybols](https://taybols.undef.games)

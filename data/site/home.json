@@ -1,36 +1,72 @@
 {
   "hero": {
-    "kicker": "CH 00 / SIGNAL FIELD",
+    "kicker": "CH 13 / SIGNAL FIELD",
     "title": "undef games",
-    "copy": "Systems, toys, and game-shaped experiments tuned out of undefined space.",
-    "primary_label": "Open lab",
-    "primary_href": "/lab/",
+    "copy": "Indie developer building game tools and systems for fun shared experiences online and off.",
+    "status_label": "Shared play, digital and physical.",
+    "primary_label": "Explore WARP",
+    "primary_href": "https://warp.undef.games",
     "secondary_label": "View projects",
     "secondary_href": "#projects"
+  },
+  "products_intro": {
+    "kicker": "Live routes",
+    "title": "Projects built to be used, watched, and played with."
   },
   "products": [
     {
       "tag": "warp",
       "label": "TradeWars: WARP Agent Runtime Platform",
       "href": "https://warp.undef.games",
-      "description": "Agent runtime platform for TradeWars automation, tools, and live operators."
+      "description": "The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling."
     },
     {
       "tag": "dice",
       "label": "Undef Dice",
       "href": "https://undefdice.com",
-      "description": "Fast dice, table helpers, and lightweight play tools for groups."
+      "description": "Dice and table tools for shared play at the table and on the network."
     },
     {
       "tag": "taybols",
       "label": "Taybols",
       "href": "https://taybols.undef.games",
-      "description": "Table-shaped experiments, generators, and odd little game utilities."
+      "description": "Random tables for tabletop play. Roll for NPCs, encounters, and rumors, build your own, or import a whole book from a PDF."
     }
   ],
   "identity": {
-    "kicker": "Identity baseline",
-    "title": "The mark stays quiet until the lockup needs it.",
-    "copy": "The Maze Gate U Cut is the saved mark. On the landing page, it lives as the identity lockup and as a dim, frosted background presence behind the broadcast, never as a hard symbol in the center of the scene."
+    "kicker": "Company baseline",
+    "title": "Good systems should make shared play easier to reach.",
+    "copy": "undef games builds the technical side of play so people can gather, operate, and have fun across digital and physical spaces."
+  },
+  "signal": {
+    "kicker": "Interactive field",
+    "title": "Shared play needs strong systems underneath it.",
+    "copy": "The work here spans products, tools, and experiments built for shared play online and off."
+  },
+  "warp": {
+    "kicker": "Flagship route",
+    "title": "TradeWars: WARP Agent Runtime Platform.",
+    "copy": "A live alpha platform for runtime control, automation, and operator tooling around TradeWars.",
+    "link_label": "Explore WARP",
+    "href": "https://warp.undef.games"
+  },
+  "dice": {
+    "kicker": "Table tools",
+    "title": "Undef Dice keeps shared play moving.",
+    "copy": "Fast dice and lightweight utilities for groups who want clearer game moments online and off.",
+    "link_label": "Open Undef Dice",
+    "href": "https://undefdice.com"
+  },
+  "taybols": {
+    "kicker": "Tabletop tables",
+    "title": "Taybols rolls the random tables your game needs.",
+    "copy": "Roll weighted tables for NPCs, encounters, moods, and rumors, or drop in a PDF to turn a sourcebook into rollable tables. Everything stays on your device, with no account and no sync.",
+    "link_label": "Open Taybols",
+    "href": "https://taybols.undef.games"
+  },
+  "closing": {
+    "kicker": "undef.games",
+    "title": "Built for people to play together.",
+    "action": "Back to top"
   }
 }
