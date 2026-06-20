@@ -21,7 +21,7 @@
 
 .station-signal-scene,
 .station-signal-scene canvas {
-  touch-action: pan-y pinch-zoom;
+  touch-action: pan-y;
 }
 
 .station-overlay {
