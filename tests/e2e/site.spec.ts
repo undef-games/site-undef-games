@@ -9,9 +9,9 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
     'href',
     '/games/',
   )
-  await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /blog/i })).toHaveAttribute(
+  await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /logs/i })).toHaveAttribute(
     'href',
-    '/blog/',
+    '/logs/',
   )
   await expect(page.getByRole('navigation', { name: /primary/i }).getByRole('link', { name: /about/i })).toHaveAttribute(
     'href',
@@ -52,7 +52,7 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
 test('serves separate Hugo pages with the scanlines header', async ({ page }) => {
   for (const route of [
     { heading: /^Games$/i, path: '/games/' },
-    { heading: /^Blog$/i, path: '/blog/' },
+    { heading: /^Logs$/i, path: '/logs/' },
     { heading: /^About$/i, path: '/about/' },
   ]) {
     await page.goto(route.path)
