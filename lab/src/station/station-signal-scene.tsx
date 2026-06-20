@@ -3,16 +3,19 @@ import type { Application, Graphics } from 'pixi.js'
 import { BASELINE_EFFECTS, type EffectsSettings } from './effects-config'
 import { hexToPixiColor } from './effects-style'
 import { getStationStatus, type StationState } from './station-state'
+import type { ScanlineEngineState } from './scanline-engine'
 
 export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
 
 export function StationSignalScene({
   state,
+  scanlineEngine,
   scrollDepth = 0,
   channelMode = 'baseline',
   effects = BASELINE_EFFECTS,
 }: {
   state: StationState
+  scanlineEngine?: ScanlineEngineState
   scrollDepth?: number
   channelMode?: ChannelMode
   effects?: EffectsSettings
@@ -20,6 +23,7 @@ export function StationSignalScene({
   const status = getStationStatus(state)
   const plan = getSignalFieldPlan(state.signal, channelMode)
   const hostRef = useRef<HTMLDivElement>(null)
+  const engineRef = useRef(scanlineEngine)
   const signalRef = useRef(state.signal)
   const scrollDepthRef = useRef(scrollDepth)
   const channelModeRef = useRef(channelMode)
@@ -40,6 +44,10 @@ export function StationSignalScene({
   useEffect(() => {
     effectsRef.current = effects
   }, [effects])
+
+  useEffect(() => {
+    engineRef.current = scanlineEngine
+  }, [scanlineEngine])
 
   useEffect(() => {
     const host = hostRef.current
@@ -152,6 +160,8 @@ export function StationSignalScene({
       className="station-signal-scene"
       aria-label="interactive station signal"
       data-active-scanlines={plan.activeScanlines}
+      data-scanline-base-pattern={engineRef.current?.basePattern ?? 'straight'}
+      data-scanline-layer-count={engineRef.current?.layers?.length ?? 0}
       data-field-shape="scan-field"
       data-renderer="pixijs"
       data-resize-mode="observer"
