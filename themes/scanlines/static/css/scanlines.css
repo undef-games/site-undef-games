@@ -248,7 +248,13 @@ a {
 }
 
 @media (max-width: 760px) {
-  .scan-fallback__hero,
+  .scan-fallback__hero {
+    padding-top: 84px;
+    padding-right: 18px;
+    padding-left: 18px;
+    padding-bottom: 44px;
+  }
+
   .scan-fallback__section {
     padding: 62px 18px;
   }
