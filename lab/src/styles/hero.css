@@ -252,6 +252,7 @@
 .station-hero {
   position: relative;
   z-index: 2;
+  min-height: 76svh;
   display: grid;
   align-content: center;
   padding: 56px 92px;

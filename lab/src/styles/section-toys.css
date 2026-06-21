@@ -543,10 +543,11 @@
 
 .section-toy.section-toy--effect-dice span:nth-child(n) {
   --die-size: 124px;
-  --die-distance: 248vw;
-  --die-spin: 312deg;
-  --die-spin-start: -14deg;
-  --die-start: 114vw;
+  --die-distance: 176vw;
+  --die-start: 116vw;
+  --die-spin-duration: calc(3.6s + var(--toy-index, 0) * 0.9s);
+  --die-spin-to: 1turn;
+  --die-spin-delay: calc(var(--toy-index, 0) * -0.7s);
   --die-pip-rgb: var(--fx-support-1-rgb, 216 255 53);
   left: auto;
   right: auto;
@@ -560,10 +561,14 @@
     inset 0 0 22px rgb(var(--die-pip-rgb) / 0.06),
     0 0 calc(30px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-2-rgb, 216 255 53) / 0.16);
   transform-origin: center;
-  transform:
-    translateX(calc(var(--die-start) - var(--section-progress, 0) * var(--die-distance) * var(--fx-rectangle-travel, 1)))
-    rotate(calc(var(--die-spin-start) + var(--section-progress, 0) * var(--die-spin) * var(--fx-rectangle-spin, 1)));
-  will-change: transform;
+  transform: translateX(calc(var(--die-start) - var(--section-progress, 0) * var(--die-distance) * var(--fx-rectangle-travel, 1)));
+  rotate: 0deg;
+  animation: dice-spin var(--die-spin-duration) linear var(--die-spin-delay) infinite;
+  will-change: transform, rotate;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(even) {
+  --die-spin-to: -1turn;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(n)::before {
@@ -667,4 +672,10 @@
   --die-pip-rgb: var(--fx-text-on-light-rgb, 17 19 13);
   border-color: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.5);
   background: rgb(var(--fx-bg-rgb, 244 240 223) / 0.5);
+}
+
+@keyframes dice-spin {
+  to {
+    rotate: var(--die-spin-to, 1turn);
+  }
 }
