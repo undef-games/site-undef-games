@@ -731,6 +731,7 @@
   --warp-wave: 0deg;
   --warp-phase: 0deg;
   --warp-amp: 0px;
+  --warp-alpha: 0.82;
   --warp-rgb: var(--fx-support-1-rgb, 216 255 53);
   left: auto;
   right: auto;
@@ -758,8 +759,8 @@
   width: var(--warp-size);
   height: calc(var(--warp-size) * 0.72);
   clip-path: polygon(100% 50%, 38% 36%, 14% 18%, 30% 44%, 0% 44%, 0% 56%, 30% 56%, 14% 82%, 38% 64%);
-  background: rgb(var(--warp-rgb) / 0.82);
-  box-shadow: 0 0 calc(16px * var(--fx-glow-strength, 1)) rgb(var(--warp-rgb) / 0.5);
+  background: rgb(var(--warp-rgb) / var(--warp-alpha));
+  box-shadow: 0 0 calc(16px * var(--fx-glow-strength, 1)) rgb(var(--warp-rgb) / calc(var(--warp-alpha) * 0.6));
 }
 
 /* spirals (even) — swirling conic rings that spin on scroll */
@@ -773,58 +774,64 @@
   box-shadow: 0 0 calc(22px * var(--fx-glow-strength, 1)) rgb(var(--warp-rgb) / 0.18);
 }
 
-/* ships (odd): 3 detailed silhouettes (fighter / shuttle / interceptor), each a different size, speed, shade, and wave */
-/* nth-child(1,7) = fighter (base shape) */
+/* ships (odd): 3 detailed silhouettes; size + speed correlate for parallax (big = fast = foreground) */
+/* fighter (base shape) — small, slow, dim (far) */
 .section-toy.section-toy--effect-warp span:nth-child(1) {
-  top: 18%; --warp-size: 36px; --warp-speed: 168vw; --warp-wave: 720deg; --warp-amp: 26px;
-}
-/* shuttle: blunt nose, top + bottom fins, engine notch */
-.section-toy.section-toy--effect-warp span:nth-child(3) {
-  top: 66%; --warp-size: 60px; --warp-speed: 250vw; --warp-wave: 540deg; --warp-phase: 144deg; --warp-amp: 18px;
-  --warp-rgb: var(--fx-support-3-rgb, 216 255 53);
-  clip-path: polygon(100% 42%, 100% 58%, 56% 64%, 48% 84%, 36% 64%, 0% 56%, 12% 50%, 0% 44%, 36% 36%, 48% 16%, 56% 36%);
-}
-/* interceptor: sharp nose, canards, engine notch */
-.section-toy.section-toy--effect-warp span:nth-child(5) {
-  top: 42%; --warp-size: 44px; --warp-speed: 205vw; --warp-wave: 900deg; --warp-phase: 252deg; --warp-amp: 32px;
-  --warp-rgb: var(--fx-muted-rgb, 244 244 240);
-  clip-path: polygon(100% 50%, 50% 42%, 34% 26%, 44% 46%, 8% 42%, 18% 50%, 8% 58%, 44% 54%, 34% 74%, 50% 58%);
-}
-.section-toy.section-toy--effect-warp span:nth-child(7) {
-  top: 12%; --warp-size: 24px; --warp-speed: 286vw; --warp-wave: 720deg; --warp-phase: 72deg; --warp-amp: 22px;
+  top: 18%; --warp-size: 28px; --warp-speed: 270vw; --warp-alpha: 0.6; --warp-wave: 720deg; --warp-amp: 22px;
   --warp-rgb: var(--fx-support-2-rgb, 216 255 53);
 }
-/* shuttle (larger) */
-.section-toy.section-toy--effect-warp span:nth-child(9) {
-  top: 62%; --warp-size: 48px; --warp-speed: 150vw; --warp-wave: 600deg; --warp-phase: 324deg; --warp-amp: 28px;
+/* shuttle — large, fast, bright (near) */
+.section-toy.section-toy--effect-warp span:nth-child(3) {
+  top: 64%; --warp-size: 80px; --warp-speed: 400vw; --warp-alpha: 0.85; --warp-wave: 540deg; --warp-phase: 144deg; --warp-amp: 16px;
   --warp-rgb: var(--fx-support-1-rgb, 216 255 53);
   clip-path: polygon(100% 42%, 100% 58%, 56% 64%, 48% 84%, 36% 64%, 0% 56%, 12% 50%, 0% 44%, 36% 36%, 48% 16%, 56% 36%);
 }
+/* interceptor — mid size, dimmed grey */
+.section-toy.section-toy--effect-warp span:nth-child(5) {
+  top: 42%; --warp-size: 44px; --warp-speed: 310vw; --warp-alpha: 0.5; --warp-wave: 900deg; --warp-phase: 252deg; --warp-amp: 30px;
+  --warp-rgb: var(--fx-muted-rgb, 244 244 240);
+  clip-path: polygon(100% 50%, 50% 42%, 34% 26%, 44% 46%, 8% 42%, 18% 50%, 8% 58%, 44% 54%, 34% 74%, 50% 58%);
+}
+/* fighter — smallest, slowest, dimmest grey (farthest) */
+.section-toy.section-toy--effect-warp span:nth-child(7) {
+  top: 12%; --warp-size: 18px; --warp-speed: 240vw; --warp-alpha: 0.45; --warp-wave: 720deg; --warp-phase: 72deg; --warp-amp: 20px;
+  --warp-rgb: var(--fx-muted-rgb, 244 244 240);
+}
+/* shuttle — large, fast (near) */
+.section-toy.section-toy--effect-warp span:nth-child(9) {
+  top: 60%; --warp-size: 58px; --warp-speed: 360vw; --warp-alpha: 0.8; --warp-wave: 600deg; --warp-phase: 324deg; --warp-amp: 26px;
+  --warp-rgb: var(--fx-support-2-rgb, 216 255 53);
+  clip-path: polygon(100% 42%, 100% 58%, 56% 64%, 48% 84%, 36% 64%, 0% 56%, 12% 50%, 0% 44%, 36% 36%, 48% 16%, 56% 36%);
+}
 
-/* spirals (even): each a different size, speed, spin, shade, swirl geometry, and wave */
+/* spirals (even): size + speed correlate for parallax; bigger = faster = nearer */
+/* largest, fastest, brightest (near) */
 .section-toy.section-toy--effect-warp span:nth-child(2) {
-  top: 58%; --warp-size: 96px; --warp-speed: 190vw; --warp-spin: -460deg; --warp-wave: 480deg; --warp-amp: 14px;
+  top: 56%; --warp-size: 120px; --warp-speed: 440vw; --warp-spin: -460deg; --warp-wave: 480deg; --warp-amp: 12px;
   --warp-rgb: var(--fx-support-2-rgb, 216 255 53);
   background: conic-gradient(from 0deg, rgb(var(--warp-rgb) / 0.6), rgb(var(--warp-rgb) / 0.05) 38%, transparent 60% 100%);
   -webkit-mask: radial-gradient(circle, transparent 0 20%, #000 26% 70%, transparent 74%);
           mask: radial-gradient(circle, transparent 0 20%, #000 26% 70%, transparent 74%);
 }
+/* small, slow, dim grey (far) */
 .section-toy.section-toy--effect-warp span:nth-child(4) {
-  top: 24%; --warp-size: 60px; --warp-speed: 235vw; --warp-spin: 640deg; --warp-wave: 360deg; --warp-phase: 180deg; --warp-amp: 20px;
-  --warp-rgb: var(--fx-support-3-rgb, 216 255 53);
-  background: conic-gradient(from 0deg, rgb(var(--warp-rgb) / 0.55), transparent 30% 100%);
+  top: 26%; --warp-size: 48px; --warp-speed: 300vw; --warp-spin: 640deg; --warp-wave: 360deg; --warp-phase: 180deg; --warp-amp: 18px;
+  --warp-rgb: var(--fx-muted-rgb, 244 244 240);
+  background: conic-gradient(from 0deg, rgb(var(--warp-rgb) / 0.32), transparent 30% 100%);
   -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 40% 64%, transparent 70%);
           mask: radial-gradient(circle, transparent 0 34%, #000 40% 64%, transparent 70%);
 }
+/* large, fast (near) */
 .section-toy.section-toy--effect-warp span:nth-child(6) {
-  top: 80%; --warp-size: 78px; --warp-speed: 165vw; --warp-spin: -560deg; --warp-wave: 540deg; --warp-phase: 90deg; --warp-amp: 12px;
+  top: 78%; --warp-size: 92px; --warp-speed: 410vw; --warp-spin: -560deg; --warp-wave: 540deg; --warp-phase: 90deg; --warp-amp: 12px;
   --warp-rgb: var(--fx-signal-rgb, 216 255 53);
   background: conic-gradient(from 0deg, rgb(var(--warp-rgb) / 0.5), rgb(var(--warp-rgb) / 0.04) 22%, transparent 42%, rgb(var(--warp-rgb) / 0.42) 62%, transparent 80% 100%);
   -webkit-mask: radial-gradient(circle, transparent 0 22%, #000 28% 68%, transparent 72%);
           mask: radial-gradient(circle, transparent 0 22%, #000 28% 68%, transparent 72%);
 }
+/* mid */
 .section-toy.section-toy--effect-warp span:nth-child(8) {
-  top: 50%; --warp-size: 86px; --warp-speed: 215vw; --warp-spin: 520deg; --warp-wave: 420deg; --warp-phase: 270deg; --warp-amp: 16px;
+  top: 48%; --warp-size: 66px; --warp-speed: 340vw; --warp-spin: 520deg; --warp-wave: 420deg; --warp-phase: 270deg; --warp-amp: 16px;
   --warp-rgb: var(--fx-support-1-rgb, 216 255 53);
   background: conic-gradient(from 0deg, rgb(var(--warp-rgb) / 0.62), rgb(var(--warp-rgb) / 0.05) 44%, transparent 68% 100%);
   -webkit-mask: radial-gradient(circle, transparent 0 28%, #000 32% 66%, transparent 70%);
