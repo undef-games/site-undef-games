@@ -770,8 +770,8 @@ test('tumbles skinny bars and varies row-rectangle travel directions', async ({ 
   const lateFirstRowRect = await firstRowRect.evaluate(readToyMotion)
   const lateSecondRowRect = await secondRowRect.evaluate(readToyMotion)
 
-  expect(lateFirstRowRect.translateX).toBeLessThan(earlyFirstRowRect.translateX - 24)
-  expect(lateSecondRowRect.translateX).toBeLessThan(earlySecondRowRect.translateX - 24)
+  expect(lateFirstRowRect.translateX).toBeGreaterThan(earlyFirstRowRect.translateX + 24)
+  expect(lateSecondRowRect.translateX).toBeGreaterThan(earlySecondRowRect.translateX + 24)
   expect(Math.abs(lateFirstRowRect.rotation - earlyFirstRowRect.rotation)).toBeGreaterThan(18)
   const firstDieSpin = await firstRowRect.evaluate((element) => getComputedStyle(element).getPropertyValue('--die-spin').trim())
   const secondDieSpin = await secondRowRect.evaluate((element) => getComputedStyle(element).getPropertyValue('--die-spin').trim())
