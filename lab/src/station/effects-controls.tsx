@@ -80,6 +80,7 @@ const TONE_LABELS: Record<EffectsTone, { icon: string; label: string }> = {
 
 const SECTION_EFFECT_OPTIONS: { label: string; value: SectionToyEffect }[] = [
   { label: 'Skinny bars', value: 'bars' },
+  { label: 'Tumbling dice', value: 'dice' },
   { label: 'Tumble rectangles', value: 'tumble' },
   { label: 'Classic CRT', value: 'crt' },
   { label: 'Bouncing notes', value: 'notes' },

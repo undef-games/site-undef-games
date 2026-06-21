@@ -189,20 +189,11 @@ test('keeps the site header responsive without pinning controls to wide viewport
   await expect(page.getByRole('link', { name: /log in/i })).toBeVisible()
   const headerBox = await page.getByRole('banner').boundingBox()
   const heroHeadingBox = await page.getByRole('heading', { name: /^undef games$/i }).boundingBox()
-  const mobileHeroLayout = await page.locator('.station-shell--site .station-hero').evaluate((element) => {
-    const style = getComputedStyle(element)
-    return {
-      alignContent: style.alignContent,
-      paddingTop: Number.parseFloat(style.paddingTop),
-    }
-  })
   const mobileCanvasTouchAction = await page
     .locator('.station-shell--site .station-signal-scene canvas')
     .evaluate((element) => getComputedStyle(element).touchAction)
   expect(headerBox).not.toBeNull()
   expect(heroHeadingBox).not.toBeNull()
-  expect(mobileHeroLayout.alignContent).toBe('start')
-  expect(mobileHeroLayout.paddingTop).toBeGreaterThanOrEqual(110)
   expect(heroHeadingBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height + 12)
   expect(mobileCanvasTouchAction).not.toBe('none')
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)

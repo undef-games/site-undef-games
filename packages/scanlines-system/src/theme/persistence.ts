@@ -38,7 +38,7 @@ export type ThemeState = {
 }
 
 export const DEFAULT_SECTION_EFFECTS: SectionEffects = {
-  dice: 'bars',
+  dice: 'dice',
   identity: 'tumble',
   projects: 'tumble',
   signal: 'bars',

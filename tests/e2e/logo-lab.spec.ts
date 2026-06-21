@@ -600,7 +600,13 @@ test('switches section background effects independently', async ({ page }) => {
 
   await effects.getByLabel('Signal background').selectOption('notes')
   await expect(signalToy).toHaveClass(/section-toy--effect-notes/)
-  const noteRect = await page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyRect)
+  const noteRect = await page
+    .locator('.landing-section--signal .section-toy span')
+    .first()
+    .evaluate((element) => ({
+      height: (element as HTMLElement).offsetHeight,
+      width: (element as HTMLElement).offsetWidth,
+    }))
   expect(noteRect.height).toBeGreaterThanOrEqual(74)
   expect(noteRect.height).toBeLessThanOrEqual(82)
   expect(noteRect.width).toBeGreaterThanOrEqual(14)
@@ -764,8 +770,8 @@ test('tumbles skinny bars and varies row-rectangle travel directions', async ({ 
   const lateFirstRowRect = await firstRowRect.evaluate(readToyMotion)
   const lateSecondRowRect = await secondRowRect.evaluate(readToyMotion)
 
-  expect(lateFirstRowRect.translateY).toBeLessThan(earlyFirstRowRect.translateY - 24)
-  expect(lateSecondRowRect.translateY).toBeGreaterThan(earlySecondRowRect.translateY + 24)
+  expect(lateFirstRowRect.translateX).toBeLessThan(earlyFirstRowRect.translateX - 24)
+  expect(lateSecondRowRect.translateX).toBeLessThan(earlySecondRowRect.translateX - 24)
   expect(Math.abs(lateFirstRowRect.rotation - earlyFirstRowRect.rotation)).toBeGreaterThan(18)
 })
 

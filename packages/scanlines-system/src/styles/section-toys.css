@@ -535,3 +535,136 @@
     rotate: calc(var(--fx-rectangle-wobble, 0.45) * 8deg);
   }
 }
+
+/* Tumbling dice — dice faces drifting across, an alternative to the rectangles */
+.section-toy--effect-dice {
+  opacity: max(0.46, calc(0.56 * var(--fx-rectangle-opacity, 1)));
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(n) {
+  --die-size: 124px;
+  --die-distance: 248vw;
+  --die-spin: 312deg;
+  --die-spin-start: -14deg;
+  --die-start: 114vw;
+  --die-pip-rgb: var(--fx-support-1-rgb, 216 255 53);
+  left: auto;
+  right: auto;
+  top: 14%;
+  width: var(--die-size);
+  height: var(--die-size);
+  border: 2px solid rgb(var(--die-pip-rgb) / 0.42);
+  border-radius: calc(var(--die-size) * 0.2);
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.5);
+  box-shadow:
+    inset 0 0 22px rgb(var(--die-pip-rgb) / 0.06),
+    0 0 calc(30px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-2-rgb, 216 255 53) / 0.16);
+  transform-origin: center;
+  transform:
+    translateX(calc(var(--die-start) - var(--section-progress, 0) * var(--die-distance) * var(--fx-rectangle-travel, 1)))
+    rotate(calc(var(--die-spin-start) + var(--section-progress, 0) * var(--die-spin) * var(--fx-rectangle-spin, 1)));
+  will-change: transform;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(n)::before {
+  content: '';
+  position: absolute;
+  inset: 16%;
+  background-repeat: no-repeat;
+  --pip: rgb(var(--die-pip-rgb) / 0.82);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(n + 7) {
+  display: none;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(1) {
+  top: 9%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(1)::before {
+  background-image:
+    radial-gradient(circle at 20% 20%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 80% 20%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 50% 50%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 20% 80%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 80% 80%, var(--pip) 0 6px, transparent 7px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(2) {
+  --die-size: 100px;
+  --die-spin: -276deg;
+  --die-start: 124vw;
+  top: 30%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(2)::before {
+  background-image:
+    radial-gradient(circle at 24% 24%, var(--pip) 0 5px, transparent 6px),
+    radial-gradient(circle at 50% 50%, var(--pip) 0 5px, transparent 6px),
+    radial-gradient(circle at 76% 76%, var(--pip) 0 5px, transparent 6px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(3) {
+  --die-size: 150px;
+  --die-spin: 360deg;
+  --die-start: 106vw;
+  top: 46%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(3)::before {
+  background-image:
+    radial-gradient(circle at 22% 18%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 22% 50%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 22% 82%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 78% 18%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 78% 50%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 78% 82%, var(--pip) 0 6px, transparent 7px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(4) {
+  --die-size: 88px;
+  --die-spin: 252deg;
+  --die-start: 130vw;
+  --die-pip-rgb: var(--fx-muted-rgb, 244 244 240);
+  top: 12%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(4)::before {
+  background-image:
+    radial-gradient(circle at 28% 28%, var(--pip) 0 5px, transparent 6px),
+    radial-gradient(circle at 72% 72%, var(--pip) 0 5px, transparent 6px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(5) {
+  --die-size: 116px;
+  --die-spin: -340deg;
+  --die-start: 118vw;
+  top: 62%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(5)::before {
+  background-image:
+    radial-gradient(circle at 24% 24%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 76% 24%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 24% 76%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 76% 76%, var(--pip) 0 6px, transparent 7px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(6) {
+  --die-size: 76px;
+  --die-spin: 300deg;
+  --die-start: 136vw;
+  --die-pip-rgb: var(--fx-muted-rgb, 244 244 240);
+  top: 38%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(6)::before {
+  background-image: radial-gradient(circle at 50% 50%, var(--pip) 0 7px, transparent 8px);
+}
+
+.station-shell[data-tone='light'] .section-toy.section-toy--effect-dice span:nth-child(n) {
+  --die-pip-rgb: var(--fx-text-on-light-rgb, 17 19 13);
+  border-color: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.5);
+  background: rgb(var(--fx-bg-rgb, 244 240 223) / 0.5);
+}

@@ -47,7 +47,7 @@ const DEFAULT_PALETTES: Record<Tone, PaletteSettings> = {
 }
 
 const DEFAULT_SECTION_EFFECTS = {
-  dice: 'bars',
+  dice: 'dice',
   identity: 'tumble',
   projects: 'tumble',
   signal: 'bars',
