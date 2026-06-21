@@ -56,10 +56,10 @@ describe('AppShell', () => {
     render(<AppShell />)
 
     expect(
-      screen.getByText(/indie developer building game tools and systems for fun shared experiences/i),
+      screen.getByText(/indie studio building game tools and systems for fun shared experiences/i),
     ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /explore warp/i })).toBeInTheDocument()
-    expect(screen.getAllByText(/TradeWars: WARP Agent Runtime Platform/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/WARP: Warp Agent Runtime Portal/i).length).toBeGreaterThan(0)
     expect(screen.getByText(/at the table and on the network/i)).toBeInTheDocument()
   })
 

@@ -167,7 +167,7 @@ export function SiteApp() {
           </div>
         </section>
 
-        <section className="landing-section landing-section--warp" aria-label="TradeWars WARP Agent Runtime Platform">
+        <section className="landing-section landing-section--warp" aria-label="WARP Warp Agent Runtime Portal">
           {renderSectionToy('signal', sectionEffects.warp as SectionToyEffect)}
           <p className="section-kicker">{copy.sections.warp.kicker}</p>
           <h2>{copy.sections.warp.title}</h2>

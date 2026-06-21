@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import type { ChannelMode } from './signal-field-plan'
 
-export type SectionToyEffect = 'bars' | 'crt' | 'dice' | 'frames' | 'notes' | 'rails' | 'rungs' | 'scatter' | 'slab' | 'tumble'
+export type SectionToyEffect = 'bars' | 'crt' | 'dice' | 'frames' | 'notes' | 'rails' | 'rungs' | 'scatter' | 'slab' | 'tumble' | 'warp'
 export type SectionEffectId = 'dice' | 'identity' | 'projects' | 'signal' | 'taybols' | 'warp'
 export type SectionEffects = Record<SectionEffectId, SectionToyEffect>
 

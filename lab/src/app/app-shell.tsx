@@ -394,7 +394,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
           </div>
         </section>
 
-        <section className="landing-section landing-section--warp" aria-label="TradeWars WARP Agent Runtime Platform">
+        <section className="landing-section landing-section--warp" aria-label="WARP Warp Agent Runtime Portal">
           <SectionToy variant="signal" effect={sectionEffects.warp} />
           <p className="section-kicker">{LAB_SECTIONS.warp.kicker}</p>
           <h2>{LAB_SECTIONS.warp.title}</h2>

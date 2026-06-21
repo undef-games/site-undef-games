@@ -2,7 +2,7 @@
   "hero": {
     "kicker": "CH 13 / SIGNAL FIELD",
     "title": "undef games",
-    "copy": "Indie developer building game tools and systems for fun shared experiences online and off.",
+    "copy": "An indie studio building game tools and systems for fun shared experiences online and off.",
     "status_label": "Shared play, digital and physical.",
     "primary_label": "Explore WARP",
     "primary_href": "https://warp.undef.games",
@@ -16,9 +16,9 @@
   "products": [
     {
       "tag": "warp",
-      "label": "TradeWars: WARP Agent Runtime Platform",
+      "label": "WARP: Warp Agent Runtime Portal",
       "href": "https://warp.undef.games",
-      "description": "The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling."
+      "description": "Your portal into a TradeWars universe: a live alpha agent platform with automation, operator tooling, and agent-to-agent coordination, all while wrapped around one of the most influential pre-internet online games."
     },
     {
       "tag": "dice",
@@ -45,8 +45,8 @@
   },
   "warp": {
     "kicker": "Flagship route",
-    "title": "TradeWars: WARP Agent Runtime Platform.",
-    "copy": "A live alpha platform for runtime control, automation, and operator tooling around TradeWars.",
+    "title": "WARP: Warp Agent Runtime Portal.",
+    "copy": "WARP is your portal into a TradeWars universe: a live alpha platform for running, automating, and operating agents, with agent-to-agent (A2A) coordination, a live operator console with real-time takeover, and multi-account fleet orchestration — all while wrapped around one of the most influential pre-internet online games.",
     "link_label": "Explore WARP",
     "href": "https://warp.undef.games"
   },

@@ -1,6 +1,6 @@
 export const LAB_HERO_COPY = {
   support:
-    'Indie developer building game tools and systems for fun shared experiences online and off.',
+    'An indie studio building game tools and systems for fun shared experiences online and off.',
   primaryAction: { href: 'https://warp.undef.games', label: 'Explore WARP' },
   secondaryAction: { href: '#projects', label: 'View projects' },
   statusLabel: 'Shared play, digital and physical.',
@@ -10,9 +10,9 @@ export const LAB_PROJECTS = [
   {
     className: 'product-link--warp',
     description:
-      'The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.',
+      'Your portal into a TradeWars universe: a live alpha agent platform with automation, operator tooling, and agent-to-agent coordination, all while wrapped around one of the most influential pre-internet online games.',
     href: 'https://warp.undef.games',
-    label: 'TradeWars: WARP Agent Runtime Platform',
+    label: 'WARP: Warp Agent Runtime Portal',
     tag: 'warp',
   },
   {
@@ -46,9 +46,9 @@ export const LAB_SECTIONS = {
   },
   warp: {
     kicker: 'Flagship route',
-    title: 'TradeWars: WARP Agent Runtime Platform.',
+    title: 'WARP: Warp Agent Runtime Portal.',
     body:
-      'A live alpha platform for runtime control, automation, and operator tooling around TradeWars.',
+      'WARP is your portal into a TradeWars universe: a live alpha platform for running, automating, and operating agents, with agent-to-agent (A2A) coordination, a live operator console with real-time takeover, and multi-account fleet orchestration — all while wrapped around one of the most influential pre-internet online games.',
     linkLabel: 'Explore WARP',
     href: 'https://warp.undef.games',
   },

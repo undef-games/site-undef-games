@@ -52,7 +52,7 @@ const DEFAULT_SECTION_EFFECTS = {
   projects: 'tumble',
   signal: 'bars',
   taybols: 'bars',
-  warp: 'tumble',
+  warp: 'warp',
 }
 
 type ThemeState = {

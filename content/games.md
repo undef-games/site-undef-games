@@ -4,9 +4,9 @@ kicker: "Live routes"
 description: "Active game tools, systems, and playable utilities from undef games."
 ---
 
-## TradeWars: WARP Agent Runtime Platform
+## WARP: Warp Agent Runtime Portal
 
-The flagship route: a live alpha platform for TradeWars runtime, automation, and operator tooling.
+WARP is your portal into a TradeWars universe: a live alpha platform for running, automating, and operating agents, with agent-to-agent (A2A) coordination, a live operator console, and multi-account fleet orchestration — all while wrapped around one of the most influential pre-internet online games.
 
 [Explore WARP](https://warp.undef.games)
 

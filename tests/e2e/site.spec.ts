@@ -27,7 +27,7 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
   await expect(page.getByLabel('station tools and identity')).toHaveCount(0)
   await expect(page.getByLabel('effects controls')).toHaveCount(0)
   await expect(
-    page.getByText(/indie developer building game tools and systems for fun shared experiences/i),
+    page.getByText(/indie studio building game tools and systems for fun shared experiences/i),
   ).toBeVisible()
   await expect(
     page.getByRole('heading', { name: /projects built to be used, watched, and played with/i }),
@@ -38,7 +38,7 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
     ),
   ).toBeVisible()
   const projects = page.getByLabel('undef games projects')
-  await expect(projects.getByRole('link', { name: /TradeWars: WARP Agent Runtime Platform/i })).toHaveAttribute(
+  await expect(projects.getByRole('link', { name: /WARP: Warp Agent Runtime Portal/i })).toHaveAttribute(
     'href',
     /https:\/\/warp\.undef\.games\/?/,
   )

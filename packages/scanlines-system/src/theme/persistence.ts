@@ -43,7 +43,7 @@ export const DEFAULT_SECTION_EFFECTS: SectionEffects = {
   projects: 'tumble',
   signal: 'bars',
   taybols: 'bars',
-  warp: 'tumble',
+  warp: 'warp',
 }
 
 export const DEFAULT_SCANLINE_LAYERS: ScanlineLayers = {

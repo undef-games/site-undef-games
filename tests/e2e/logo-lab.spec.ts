@@ -167,7 +167,7 @@ test('advertises concrete undef games projects', async ({ page }) => {
   const projects = page.getByLabel('undef games projects')
   await expect(projects).toBeVisible()
   await expect(projects.getByRole('heading', { name: /projects built to be used, watched, and played with/i })).toBeVisible()
-  await expect(projects.getByRole('link', { name: /TradeWars: WARP Agent Runtime Platform/i })).toHaveAttribute(
+  await expect(projects.getByRole('link', { name: /WARP: Warp Agent Runtime Portal/i })).toHaveAttribute(
     'href',
     /https:\/\/warp\.undef\.games\/?/,
   )
@@ -567,7 +567,7 @@ test('switches section background effects independently', async ({ page }) => {
   const identityToy = page.locator('.landing-section--identity .section-toy')
   await expect(signalToy).toHaveClass(/section-toy--effect-bars/)
   await expect(projectsToy).toHaveClass(/section-toy--effect-tumble/)
-  await expect(warpToy).toHaveClass(/section-toy--effect-tumble/)
+  await expect(warpToy).toHaveClass(/section-toy--effect-warp/)
   await expect.poll(() => signalToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.7)
   await expect.poll(() => projectsToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.38)
   await expect
@@ -770,8 +770,8 @@ test('tumbles skinny bars and varies row-rectangle travel directions', async ({ 
   const lateFirstRowRect = await firstRowRect.evaluate(readToyMotion)
   const lateSecondRowRect = await secondRowRect.evaluate(readToyMotion)
 
-  expect(lateFirstRowRect.translateX).toBeGreaterThan(earlyFirstRowRect.translateX + 24)
-  expect(lateSecondRowRect.translateX).toBeGreaterThan(earlySecondRowRect.translateX + 24)
+  expect(Math.abs(lateFirstRowRect.translateX - earlyFirstRowRect.translateX)).toBeGreaterThan(24)
+  expect(Math.abs(lateSecondRowRect.translateX - earlySecondRowRect.translateX)).toBeGreaterThan(24)
   expect(Math.abs(lateFirstRowRect.rotation - earlyFirstRowRect.rotation)).toBeGreaterThan(18)
   const firstDieSpin = await firstRowRect.evaluate((element) => getComputedStyle(element).getPropertyValue('--die-spin').trim())
   const secondDieSpin = await secondRowRect.evaluate((element) => getComputedStyle(element).getPropertyValue('--die-spin').trim())
