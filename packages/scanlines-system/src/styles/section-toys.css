@@ -561,7 +561,7 @@
     0 0 calc(30px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-2-rgb, 216 255 53) / 0.16);
   transform-origin: center;
   transform:
-    translateX(calc(var(--die-start) - 138vw + var(--section-progress, 0) * var(--die-distance) * 0.62 * var(--fx-rectangle-travel, 1)))
+    translateX(calc(-54vw + var(--toy-index, 0) * 17vw + var(--section-progress, 0) * (56vw + var(--toy-index, 0) * 20vw) * var(--fx-rectangle-travel, 1)))
     rotate(calc(var(--die-spin-start) + var(--section-progress, 0) * var(--die-spin) * 1.5 * var(--fx-rectangle-spin, 1)))
     scale(0.86);
   will-change: transform;
@@ -575,7 +575,7 @@
   --pip: rgb(var(--die-pip-rgb) / 0.82);
 }
 
-.section-toy.section-toy--effect-dice span:nth-child(n + 7) {
+.section-toy.section-toy--effect-dice span:nth-child(n + 10) {
   display: none;
 }
 
@@ -670,6 +670,47 @@
 
 .section-toy.section-toy--effect-dice span:nth-child(6)::before {
   background-image: radial-gradient(circle at 50% 50%, var(--pip) 0 7px, transparent 8px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(7) {
+  --die-size: 92px;
+  --die-spin: 864deg;
+  top: 28%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(7)::before {
+  background-image:
+    radial-gradient(circle at 20% 20%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 80% 20%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 50% 50%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 20% 80%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 80% 80%, var(--pip) 0 6px, transparent 7px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(8) {
+  --die-size: 134px;
+  --die-spin: -540deg;
+  --die-pip-rgb: var(--fx-muted-rgb, 244 244 240);
+  top: 66%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(8)::before {
+  background-image:
+    radial-gradient(circle at 28% 28%, var(--pip) 0 6px, transparent 7px),
+    radial-gradient(circle at 72% 72%, var(--pip) 0 6px, transparent 7px);
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(9) {
+  --die-size: 70px;
+  --die-spin: 1008deg;
+  top: 14%;
+}
+
+.section-toy.section-toy--effect-dice span:nth-child(9)::before {
+  background-image:
+    radial-gradient(circle at 24% 24%, var(--pip) 0 5px, transparent 6px),
+    radial-gradient(circle at 50% 50%, var(--pip) 0 5px, transparent 6px),
+    radial-gradient(circle at 76% 76%, var(--pip) 0 5px, transparent 6px);
 }
 
 .station-shell[data-tone='light'] .section-toy.section-toy--effect-dice span:nth-child(n) {
