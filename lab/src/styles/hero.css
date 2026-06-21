@@ -252,7 +252,7 @@
 .station-hero {
   position: relative;
   z-index: 2;
-  min-height: 76svh;
+  min-height: 88svh;
   display: grid;
   align-content: center;
   padding: 56px 92px;
@@ -260,6 +260,7 @@
 }
 
 .station-shell--site .station-hero {
+  padding-top: 96px;
   padding-left: 64px;
   padding-right: min(14vw, 180px);
 }

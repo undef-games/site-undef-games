@@ -772,17 +772,10 @@ test('tumbles skinny bars and varies row-rectangle travel directions', async ({ 
 
   expect(lateFirstRowRect.translateX).toBeLessThan(earlyFirstRowRect.translateX - 24)
   expect(lateSecondRowRect.translateX).toBeLessThan(earlySecondRowRect.translateX - 24)
-  const firstSpin = await firstRowRect.evaluate((element) => ({
-    duration: getComputedStyle(element).animationDuration,
-    name: getComputedStyle(element).animationName,
-  }))
-  const secondSpin = await secondRowRect.evaluate((element) => ({
-    duration: getComputedStyle(element).animationDuration,
-    name: getComputedStyle(element).animationName,
-  }))
-  expect(firstSpin.name).toBe('dice-spin')
-  expect(secondSpin.name).toBe('dice-spin')
-  expect(firstSpin.duration).not.toBe(secondSpin.duration)
+  expect(Math.abs(lateFirstRowRect.rotation - earlyFirstRowRect.rotation)).toBeGreaterThan(18)
+  const firstDieSpin = await firstRowRect.evaluate((element) => getComputedStyle(element).getPropertyValue('--die-spin').trim())
+  const secondDieSpin = await secondRowRect.evaluate((element) => getComputedStyle(element).getPropertyValue('--die-spin').trim())
+  expect(firstDieSpin).not.toBe(secondDieSpin)
 })
 
 function getTranslateX(element: Element) {

@@ -543,15 +543,14 @@
 
 .section-toy.section-toy--effect-dice span:nth-child(n) {
   --die-size: 124px;
-  --die-distance: 176vw;
-  --die-start: 116vw;
-  --die-spin-duration: calc(3.6s + var(--toy-index, 0) * 0.9s);
-  --die-spin-to: 1turn;
-  --die-spin-delay: calc(var(--toy-index, 0) * -0.7s);
+  --die-start: 112vw;
+  --die-distance: 240vw;
+  --die-spin: 560deg;
+  --die-spin-start: -8deg;
   --die-pip-rgb: var(--fx-support-1-rgb, 216 255 53);
   left: auto;
   right: auto;
-  top: 14%;
+  top: 16%;
   width: var(--die-size);
   height: var(--die-size);
   border: 2px solid rgb(var(--die-pip-rgb) / 0.42);
@@ -561,14 +560,10 @@
     inset 0 0 22px rgb(var(--die-pip-rgb) / 0.06),
     0 0 calc(30px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-2-rgb, 216 255 53) / 0.16);
   transform-origin: center;
-  transform: translateX(calc(var(--die-start) - var(--section-progress, 0) * var(--die-distance) * var(--fx-rectangle-travel, 1)));
-  rotate: 0deg;
-  animation: dice-spin var(--die-spin-duration) linear var(--die-spin-delay) infinite;
-  will-change: transform, rotate;
-}
-
-.section-toy.section-toy--effect-dice span:nth-child(even) {
-  --die-spin-to: -1turn;
+  transform:
+    translateX(calc(var(--die-start) - var(--section-progress, 0) * var(--die-distance) * var(--fx-rectangle-travel, 1)))
+    rotate(calc(var(--die-spin-start) + var(--section-progress, 0) * var(--die-spin) * var(--fx-rectangle-spin, 1)));
+  will-change: transform;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(n)::before {
@@ -584,7 +579,10 @@
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(1) {
-  top: 9%;
+  --die-spin: 540deg;
+  --die-start: 110vw;
+  --die-distance: 250vw;
+  top: 12%;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(1)::before {
@@ -598,9 +596,10 @@
 
 .section-toy.section-toy--effect-dice span:nth-child(2) {
   --die-size: 100px;
-  --die-spin: -276deg;
-  --die-start: 124vw;
-  top: 30%;
+  --die-spin: -684deg;
+  --die-start: 118vw;
+  --die-distance: 226vw;
+  top: 36%;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(2)::before {
@@ -611,10 +610,11 @@
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(3) {
-  --die-size: 150px;
-  --die-spin: 360deg;
+  --die-size: 148px;
+  --die-spin: 612deg;
   --die-start: 106vw;
-  top: 46%;
+  --die-distance: 262vw;
+  top: 58%;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(3)::before {
@@ -628,11 +628,12 @@
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(4) {
-  --die-size: 88px;
-  --die-spin: 252deg;
-  --die-start: 130vw;
+  --die-size: 84px;
+  --die-spin: -792deg;
+  --die-start: 122vw;
+  --die-distance: 238vw;
   --die-pip-rgb: var(--fx-muted-rgb, 244 244 240);
-  top: 12%;
+  top: 20%;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(4)::before {
@@ -642,10 +643,11 @@
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(5) {
-  --die-size: 116px;
-  --die-spin: -340deg;
-  --die-start: 118vw;
-  top: 62%;
+  --die-size: 112px;
+  --die-spin: 720deg;
+  --die-start: 114vw;
+  --die-distance: 246vw;
+  top: 70%;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(5)::before {
@@ -657,11 +659,12 @@
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(6) {
-  --die-size: 76px;
-  --die-spin: 300deg;
-  --die-start: 136vw;
+  --die-size: 74px;
+  --die-spin: -456deg;
+  --die-start: 128vw;
+  --die-distance: 232vw;
   --die-pip-rgb: var(--fx-muted-rgb, 244 244 240);
-  top: 38%;
+  top: 44%;
 }
 
 .section-toy.section-toy--effect-dice span:nth-child(6)::before {
@@ -672,10 +675,4 @@
   --die-pip-rgb: var(--fx-text-on-light-rgb, 17 19 13);
   border-color: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.5);
   background: rgb(var(--fx-bg-rgb, 244 240 223) / 0.5);
-}
-
-@keyframes dice-spin {
-  to {
-    rotate: var(--die-spin-to, 1turn);
-  }
 }
