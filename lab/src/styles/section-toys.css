@@ -561,8 +561,8 @@
     0 0 calc(30px * var(--fx-glow-strength, 1)) rgb(var(--fx-support-2-rgb, 216 255 53) / 0.16);
   transform-origin: center;
   transform:
-    translateX(calc(var(--die-start) - var(--section-progress, 0) * var(--die-distance) * var(--fx-rectangle-travel, 1)))
-    rotate(calc(var(--die-spin-start) + var(--section-progress, 0) * var(--die-spin) * var(--fx-rectangle-spin, 1)));
+    translateX(calc(var(--die-start) - var(--section-progress, 0) * var(--die-distance) * 0.85 * var(--fx-rectangle-travel, 1)))
+    rotate(calc(var(--die-spin-start) + var(--section-progress, 0) * var(--die-spin) * 1.35 * var(--fx-rectangle-spin, 1)));
   will-change: transform;
 }
 
