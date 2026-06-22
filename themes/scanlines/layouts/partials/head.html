@@ -10,6 +10,7 @@
   <meta property="og:description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
   <meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
   <link rel="canonical" href="{{ .Permalink }}">
+  <script src="/js/theme-boot.js"></script>
   <script type="module" src="/lab/assets/theme-hydrate.js"></script>
   <link rel="stylesheet" href="/css/scanlines.css">
   <link rel="stylesheet" href="/css/chrome.css">
