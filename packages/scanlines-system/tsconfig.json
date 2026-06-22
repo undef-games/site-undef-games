@@ -13,6 +13,7 @@
     "moduleResolution": "Bundler",
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
+    "types": ["node"],
     "typeRoots": ["../../lab/node_modules/@types"],
     "paths": {
       "@testing-library/jest-dom/vitest": ["../../lab/node_modules/@testing-library/jest-dom/vitest"],
