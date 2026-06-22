@@ -30,6 +30,7 @@ export default defineConfig({
       '@undef/scanlines-system': resolve(__dirname, '../packages/scanlines-system/src/index.ts'),
       '@testing-library/jest-dom/vitest': resolve(__dirname, 'node_modules/@testing-library/jest-dom/vitest.js'),
       '@testing-library/react': resolve(__dirname, 'node_modules/@testing-library/react'),
+      '@testing-library/user-event': resolve(__dirname, 'node_modules/@testing-library/user-event'),
       'pixi.js': resolve(__dirname, 'node_modules/pixi.js/lib/index.mjs'),
       'react': resolve(__dirname, 'node_modules/react'),
       'react-dom': resolve(__dirname, 'node_modules/react-dom'),
