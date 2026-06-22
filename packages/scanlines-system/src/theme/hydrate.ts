@@ -20,11 +20,11 @@ function getHexLuminance(hex: string) {
   const numeric = Number.parseInt(value, 16)
   if (!Number.isFinite(numeric)) return 0
 
-  const channels = [((numeric >> 16) & 255) / 255, ((numeric >> 8) & 255) / 255, (numeric & 255) / 255].map((channel) =>
+  const [r = 0, g = 0, b = 0] = [((numeric >> 16) & 255) / 255, ((numeric >> 8) & 255) / 255, (numeric & 255) / 255].map((channel) =>
     channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
   )
 
-  return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722
+  return r * 0.2126 + g * 0.7152 + b * 0.0722
 }
 
 function setVar(name: string, value: string) {
