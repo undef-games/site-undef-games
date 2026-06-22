@@ -1,4 +1,4 @@
-export type ScanlinesSurface = 'site' | 'auth' | 'account'
+export type ScanlinesSurface = 'site' | 'auth' | 'account' | 'admin'
 
 export interface ScanlinesNavItem {
   href: string
@@ -21,3 +21,11 @@ export const BACK_TO_SITE_ACTION: ScanlinesUtilityAction = {
   href: 'https://undef.games/',
   label: 'Back to site',
 }
+
+export const ADMIN_SURFACE_NAV_ITEMS: ScanlinesNavItem[] = [
+  { href: '#principals', label: 'Principals' },
+  { href: '#roles', label: 'Roles' },
+  { href: '#audit', label: 'Audit' },
+  { href: '#signals', label: 'Signals' },
+  { href: '#spend', label: 'Spend' },
+]
