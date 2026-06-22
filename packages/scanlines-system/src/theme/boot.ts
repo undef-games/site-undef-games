@@ -3,8 +3,16 @@ import { readThemeState } from './persistence'
 
 export function applyStoredTheme(): void {
   try {
-    applyThemeState(readThemeState())
+    const theme = readThemeState()
+    applyThemeState(theme)
+    if (typeof window !== 'undefined') {
+      const tone = theme?.activeTone ?? 'dark'
+      ;(window as unknown as { __undefScanTheme?: { tone: 'dark' | 'light'; settings: unknown } }).__undefScanTheme = {
+        tone,
+        settings: theme?.tones[tone]?.settings ?? null,
+      }
+    }
   } catch {
-    document.documentElement.dataset.scanTone = 'dark'
+    if (typeof document !== 'undefined') document.documentElement.dataset.scanTone = 'dark'
   }
 }

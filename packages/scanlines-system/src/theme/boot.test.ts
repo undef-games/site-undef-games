@@ -6,6 +6,7 @@ afterEach(() => {
   localStorage.clear()
   document.documentElement.removeAttribute('style')
   document.documentElement.removeAttribute('data-scan-tone')
+  delete (window as unknown as Record<string, unknown>).__undefScanTheme
 })
 
 describe('applyStoredTheme', () => {
@@ -23,5 +24,18 @@ describe('applyStoredTheme', () => {
   it('does not throw on corrupt storage', () => {
     localStorage.setItem(STORAGE_KEY, '{not json')
     expect(() => { applyStoredTheme() }).not.toThrow()
+  })
+
+  it('sets window.__undefScanTheme.tone to light when light tone is stored', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ activeTone: 'light', version: 1 }))
+    applyStoredTheme()
+    expect((window as unknown as Record<string, unknown>).__undefScanTheme).toBeDefined()
+    expect((window as unknown as { __undefScanTheme: { tone: string } }).__undefScanTheme.tone).toBe('light')
+  })
+
+  it('sets window.__undefScanTheme.tone to dark when nothing is stored', () => {
+    applyStoredTheme()
+    expect((window as unknown as Record<string, unknown>).__undefScanTheme).toBeDefined()
+    expect((window as unknown as { __undefScanTheme: { tone: string } }).__undefScanTheme.tone).toBe('dark')
   })
 })

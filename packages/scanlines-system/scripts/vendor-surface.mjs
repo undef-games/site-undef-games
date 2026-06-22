@@ -24,4 +24,5 @@ export const VENDOR_FILES = [
   'src/styles/backdrop.css',
   'src/styles/account.css',
   'dist/theme-boot.js',
+  'dist/theme-boot.inline.ts',
 ]
