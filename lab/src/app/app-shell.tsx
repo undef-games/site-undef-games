@@ -35,12 +35,12 @@ import {
 } from '../station/station-toys'
 import {
   clearThemeState,
-  createDefaultThemeState,
+  createDefaultFullThemeState,
   getActiveThemeSettings,
-  readThemeState,
-  writeThemeState,
+  readFullThemeState,
+  writeFullThemeState,
+  type FullThemeState,
   type ScanlineLayerId,
-  type ThemeState,
 } from '../store/persistence'
 import { attachButtonPressFeedback } from '../ui/button-press-feedback'
 import { LAB_HERO_COPY, LAB_PROJECTS, LAB_SECTIONS } from './site-copy'
@@ -68,7 +68,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const [stationState, setStationState] = useState(() => createStationState({ signal: isSiteSurface ? 50 : 0 }))
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
-  const [themeState, setThemeState] = useState<ThemeState>(() => readThemeState() ?? createDefaultThemeState())
+  const [themeState, setThemeState] = useState<FullThemeState>(() => readFullThemeState() ?? createDefaultFullThemeState())
   const effectsSettings = getActiveThemeSettings(themeState)
   const activePresetId = themeState.tones[themeState.activeTone].presetId
   const darkPresetId = themeState.tones.dark.presetId
@@ -85,11 +85,11 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const detune = () => setStationState((current) => detuneSignal(current, 25))
   const reset = () => setStationState(resetSignal)
 
-  const updateThemeState = (updater: (current: ThemeState) => ThemeState) => {
+  const updateThemeState = (updater: (current: FullThemeState) => FullThemeState) => {
     setThemeState((current) => {
       const next = updater(current)
       if (!isSiteSurface) {
-        writeThemeState(next)
+        writeFullThemeState(next)
       }
       return next
     })
@@ -174,7 +174,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   }
   const resetTheme = () => {
     clearThemeState()
-    setThemeState(createDefaultThemeState())
+    setThemeState(createDefaultFullThemeState())
   }
   const resetProminent = () => {
     resetProminentEntrances([PROMINENT_ENTRANCE_CONFIGS.labBack])
@@ -223,7 +223,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
 
   useEffect(() => {
     const syncThemeState = () => {
-      const nextTheme = readThemeState()
+      const nextTheme = readFullThemeState()
       if (nextTheme) setThemeState(nextTheme)
     }
 

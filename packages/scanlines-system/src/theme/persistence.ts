@@ -1,90 +1,71 @@
-import {
-  EFFECTS_PRESETS,
-  type EffectsPresetId,
-  type EffectsSettings,
-  type EffectsTone,
-} from '../station/effects-config'
-import {
-  createDefaultScanlineEngine,
-  updateScanlineLayer,
-  type ScanlineBlendMode,
-  type ScanlineEngineState,
-  type ScanlineLayerPatch,
-  type ScanlinePattern,
-} from '../station/scanline-engine'
-import type { SectionEffects } from '../station/station-toys'
-
 export const STORAGE_KEY = 'undef-logos-theme'
 export const THEME_STATE_VERSION = 1
-export const DEFAULT_DARK_PRESET_ID: EffectsPresetId = 'blue-noise'
-export const DEFAULT_LIGHT_PRESET_ID: EffectsPresetId = 'paper-terminal'
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
-export type ScanlineLayerId = 'graph' | 'crt' | 'glitch'
-export type ScanlineLayers = Record<ScanlineLayerId, boolean>
+export type Tone = 'dark' | 'light'
 
-export type ThemePresetState = {
-  presetId: EffectsPresetId | 'custom'
-  settings: EffectsSettings
+export type PaletteSettings = {
+  paletteBg: string
+  palettePanel: string
+  paletteText: string
+  paletteTextOnDark: string
+  paletteTextOnLight: string
+  paletteSignal: string
+  paletteMuted: string
+  paletteGlow: string
+  paletteSupport1: string
+  paletteSupport2: string
+  paletteSupport3: string
 }
 
 export type ThemeState = {
-  activeTone: EffectsTone
-  scanlineEngine: ScanlineEngineState
-  scanlineLayers: ScanlineLayers
-  sectionEffects: SectionEffects
-  tones: Record<EffectsTone, ThemePresetState>
+  activeTone: Tone
+  tones: Record<Tone, { settings: PaletteSettings }>
   version: typeof THEME_STATE_VERSION
 }
 
-export const DEFAULT_SECTION_EFFECTS: SectionEffects = {
-  dice: 'dice',
-  identity: 'tumble',
-  projects: 'tumble',
-  signal: 'bars',
-  taybols: 'bars',
-  warp: 'warp',
-}
-
-export const DEFAULT_SCANLINE_LAYERS: ScanlineLayers = {
-  graph: false,
-  crt: false,
-  glitch: false,
-}
-
-const cloneSettings = (settings: EffectsSettings): EffectsSettings => ({ ...settings })
-
-const findPreset = (presetId: EffectsPresetId, tone?: EffectsTone) =>
-  EFFECTS_PRESETS.find((preset) => preset.id === presetId && (!tone || preset.tone === tone))
-
-const defaultPresetState = (presetId: EffectsPresetId, tone: EffectsTone): ThemePresetState => {
-  const preset = findPreset(presetId, tone) ?? EFFECTS_PRESETS.find((candidate) => candidate.tone === tone) ?? EFFECTS_PRESETS[0]
-  return {
-    presetId: preset.id,
-    settings: cloneSettings(preset.settings),
-  }
+export const DEFAULT_PALETTE: Record<Tone, PaletteSettings> = {
+  dark: {
+    paletteBg: '#050607',
+    palettePanel: '#08090a',
+    paletteText: '#f4f4f0',
+    paletteTextOnDark: '#f4f4f0',
+    paletteTextOnLight: '#050607',
+    paletteSignal: '#d8ff35',
+    paletteMuted: '#f4f4f0',
+    paletteGlow: '#d8ff35',
+    paletteSupport1: '#d8ff35',
+    paletteSupport2: '#d8ff35',
+    paletteSupport3: '#d8ff35',
+  },
+  light: {
+    paletteBg: '#f4f0df',
+    palettePanel: '#ddd7c1',
+    paletteText: '#11130d',
+    paletteTextOnDark: '#f4f4f0',
+    paletteTextOnLight: '#11130d',
+    paletteSignal: '#405500',
+    paletteMuted: '#11130d',
+    paletteGlow: '#b0d000',
+    paletteSupport1: '#b0d000',
+    paletteSupport2: '#213019',
+    paletteSupport3: '#f8fbef',
+  },
 }
 
 export function createDefaultThemeState(): ThemeState {
   return {
     activeTone: 'dark',
-    scanlineEngine: createDefaultScanlineEngine(),
-    scanlineLayers: { ...DEFAULT_SCANLINE_LAYERS },
-    sectionEffects: { ...DEFAULT_SECTION_EFFECTS },
     tones: {
-      dark: defaultPresetState(DEFAULT_DARK_PRESET_ID, 'dark'),
-      light: defaultPresetState(DEFAULT_LIGHT_PRESET_ID, 'light'),
+      dark: { settings: { ...DEFAULT_PALETTE.dark } },
+      light: { settings: { ...DEFAULT_PALETTE.light } },
     },
     version: THEME_STATE_VERSION,
   }
 }
 
-export function getActiveThemeSettings(theme: ThemeState): EffectsSettings {
+export function getActivePaletteSettings(theme: ThemeState): PaletteSettings {
   return theme.tones[theme.activeTone].settings
-}
-
-export function getActiveThemePresetId(theme: ThemeState): EffectsPresetId | 'custom' {
-  return theme.tones[theme.activeTone].presetId
 }
 
 function getStorage(): Storage | undefined {
@@ -138,129 +119,118 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object'
 }
 
-function isTone(value: unknown): value is EffectsTone {
+function isTone(value: unknown): value is Tone {
   return value === 'dark' || value === 'light'
 }
 
-function isNumber(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value)
-}
+const PALETTE_KEYS: (keyof PaletteSettings)[] = [
+  'paletteBg',
+  'palettePanel',
+  'paletteText',
+  'paletteTextOnDark',
+  'paletteTextOnLight',
+  'paletteSignal',
+  'paletteMuted',
+  'paletteGlow',
+  'paletteSupport1',
+  'paletteSupport2',
+  'paletteSupport3',
+]
 
-function isLayerPattern(value: unknown): value is ScanlinePattern {
-  return value === 'straight' || value === 'sine' || value === 'audit' || value === 'broken' || value === 'pulse'
-}
-
-function isBasePattern(value: unknown): value is ScanlineEngineState['basePattern'] {
-  return value === 'straight' || value === 'sine' || value === 'audit' || value === 'broken'
-}
-
-function isBlendMode(value: unknown): value is ScanlineBlendMode {
-  return value === 'add' || value === 'screen' || value === 'soft-light' || value === 'difference'
-}
-
-function resolveScanlineLayerPatch(value: Record<string, unknown>): ScanlineLayerPatch {
-  const patch: ScanlineLayerPatch = {}
-
-  if (typeof value.enabled === 'boolean') patch.enabled = value.enabled
-  if (isLayerPattern(value.kind)) patch.kind = value.kind
-  if (isNumber(value.opacity)) patch.opacity = value.opacity
-  if (isNumber(value.speed)) patch.speed = value.speed
-  if (isNumber(value.amplitude)) patch.amplitude = value.amplitude
-  if (isNumber(value.verticalOffset)) patch.verticalOffset = value.verticalOffset
-  if (isNumber(value.phase)) patch.phase = value.phase
-  if (isBlendMode(value.blendMode)) patch.blendMode = value.blendMode
-  if (isNumber(value.spacingInfluence)) patch.spacingInfluence = value.spacingInfluence
-  if (isNumber(value.frequency)) patch.frequency = value.frequency
-  if (isNumber(value.thickness)) patch.thickness = value.thickness
-  if (isNumber(value.jitter)) patch.jitter = value.jitter
-  if (isNumber(value.dashLength)) patch.dashLength = value.dashLength
-  if (isNumber(value.gapLength)) patch.gapLength = value.gapLength
-  if (isNumber(value.stepSharpness)) patch.stepSharpness = value.stepSharpness
-  if (isNumber(value.scrollCoupling)) patch.scrollCoupling = value.scrollCoupling
-  if (isNumber(value.pointerCoupling)) patch.pointerCoupling = value.pointerCoupling
-  if (isNumber(value.intensity)) patch.intensity = value.intensity
-
-  return patch
-}
-
-function resolveScanlineEngine(value: unknown, defaults: ScanlineEngineState): ScanlineEngineState {
-  if (!isRecord(value)) return createDefaultScanlineEngine()
-
-  const resolvedBasePattern = isBasePattern(value.basePattern) ? value.basePattern : defaults.basePattern
-
-  const layers = Array.isArray(value.layers) ? value.layers : []
-  let engine: ScanlineEngineState = {
-    basePattern: resolvedBasePattern,
-    layers: [],
+function resolvePaletteSettings(saved: unknown, tone: Tone): PaletteSettings {
+  const settings: PaletteSettings = { ...DEFAULT_PALETTE[tone] }
+  if (!isRecord(saved)) return settings
+  const savedSettings = isRecord(saved.settings) ? saved.settings : undefined
+  if (!savedSettings) return settings
+  for (const key of PALETTE_KEYS) {
+    const value = savedSettings[key]
+    if (typeof value === 'string') settings[key] = value
   }
-
-  for (const layer of layers) {
-    if (!isRecord(layer) || typeof layer.id !== 'string') continue
-    const patch = resolveScanlineLayerPatch(layer)
-    engine = {
-      ...engine,
-      layers: [...engine.layers, { id: layer.id }] as ScanlineEngineState['layers'],
-    }
-    engine = updateScanlineLayer(engine, layer.id, patch)
-  }
-
-  return engine
+  return settings
 }
 
-function mergeThemeState(value: Record<string, unknown>): ThemeState | null {
-  if (value.version !== THEME_STATE_VERSION) return null
-
-  const defaults = createDefaultThemeState()
-  const activeTone = isTone(value.activeTone) ? value.activeTone : defaults.activeTone
-  const scanlineEngine = resolveScanlineEngine(value.scanlineEngine, defaults.scanlineEngine)
-  const tones = isRecord(value.tones) ? value.tones : {}
-  const scanlineLayers = isRecord(value.scanlineLayers) ? value.scanlineLayers : {}
-  const sectionEffects = isRecord(value.sectionEffects) ? value.sectionEffects : {}
-
-  const resolveTone = (tone: EffectsTone): ThemePresetState => {
-    const saved = isRecord(tones[tone]) ? tones[tone] : {}
-    const settings = isRecord(saved.settings) ? ({ ...defaults.tones[tone].settings, ...saved.settings } as EffectsSettings) : defaults.tones[tone].settings
-    const presetId = typeof saved.presetId === 'string' ? saved.presetId : defaults.tones[tone].presetId
-    return {
-      presetId,
-      settings: cloneSettings(settings),
-    }
-  }
-
-  return {
-    activeTone,
-    scanlineEngine,
-    scanlineLayers: {
-      graph: typeof scanlineLayers.graph === 'boolean' ? scanlineLayers.graph : defaults.scanlineLayers.graph,
-      crt: typeof scanlineLayers.crt === 'boolean' ? scanlineLayers.crt : defaults.scanlineLayers.crt,
-      glitch: typeof scanlineLayers.glitch === 'boolean' ? scanlineLayers.glitch : defaults.scanlineLayers.glitch,
-    },
-    sectionEffects: {
-      ...defaults.sectionEffects,
-      ...sectionEffects,
-    } as SectionEffects,
-    tones: {
-      dark: resolveTone('dark'),
-      light: resolveTone('light'),
-    },
-    version: THEME_STATE_VERSION,
-  }
-}
-
+/**
+ * Read the cross-domain theme cookie/localStorage and project the station-free
+ * CORE view: active tone plus per-tone palette colors only. Rich authoring
+ * fields (scanline engine/layers, section effects, effect settings) are ignored
+ * here — they belong to the station full-state layer (theme-state module).
+ */
 export function readThemeState(storage = getStorage()): ThemeState | null {
   try {
     const raw = storage?.getItem(STORAGE_KEY) ?? readThemeCookie()
     if (!raw) return null
     const parsed: unknown = JSON.parse(raw)
     if (!isRecord(parsed)) return null
-    return mergeThemeState(parsed)
+    if (parsed.version !== THEME_STATE_VERSION) return null
+
+    const activeTone = isTone(parsed.activeTone) ? parsed.activeTone : 'dark'
+    const tones = isRecord(parsed.tones) ? parsed.tones : {}
+
+    return {
+      activeTone,
+      tones: {
+        dark: { settings: resolvePaletteSettings(tones.dark, 'dark') },
+        light: { settings: resolvePaletteSettings(tones.light, 'light') },
+      },
+      version: THEME_STATE_VERSION,
+    }
   } catch {
     return null
   }
 }
 
+/**
+ * Read the raw stored JSON object (localStorage → cookie) without projecting it
+ * to any typed view. Returns `null` when nothing is stored or the payload is
+ * unparseable. The station layer reuses this so cookie/storage access lives in
+ * exactly one module.
+ */
+export function readRawThemeStateObject(storage = getStorage()): Record<string, unknown> | null {
+  try {
+    const raw = storage?.getItem(STORAGE_KEY) ?? readThemeCookie()
+    if (!raw) return null
+    const parsed: unknown = JSON.parse(raw)
+    return isRecord(parsed) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Deep-merge-preserving write (the cross-domain linchpin). Reads the existing
+ * RAW stored object and overlays the given core/full theme so that:
+ *  - top-level managed keys (`activeTone`, `version`) win, while any unmanaged
+ *    keys already stored (e.g. `scanlineEngine`, `scanlineLayers`,
+ *    `sectionEffects`) are preserved;
+ *  - per-tone `settings` are merged, so effect fields that live alongside
+ *    palette fields (e.g. `scanOpacity`) survive a palette-only write.
+ *
+ * This lets a backoffice/core writer flip the tone without clobbering the lab's
+ * rich authoring state, and lets the station layer write the full object.
+ */
 export function writeThemeState(theme: ThemeState, storage = getStorage()) {
-  const serialized = JSON.stringify(theme)
+  const raw = readRawThemeStateObject(storage) ?? {}
+  const rawTones = isRecord(raw.tones) ? raw.tones : {}
+
+  const mergedTones: Record<string, unknown> = { ...rawTones }
+  for (const tone of Object.keys(theme.tones) as Tone[]) {
+    const rawTone = isRecord(rawTones[tone]) ? rawTones[tone] : {}
+    const rawSettings = isRecord(rawTone.settings) ? rawTone.settings : {}
+    const nextTone = theme.tones[tone]
+    mergedTones[tone] = {
+      ...rawTone,
+      ...nextTone,
+      settings: { ...rawSettings, ...nextTone.settings },
+    }
+  }
+
+  const merged = {
+    ...raw,
+    ...theme,
+    tones: mergedTones,
+  }
+
+  const serialized = JSON.stringify(merged)
   storage?.setItem(STORAGE_KEY, serialized)
   writeThemeCookie(serialized)
 }

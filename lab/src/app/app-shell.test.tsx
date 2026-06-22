@@ -2,7 +2,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AppShell } from './app-shell'
-import { createDefaultThemeState, STORAGE_KEY } from '../store/persistence'
+import { createDefaultFullThemeState, STORAGE_KEY } from '../store/persistence'
 import { PROMINENT_ENTRANCE_CONFIGS } from '../prominent/prominent-config'
 import { getProminentEntranceStorageKey } from '../prominent/prominent-storage'
 
@@ -67,15 +67,15 @@ describe('AppShell', () => {
     window.localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
-        ...createDefaultThemeState(),
+        ...createDefaultFullThemeState(),
         activeTone: 'light',
         scanlineLayers: { graph: true, crt: true, glitch: false },
         tones: {
-          ...createDefaultThemeState().tones,
+          ...createDefaultFullThemeState().tones,
           light: {
             presetId: 'custom',
             settings: {
-              ...createDefaultThemeState().tones.light.settings,
+              ...createDefaultFullThemeState().tones.light.settings,
               paletteBg: '#ffffff',
               paletteSignal: '#123456',
             },
@@ -96,7 +96,7 @@ describe('AppShell', () => {
     window.localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
-        ...createDefaultThemeState(),
+        ...createDefaultFullThemeState(),
         scanlineEngine: {
           basePattern: 'audit',
           layers: [

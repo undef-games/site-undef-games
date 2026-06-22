@@ -1,49 +1,4 @@
-import type { ThemeState } from './persistence'
-
-type Tone = 'dark' | 'light'
-
-type PaletteSettings = {
-  paletteBg?: string
-  paletteGlow?: string
-  paletteMuted?: string
-  palettePanel?: string
-  paletteSignal?: string
-  paletteSupport1?: string
-  paletteSupport2?: string
-  paletteSupport3?: string
-  paletteText?: string
-  paletteTextOnDark?: string
-  paletteTextOnLight?: string
-}
-
-const DEFAULT_PALETTES: Record<Tone, PaletteSettings> = {
-  dark: {
-    paletteBg: '#050607',
-    paletteGlow: '#d8ff35',
-    paletteMuted: '#f4f4f0',
-    palettePanel: '#08090a',
-    paletteSignal: '#d8ff35',
-    paletteSupport1: '#d8ff35',
-    paletteSupport2: '#d8ff35',
-    paletteSupport3: '#d8ff35',
-    paletteText: '#f4f4f0',
-    paletteTextOnDark: '#f4f4f0',
-    paletteTextOnLight: '#050607',
-  },
-  light: {
-    paletteBg: '#f4f0df',
-    paletteGlow: '#b0d000',
-    paletteMuted: '#11130d',
-    palettePanel: '#ddd7c1',
-    paletteSignal: '#405500',
-    paletteSupport1: '#b0d000',
-    paletteSupport2: '#213019',
-    paletteSupport3: '#f8fbef',
-    paletteText: '#11130d',
-    paletteTextOnDark: '#f4f4f0',
-    paletteTextOnLight: '#11130d',
-  },
-}
+import { DEFAULT_PALETTE, type PaletteSettings, type ThemeState, type Tone } from './persistence'
 
 function normalizeHex(value: unknown, fallback: string) {
   if (typeof value !== "string") return fallback
@@ -137,6 +92,6 @@ function applyPalette(settings: PaletteSettings, preferredTone: Tone) {
 
 export function applyThemeState(theme: ThemeState | null): void {
   const activeTone = theme?.activeTone ?? 'dark'
-  const settings = theme?.tones[activeTone]?.settings ?? DEFAULT_PALETTES[activeTone]
+  const settings = theme?.tones[activeTone]?.settings ?? DEFAULT_PALETTE[activeTone]
   applyPalette(settings, activeTone)
 }

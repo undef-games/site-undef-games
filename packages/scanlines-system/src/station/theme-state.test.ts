@@ -1,16 +1,15 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { BASELINE_EFFECTS } from '../station/effects-config'
+import { BASELINE_EFFECTS } from './effects-config'
 import {
-  clearThemeState,
-  createDefaultThemeState,
+  createDefaultFullThemeState,
   getActiveThemeSettings,
-  readThemeState,
-  STORAGE_KEY,
-  writeThemeState,
-  type ThemeState,
-} from '@undef/scanlines-system'
+  readFullThemeState,
+  writeFullThemeState,
+  type FullThemeState,
+} from './theme-state'
+import { clearThemeState, STORAGE_KEY } from '../theme/persistence'
 
-describe('theme persistence', () => {
+describe('station full theme state', () => {
   beforeEach(() => {
     window.localStorage.clear()
     document.cookie = `${STORAGE_KEY}=; Path=/; Max-Age=0`
@@ -19,17 +18,33 @@ describe('theme persistence', () => {
   const createSavedTheme = (overrides: Record<string, unknown> = {}) => ({
     version: 1,
     activeTone: 'dark',
-    tones: createDefaultThemeState().tones,
+    tones: createDefaultFullThemeState().tones,
     scanlineLayers: { graph: false, crt: false, glitch: false },
-    sectionEffects: createDefaultThemeState().sectionEffects,
+    sectionEffects: createDefaultFullThemeState().sectionEffects,
     ...overrides,
   })
 
-  it('creates default theme state with the default scanline engine', () => {
-    const theme = createDefaultThemeState()
+  it('creates default full theme state with the default scanline engine', () => {
+    const theme = createDefaultFullThemeState()
 
     expect(theme.scanlineEngine.basePattern).toBe('straight')
     expect(theme.scanlineEngine.layers).toEqual([])
+  })
+
+  it('full round-trip: write defaults then read back with effect fields intact', () => {
+    const storage = window.localStorage
+    writeFullThemeState(createDefaultFullThemeState(), storage)
+
+    const reread = readFullThemeState(storage)
+    expect(reread).not.toBeNull()
+    expect(reread?.scanlineEngine).toBeDefined()
+    expect(reread?.scanlineEngine.basePattern).toBe('straight')
+
+    const active = getActiveThemeSettings(reread!)
+    // effect field carried by the full EffectsSettings is defined
+    expect(active.scanOpacity).toBeDefined()
+    // palette field sourced from the single core DEFAULT_PALETTE
+    expect(active.paletteBg).toBe('#050607')
   })
 
   it('hydrates saved scanline engine state and falls back safely for older saves', () => {
@@ -67,8 +82,8 @@ describe('theme persistence', () => {
     })
 
     storage.setItem(STORAGE_KEY, JSON.stringify(saved))
-    expect(readThemeState(storage)?.scanlineEngine.basePattern).toBe('audit')
-    expect(readThemeState(storage)?.scanlineEngine.layers).toHaveLength(1)
+    expect(readFullThemeState(storage)?.scanlineEngine.basePattern).toBe('audit')
+    expect(readFullThemeState(storage)?.scanlineEngine.layers).toHaveLength(1)
 
     storage.setItem(
       STORAGE_KEY,
@@ -78,8 +93,8 @@ describe('theme persistence', () => {
       }),
     )
 
-    expect(readThemeState(storage)?.scanlineEngine.basePattern).toBe('straight')
-    expect(readThemeState(storage)?.scanlineEngine.layers).toEqual([])
+    expect(readFullThemeState(storage)?.scanlineEngine.basePattern).toBe('straight')
+    expect(readFullThemeState(storage)?.scanlineEngine.layers).toEqual([])
   })
 
   it('falls back when persisted scanline engine fields are malformed', () => {
@@ -120,7 +135,7 @@ describe('theme persistence', () => {
       ),
     )
 
-    const theme = readThemeState(storage)
+    const theme = readFullThemeState(storage)
     expect(theme?.scanlineEngine.basePattern).toBe('straight')
     expect(theme?.scanlineEngine.layers).toEqual([
       {
@@ -168,7 +183,7 @@ describe('theme persistence', () => {
       ),
     )
 
-    const layers = readThemeState(storage)?.scanlineEngine.layers ?? []
+    const layers = readFullThemeState(storage)?.scanlineEngine.layers ?? []
 
     expect(layers).toHaveLength(4)
     expect(layers[0]).toMatchObject({
@@ -222,7 +237,7 @@ describe('theme persistence', () => {
       ),
     )
 
-    const hydratedLayers = readThemeState(storage)?.scanlineEngine.layers ?? []
+    const hydratedLayers = readFullThemeState(storage)?.scanlineEngine.layers ?? []
 
     expect(hydratedLayers).toHaveLength(13)
     expect(hydratedLayers.map((layer) => layer.id)).toEqual([
@@ -242,11 +257,11 @@ describe('theme persistence', () => {
     ])
   })
 
-  it('round-trips the saved theme state through localStorage', () => {
+  it('round-trips the saved full theme state through localStorage', () => {
     const storage = window.localStorage
     storage.clear()
-    const theme: ThemeState = {
-      ...createDefaultThemeState(),
+    const theme: FullThemeState = {
+      ...createDefaultFullThemeState(),
       activeTone: 'light',
       scanlineLayers: { graph: true, crt: false, glitch: true },
       scanlineEngine: {
@@ -270,30 +285,30 @@ describe('theme persistence', () => {
       },
     }
 
-    writeThemeState(theme, storage)
+    writeFullThemeState(theme, storage)
 
     expect(JSON.parse(storage.getItem(STORAGE_KEY) ?? '{}')).toMatchObject({ version: 1 })
-    expect(readThemeState(storage)).toMatchObject(theme)
+    expect(readFullThemeState(storage)).toMatchObject(theme)
     expect(getActiveThemeSettings(theme)).toMatchObject(theme.tones.light.settings)
   })
 
   it('falls back to the shared theme cookie when localStorage is empty', () => {
     const storage = window.localStorage
     storage.clear()
-    const theme = createDefaultThemeState()
+    const theme = createDefaultFullThemeState()
     theme.tones.dark.settings.paletteSignal = '#69a7ff'
 
     document.cookie = `${STORAGE_KEY}=${encodeURIComponent(JSON.stringify(theme))}; Path=/`
 
-    expect(readThemeState(storage)).toMatchObject(theme)
+    expect(readFullThemeState(storage)).toMatchObject(theme)
   })
 
   it('writes and clears the shared theme cookie alongside localStorage', () => {
     const storage = window.localStorage
     storage.clear()
-    const theme = createDefaultThemeState()
+    const theme = createDefaultFullThemeState()
 
-    writeThemeState(theme, storage)
+    writeFullThemeState(theme, storage)
 
     expect(document.cookie).toContain(`${STORAGE_KEY}=`)
 
@@ -306,23 +321,23 @@ describe('theme persistence', () => {
     const storage = window.localStorage
     storage.clear()
 
-    expect(readThemeState(storage)).toBeNull()
+    expect(readFullThemeState(storage)).toBeNull()
 
     storage.setItem(STORAGE_KEY, '{')
-    expect(readThemeState(storage)).toBeNull()
+    expect(readFullThemeState(storage)).toBeNull()
 
     storage.setItem(STORAGE_KEY, JSON.stringify({ version: 999 }))
-    expect(readThemeState(storage)).toBeNull()
+    expect(readFullThemeState(storage)).toBeNull()
   })
 
   it('clears the saved theme state', () => {
     const storage = window.localStorage
     storage.clear()
-    writeThemeState(createDefaultThemeState(), storage)
+    writeFullThemeState(createDefaultFullThemeState(), storage)
 
     clearThemeState(storage)
 
     expect(storage.getItem(STORAGE_KEY)).toBeNull()
-    expect(readThemeState(storage)).toBeNull()
+    expect(readFullThemeState(storage)).toBeNull()
   })
 })

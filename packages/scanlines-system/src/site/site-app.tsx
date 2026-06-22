@@ -9,13 +9,18 @@ import {
   STATION_CHANNELS,
   type SectionToyEffect,
 } from '../station/station-toys'
-import { createDefaultThemeState, getActiveThemeSettings, readThemeState, type ThemeState } from '../theme/persistence'
+import {
+  createDefaultFullThemeState,
+  getActiveThemeSettings,
+  readFullThemeState,
+  type FullThemeState,
+} from '../station/theme-state'
 import { readSiteSurfaceCopy } from './site-copy-loader'
 
 export function SiteApp() {
   const [stationState] = useState(() => createStationState({ signal: 50 }))
   const [scrollDepth, setScrollDepth] = useState(0)
-  const [themeState, setThemeState] = useState<ThemeState>(() => readThemeState() ?? createDefaultThemeState())
+  const [themeState, setThemeState] = useState<FullThemeState>(() => readFullThemeState() ?? createDefaultFullThemeState())
   const [copy] = useState(() => readSiteSurfaceCopy())
   const stationBroadcastRef = useRef<HTMLDivElement | null>(null)
   const effectsSettings = getActiveThemeSettings(themeState)
@@ -32,7 +37,7 @@ export function SiteApp() {
 
   useEffect(() => {
     const syncThemeState = () => {
-      const nextTheme = readThemeState()
+      const nextTheme = readFullThemeState()
       if (nextTheme) setThemeState(nextTheme)
     }
 
