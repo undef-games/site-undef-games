@@ -1,0 +1,27 @@
+// packages/scanlines-system/scripts/vendor-surface.mjs
+export const VENDOR_DEST = 'src/vendor/scanlines-system'
+export const VENDOR_FILES = [
+  'src/theme/persistence.ts',
+  'src/theme/hydrate.ts',
+  'src/theme/boot.ts',
+  'src/theme/provider.tsx',
+  'src/theme/signal-color.ts',
+  'src/shell/brand-mark.tsx',
+  'src/shell/mark-geometry.ts',
+  'src/shell/header.tsx',
+  'src/shell/surface-config.ts',
+  'src/primitives/field.tsx',
+  'src/primitives/panel.tsx',
+  'src/primitives/button.tsx',
+  'src/primitives/notice.tsx',
+  'src/styles/reset.css',
+  'src/styles/tokens.css',
+  'src/styles/fonts.css',
+  'src/styles/shell.css',
+  'src/styles/shell-account.css',
+  'src/styles/shell-auth.css',
+  'src/styles/shell-admin.css',
+  'src/styles/backdrop.css',
+  'src/styles/account.css',
+  'dist/theme-boot.js',
+]

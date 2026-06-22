@@ -37,7 +37,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/src/**/*.{test,spec}.{ts,tsx}'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/scripts/**/*.{test,spec}.mjs'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts']
   }
