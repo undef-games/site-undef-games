@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "node ./scripts/run-vitest.mjs",
     "test:run": "vitest run",
-    "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "build:theme-boot": "node ../packages/scanlines-system/scripts/build-theme-boot.mjs"
   },
   "dependencies": {
     "@undef/scanlines-system": "file:../packages/scanlines-system",
