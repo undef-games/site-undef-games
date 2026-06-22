@@ -1,4 +1,4 @@
-import { createDefaultThemeState, readThemeState, writeThemeState } from './persistence'
+import type { ThemeState } from './persistence'
 
 type Tone = 'dark' | 'light'
 
@@ -76,12 +76,6 @@ function setVar(name: string, value: string) {
   document.documentElement.style.setProperty(name, value)
 }
 
-function updateThemeToggle(activeTone: Tone) {
-  const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')
-  if (!toggle) return
-  toggle.setAttribute('aria-label', activeTone === 'light' ? 'Switch to dark mode' : 'Switch to light mode')
-}
-
 function applyPalette(settings: PaletteSettings, preferredTone: Tone) {
   const bg = normalizeHex(settings.paletteBg, preferredTone === 'light' ? '#f4f0df' : '#050607')
   const tone: Tone = getHexLuminance(bg) > 0.62 ? 'light' : 'dark'
@@ -141,48 +135,8 @@ function applyPalette(settings: PaletteSettings, preferredTone: Tone) {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
 }
 
-export function hydrateTheme() {
-  try {
-    const theme = readThemeState()
-    const activeTone = theme?.activeTone ?? 'dark'
-    const settings = theme?.tones[activeTone].settings ?? DEFAULT_PALETTES[activeTone]
-    if (theme) {
-      writeThemeState(theme)
-    }
-    applyPalette(settings, activeTone)
-    updateThemeToggle(activeTone)
-  } catch {
-    document.documentElement.removeAttribute('data-scan-tone')
-  }
-}
-
-function toggleTheme() {
-  const currentTheme = readThemeState() ?? createDefaultThemeState()
-  const currentTone = document.documentElement.dataset.scanTone === 'light' ? 'light' : currentTheme.activeTone
-  const nextTone: Tone = currentTone === 'light' ? 'dark' : 'light'
-  const nextTheme = {
-    ...currentTheme,
-    activeTone: nextTone,
-    tones: {
-      dark: {
-        ...currentTheme.tones.dark,
-        settings: { ...DEFAULT_PALETTES.dark, ...currentTheme.tones.dark.settings },
-      },
-      light: {
-        ...currentTheme.tones.light,
-        settings: { ...DEFAULT_PALETTES.light, ...currentTheme.tones.light.settings },
-      },
-    },
-  }
-
-  writeThemeState(nextTheme)
-  applyPalette(nextTheme.tones[nextTone].settings, nextTone)
-  updateThemeToggle(nextTone)
-  window.dispatchEvent(new CustomEvent('undef-theme-change'))
-}
-
-export function initThemeHydration() {
-  hydrateTheme()
-  document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.addEventListener('click', toggleTheme)
-  updateThemeToggle(document.documentElement.dataset.scanTone === 'light' ? 'light' : 'dark')
+export function applyThemeState(theme: ThemeState | null): void {
+  const activeTone = theme?.activeTone ?? 'dark'
+  const settings = theme?.tones[activeTone]?.settings ?? DEFAULT_PALETTES[activeTone]
+  applyPalette(settings, activeTone)
 }
