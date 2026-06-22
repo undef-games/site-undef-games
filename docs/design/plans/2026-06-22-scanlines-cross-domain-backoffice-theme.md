@@ -697,6 +697,10 @@ git commit -m "refactor(hugo): thin theme entry over shared runtime; load theme-
 
 ---
 
+### Task 8b (inserted): Station-free theme core split
+
+Decision B (approved): `theme/persistence.ts` is split into a **station-free core** (the cross-domain cookie contract — `activeTone` + per-tone `PaletteSettings`) and a **station-side full-state layer** (`station/theme-state.ts`: `FullThemeState` with `scanlineEngine`/`scanlineLayers`/`sectionEffects` + `EffectsSettings`), so backoffice consumers vendor only pure theme code. The core `writeThemeState` becomes **deep-merge-preserving** so palette-only writers (admin/Hugo toggle) never clobber the lab's rich cookie fields. Consumers repointed to the Full API: `site/site-app.tsx`, `station/station-signal-scene.tsx`, `lab/app/app-shell.tsx`, `lab/station/effects-controls.tsx`; the Hugo thin entry stays on the core API. End-state — the old full `ThemeState` is removed from persistence, no wrappers. Full brief: `.superpowers/sdd/task-8b-brief.md`. **Consequence:** Task 9's vendor surface no longer includes `effects-config`/`scanline-engine` — only pure `theme/` + `shell/` + `primitives/` + styles.
+
 ## PHASE 1 — Vendor surface + sync tooling (in `undef-logos`)
 
 ### Task 9: Define the curated vendor surface
