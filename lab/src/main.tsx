@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import '@undef/scanlines-system/styles/site.css'
+import '@undef-games/scanlines-system/styles/site.css'
 import App from './app/App'
 import './styles/controls.css'
 import './styles/quick-links.css'

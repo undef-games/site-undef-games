@@ -5,7 +5,7 @@ import {
   createDefaultThemeState,
   readThemeState,
   writeThemeState,
-} from '@undef/scanlines-system'
+} from '@undef-games/scanlines-system'
 
 applyStoredTheme()
 

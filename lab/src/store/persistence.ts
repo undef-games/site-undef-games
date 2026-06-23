@@ -1,1 +1,1 @@
-export * from '@undef/scanlines-system'
+export * from '@undef-games/scanlines-system'

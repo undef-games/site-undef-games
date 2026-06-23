@@ -1,1 +1,1 @@
-export { readSiteSurfaceCopy, type SiteSurfaceCopy } from '@undef/scanlines-system'
+export { readSiteSurfaceCopy, type SiteSurfaceCopy } from '@undef-games/scanlines-system'

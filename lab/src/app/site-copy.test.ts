@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { readSiteSurfaceCopy, type SiteSurfaceCopy } from '@undef/scanlines-system'
+import { readSiteSurfaceCopy, type SiteSurfaceCopy } from '@undef-games/scanlines-system'
 
 const VALID_SITE_SURFACE_COPY: SiteSurfaceCopy = {
   hero: {

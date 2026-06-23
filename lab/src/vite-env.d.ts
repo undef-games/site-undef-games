@@ -1,3 +1,3 @@
 /// <reference types="vite/client" />
 
-declare module '@undef/scanlines-system/styles/site.css'
+declare module '@undef-games/scanlines-system/styles/site.css'
