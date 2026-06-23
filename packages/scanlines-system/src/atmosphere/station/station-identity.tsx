@@ -1,5 +1,5 @@
 import { getStationStatus, type StationState } from './station-state'
-import { MAZE_GATE_BASELINE_PATH, MAZE_GATE_INNER_PATH, MAZE_GATE_OUTER_PATH } from '../shell/mark-geometry'
+import { MAZE_GATE_BASELINE_PATH, MAZE_GATE_INNER_PATH, MAZE_GATE_OUTER_PATH } from '../mark-geometry'
 
 export function StationIdentity({ state }: { state: StationState }) {
   const status = getStationStatus(state)

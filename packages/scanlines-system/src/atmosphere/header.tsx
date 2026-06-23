@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { BrandMark } from './brand-mark'
-import type { ScanlinesNavItem, ScanlinesSurface, ScanlinesUtilityAction } from './surface-config'
+import type { ScanlinesNavItem, ScanlinesSurface, ScanlinesUtilityAction } from '../shell/surface-config'
 
 export interface ScanlinesHeaderProps {
   surface: ScanlinesSurface

@@ -2,8 +2,8 @@
 @import '../tokens/tokens.css';
 @import '../tokens/fonts.css';
 @import './shell.css';
-@import './shell-auth.css';
-@import './shell-account.css';
+@import '../styles/shell-auth.css';
+@import '../styles/shell-account.css';
 @import './hero.css';
 @import './sections.css';
 @import './section-toys.css';

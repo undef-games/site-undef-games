@@ -1,4 +1,4 @@
-// packages/scanlines-system/src/theme/provider.tsx
+// packages/scanlines-system/src/react/provider.tsx
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { applyThemeState } from '../tokens/hydrate'
 import { createDefaultThemeState, readThemeState, writeThemeState } from '../tokens/persistence'

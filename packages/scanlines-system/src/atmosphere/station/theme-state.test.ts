@@ -7,7 +7,7 @@ import {
   writeFullThemeState,
   type FullThemeState,
 } from './theme-state'
-import { clearThemeState, STORAGE_KEY } from '../tokens/persistence'
+import { clearThemeState, STORAGE_KEY } from '../../tokens/persistence'
 
 describe('station full theme state', () => {
   beforeEach(() => {

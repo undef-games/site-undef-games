@@ -26,7 +26,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@undef-games/scanlines-system/styles/site.css': resolve(__dirname, '../packages/scanlines-system/src/styles/site.css'),
+      '@undef-games/scanlines-system/styles/site.css': resolve(__dirname, '../packages/scanlines-system/src/atmosphere/site.css'),
       '@undef-games/scanlines-system': resolve(__dirname, '../packages/scanlines-system/src/index.ts'),
       '@testing-library/jest-dom/vitest': resolve(__dirname, 'node_modules/@testing-library/jest-dom/vitest.js'),
       '@testing-library/react': resolve(__dirname, 'node_modules/@testing-library/react'),

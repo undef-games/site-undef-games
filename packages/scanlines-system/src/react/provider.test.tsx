@@ -1,4 +1,4 @@
-// packages/scanlines-system/src/theme/provider.test.tsx
+// packages/scanlines-system/src/react/provider.test.tsx
 import { afterEach, describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
