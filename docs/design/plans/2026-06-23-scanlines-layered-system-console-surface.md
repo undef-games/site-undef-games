@@ -21,6 +21,9 @@
 - **Kit components are accessible** (semantic table markup, `scope="col"`, ARIA roles, focus, empty states) — matching admin's existing a11y work.
 - **Gates (non-negotiable before the reorg + admin land):** `make typecheck && make test`; lab e2e `tests/e2e/logo-lab.spec.ts`; site e2e `tests/e2e/site.spec.ts`; the authoring round-trip (lab writes full `ThemeState` → flagship renders it cross-domain); each consumer's `check:theme`.
 - **Test commands (this repo):** focused package test `cd lab && npx vitest run <pattern>` (NOT absolute paths — they pick up stale `.worktrees` copies); full suite `make test`; typecheck `make typecheck`. Commits use `git -c commit.gpgsign=false` (1Password signing fails non-interactively).
+- **Coverage gate (user-set):** `@vitest/coverage-v8` enforces **100% lines/functions/branches/statements on the NEW console code only** — globs: `tokens/log.ts`, `react/telemetry.ts`, `react/console/**`, `react/kit/**`, `surfaces/presets.ts`. The Pixi `atmosphere/station` engine + pre-existing primitives/provider are e2e-covered, NOT unit-coverage-gated. Each Phase 2–4 task runs `npm run coverage` and its new file(s) must be 100%.
+- **E2e cadence (user-set):** full lab+site e2e is NOT run per package-internal task; it re-gates at the **end of Phase 4** (kit complete) and **Phase 5** (admin), and Phase 5 ADDS console-surface e2e specs (admin shell renders, `DataTable` shows rows, theme toggle persists, NO scanline field).
+- **Performance:** no perf checks (user-set) — admin data is bounded, the kit is presentational, the reorg is perf-neutral.
 - **Out of scope:** account→console (fast-follow spec); repo extraction (separate spec); Pagination/Modal/DatePicker; product apps; new effects.
 
 ---
