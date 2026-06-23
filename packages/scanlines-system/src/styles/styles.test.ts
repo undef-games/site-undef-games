@@ -43,4 +43,19 @@ describe('console surface styles', () => {
   it('console.css contains .panel--console variant selector', () => {
     expect(read('../react/console.css')).toMatch(/\.panel--console/)
   })
+  it('console.css styles the shell (fills viewport)', () => {
+    expect(read('../react/console.css')).toMatch(/\.console-shell\[data-surface="console"\][^{]*\{[^}]*min-height/)
+  })
+  it('console.css styles the console header bar', () => {
+    expect(read('../react/console.css')).toMatch(/\.console-header[^_][^{]*\{/)
+  })
+  it('console.css styles the header brand (not a default link)', () => {
+    expect(read('../react/console.css')).toMatch(/\.console-header__brand[^{]*\{/)
+  })
+  it('console.css styles the header nav + active state', () => {
+    expect(read('../react/console.css')).toMatch(/\.console-header__nav a\[aria-current="page"\]/)
+  })
+  it('console.css styles the console main region', () => {
+    expect(read('../react/console.css')).toMatch(/\.console-main[^{]*\{/)
+  })
 })

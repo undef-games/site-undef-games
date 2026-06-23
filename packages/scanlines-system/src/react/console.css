@@ -15,6 +15,90 @@
   --scan-line: rgb(var(--fx-muted-rgb, 17 19 13) / 0.22);
 }
 
+/* ─── Console shell + header chrome ─── */
+.console-shell[data-surface="console"] {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+[data-surface="console"] .console-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--console-row-border);
+  background: var(--console-table-header-bg);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+[data-surface="console"] .console-header__brand {
+  color: var(--fx-text, #f4f4f0);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+[data-surface="console"] .console-header__brand:hover {
+  color: rgb(var(--fx-signal-rgb, 216 255 53));
+}
+[data-surface="console"] .console-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+[data-surface="console"] .console-header__nav a {
+  color: var(--scan-muted);
+  text-decoration: none;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  transition: color 0.1s ease, background 0.1s ease;
+}
+[data-surface="console"] .console-header__nav a:hover {
+  color: var(--fx-text, #f4f4f0);
+  background: var(--console-hover);
+}
+[data-surface="console"] .console-header__nav a[aria-current="page"] {
+  color: rgb(var(--fx-signal-rgb, 216 255 53));
+  background: rgb(var(--fx-signal-rgb, 216 255 53) / 0.08);
+}
+[data-surface="console"] .console-header__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+[data-surface="console"] .console-header__utilities {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* affordance for controls dropped into the header (e.g. theme toggle) */
+[data-surface="console"] .console-header__utilities button,
+[data-surface="console"] .console-header__actions button {
+  color: var(--scan-muted);
+  background: transparent;
+  border: 1px solid var(--console-row-border);
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  line-height: 1;
+}
+[data-surface="console"] .console-header__utilities button:hover,
+[data-surface="console"] .console-header__actions button:hover {
+  color: var(--fx-text, #f4f4f0);
+  background: var(--console-hover);
+}
+[data-surface="console"] .console-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+}
+
 /* ─── Kit component styles (scoped to console surface) ─── */
 
 /* DataTable */
