@@ -39,6 +39,18 @@ export default defineConfig({
   test: {
     include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/scripts/**/*.{test,spec}.mjs'],
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts']
+    setupFiles: ['./src/test/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      allowExternal: true,
+      include: [
+        '**/scanlines-system/src/tokens/log.ts',
+        '**/scanlines-system/src/react/telemetry.ts',
+        '**/scanlines-system/src/react/console/**',
+        '**/scanlines-system/src/react/kit/**',
+        '**/scanlines-system/src/surfaces/presets.ts',
+      ],
+      thresholds: { lines: 100, functions: 100, branches: 100, statements: 100 },
+    },
   }
 })

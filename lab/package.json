@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "node ./scripts/run-vitest.mjs",
     "test:run": "vitest run",
+    "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
     "build:theme-boot": "node ../packages/scanlines-system/scripts/build-theme-boot.mjs"
   },
@@ -28,6 +29,7 @@
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
+    "@vitest/coverage-v8": "^4.1.8",
     "jsdom": "29.1.1",
     "typescript": "6.0.3",
     "vite": "8.0.16",
