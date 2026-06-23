@@ -79,8 +79,19 @@ function getStorage(): Storage | undefined {
   }
 }
 
-function getCookieDomain(hostname: string): string | null {
-  return hostname === 'undef.games' || hostname.endsWith('.undef.games') ? '.undef.games' : null
+/**
+ * Parent domains the theme cookie is scoped to so it carries across subdomains.
+ * `.undef.games` in production; `.undef.test` for local cross-domain dev (map the
+ * subdomains to 127.0.0.1 via /etc/hosts). Any other host (localhost, previews)
+ * gets a host-only cookie (returns null).
+ */
+export const SHARED_COOKIE_DOMAINS = ['.undef.games', '.undef.test'] as const
+
+export function getCookieDomain(hostname: string): string | null {
+  for (const domain of SHARED_COOKIE_DOMAINS) {
+    if (hostname === domain.slice(1) || hostname.endsWith(domain)) return domain
+  }
+  return null
 }
 
 function readThemeCookie(): string | null {

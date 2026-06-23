@@ -4,6 +4,7 @@ import {
   createDefaultThemeState,
   DEFAULT_PALETTE,
   getActivePaletteSettings,
+  getCookieDomain,
   readThemeState,
   STORAGE_KEY,
   writeThemeState,
@@ -135,5 +136,24 @@ describe('theme core persistence (station-free)', () => {
     document.cookie = `${STORAGE_KEY}=${encodeURIComponent(JSON.stringify(theme))}; Path=/`
 
     expect(readThemeState(storage)?.tones.dark.settings.paletteSignal).toBe('#69a7ff')
+  })
+})
+
+describe('getCookieDomain (cross-subdomain cookie scope)', () => {
+  it('scopes to .undef.games on production hosts', () => {
+    expect(getCookieDomain('undef.games')).toBe('.undef.games')
+    expect(getCookieDomain('admin.undef.games')).toBe('.undef.games')
+    expect(getCookieDomain('account.undef.games')).toBe('.undef.games')
+  })
+  it('scopes to .undef.test for local cross-domain dev', () => {
+    expect(getCookieDomain('undef.test')).toBe('.undef.test')
+    expect(getCookieDomain('admin.undef.test')).toBe('.undef.test')
+  })
+  it('returns null (host-only) for non-shared hosts', () => {
+    expect(getCookieDomain('localhost')).toBeNull()
+    expect(getCookieDomain('127.0.0.1')).toBeNull()
+    expect(getCookieDomain('evil.com')).toBeNull()
+    // must not match a look-alike that merely contains the suffix
+    expect(getCookieDomain('notundef.games')).toBeNull()
   })
 })
