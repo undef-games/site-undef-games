@@ -19,6 +19,8 @@
       "@testing-library/jest-dom/vitest": ["../../lab/node_modules/@testing-library/jest-dom/vitest"],
       "@testing-library/react": ["../../lab/node_modules/@testing-library/react"],
       "@testing-library/user-event": ["../../lab/node_modules/@testing-library/user-event"],
+      "@provide-io/telemetry": ["../../lab/node_modules/@provide-io/telemetry"],
+      "@provide-io/telemetry/react": ["../../lab/node_modules/@provide-io/telemetry/dist/react.d.ts"],
       "pixi.js": ["../../lab/node_modules/pixi.js"],
       "vitest": ["../../lab/node_modules/vitest"]
     },

@@ -31,6 +31,8 @@ export default defineConfig({
       '@testing-library/jest-dom/vitest': resolve(__dirname, 'node_modules/@testing-library/jest-dom/vitest.js'),
       '@testing-library/react': resolve(__dirname, 'node_modules/@testing-library/react'),
       '@testing-library/user-event': resolve(__dirname, 'node_modules/@testing-library/user-event'),
+      '@provide-io/telemetry/react': resolve(__dirname, 'node_modules/@provide-io/telemetry/dist/react.js'),
+      '@provide-io/telemetry': resolve(__dirname, 'node_modules/@provide-io/telemetry/dist/index.js'),
       'pixi.js': resolve(__dirname, 'node_modules/pixi.js/lib/index.mjs'),
       'react': resolve(__dirname, 'node_modules/react'),
       'react-dom': resolve(__dirname, 'node_modules/react-dom'),
@@ -40,6 +42,13 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/scripts/**/*.{test,spec}.mjs'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    server: {
+      deps: {
+        // Force @provide-io/telemetry through Vite's resolver so extensionless
+        // internal imports (e.g. './config') resolve correctly in ESM test env.
+        inline: ['@provide-io/telemetry'],
+      },
+    },
     coverage: {
       provider: 'v8',
       allowExternal: true,
