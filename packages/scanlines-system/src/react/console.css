@@ -1,0 +1,16 @@
+[data-surface="console"] {
+  /* reading-grade contrast: bump muted/line over the brand tokens */
+  --scan-muted: rgb(var(--fx-muted-rgb, 244 244 240) / 0.86);
+  --scan-line: rgb(var(--fx-muted-rgb, 244 244 240) / 0.28);
+  /* table tokens */
+  --console-table-header-bg: rgb(var(--fx-muted-rgb, 244 244 240) / 0.06);
+  --console-row-border: rgb(var(--fx-muted-rgb, 244 244 240) / 0.14);
+  --console-zebra: rgb(var(--fx-muted-rgb, 244 244 240) / 0.03);
+  --console-hover: rgb(var(--fx-signal-rgb, 216 255 53) / 0.08);
+  background: var(--fx-bg, #050607); /* flat, calm — NO scanline field */
+  color: var(--fx-text, #f4f4f0);
+}
+[data-scan-tone="light"][data-surface="console"],
+[data-surface="console"][data-scan-tone="light"] {
+  --scan-line: rgb(var(--fx-muted-rgb, 17 19 13) / 0.22);
+}

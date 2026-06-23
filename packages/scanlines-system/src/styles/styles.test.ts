@@ -12,3 +12,11 @@ describe('backoffice styles', () => {
     expect(read('shell-admin.css')).toMatch(/\.scanlines-header--admin/)
   })
 })
+describe('console surface styles', () => {
+  it('console.css scopes tokens to [data-surface="console"]', () => {
+    expect(read('../react/console.css')).toMatch(/\[data-surface="console"\]/)
+  })
+  it('console.css defines --console-row-border token', () => {
+    expect(read('../react/console.css')).toMatch(/--console-row-border/)
+  })
+})
