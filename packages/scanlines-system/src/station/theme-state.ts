@@ -5,7 +5,7 @@ import {
   writeThemeState,
   type ThemeState,
   type Tone,
-} from '../theme/persistence'
+} from '../tokens/persistence'
 import {
   EFFECTS_PRESETS,
   type EffectsPresetId,

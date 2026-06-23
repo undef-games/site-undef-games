@@ -1,7 +1,7 @@
 // packages/scanlines-system/src/theme/provider.tsx
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { applyThemeState } from './hydrate'
-import { createDefaultThemeState, readThemeState, writeThemeState } from './persistence'
+import { applyThemeState } from '../tokens/hydrate'
+import { createDefaultThemeState, readThemeState, writeThemeState } from '../tokens/persistence'
 
 type Tone = 'dark' | 'light'
 interface ThemeContextValue { tone: Tone; toggle: () => void }

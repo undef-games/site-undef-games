@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ThemeProvider, useTheme } from './provider'
-import { STORAGE_KEY } from './persistence'
+import { STORAGE_KEY } from '../tokens/persistence'
 
 function Probe() {
   const { tone, toggle } = useTheme()

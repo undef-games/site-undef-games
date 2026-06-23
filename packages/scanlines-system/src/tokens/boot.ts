@@ -1,4 +1,5 @@
 import { applyThemeState } from './hydrate'
+import { scanlinesLog } from './log'
 import { readThemeState } from './persistence'
 
 export function applyStoredTheme(): void {
@@ -12,7 +13,8 @@ export function applyStoredTheme(): void {
         settings: theme?.tones[tone]?.settings ?? null,
       }
     }
-  } catch {
+  } catch (e) {
+    scanlinesLog().warn('scanlines.theme.read_failed', { error: String(e) })
     if (typeof document !== 'undefined') document.documentElement.dataset.scanTone = 'dark'
   }
 }

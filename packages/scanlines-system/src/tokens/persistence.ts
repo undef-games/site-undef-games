@@ -1,3 +1,5 @@
+import { scanlinesLog } from './log'
+
 export const STORAGE_KEY = 'undef-logos-theme'
 export const THEME_STATE_VERSION = 1
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
@@ -174,7 +176,8 @@ export function readThemeState(storage = getStorage()): ThemeState | null {
       },
       version: THEME_STATE_VERSION,
     }
-  } catch {
+  } catch (e) {
+    scanlinesLog().warn('scanlines.theme.read_failed', { error: String(e) })
     return null
   }
 }

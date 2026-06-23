@@ -23,7 +23,7 @@ describe('sync-scanlines', () => {
     const t = mkdtempSync(join(tmpdir(), 'vendor-'))
     targets.push(t)
     syncTo(t, SOURCE)
-    const f = join(t, 'src/vendor/scanlines-system/src/theme/boot.ts')
+    const f = join(t, 'src/vendor/scanlines-system/src/tokens/boot.ts')
     writeFileSync(f, `${readFileSync(f, 'utf8')}\n// tampered`)
     const res = checkTarget(t)
     expect(res.ok).toBe(false)

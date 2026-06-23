@@ -11,7 +11,7 @@ const INLINE_OUT = fileURLToPath(new URL('../dist/theme-boot.inline.ts', import.
 // to a fresh rebuild by construction.
 export async function buildThemeBoot({ write = false } = {}) {
   const result = await build({
-    entryPoints: [fileURLToPath(new URL('../src/theme/boot-entry.ts', import.meta.url))],
+    entryPoints: [fileURLToPath(new URL('../src/tokens/boot-entry.ts', import.meta.url))],
     bundle: true,
     minify: true,
     format: 'iife',

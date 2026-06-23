@@ -1,6 +1,6 @@
-@import './reset.css';
-@import './tokens.css';
-@import './fonts.css';
+@import '../tokens/reset.css';
+@import '../tokens/tokens.css';
+@import '../tokens/fonts.css';
 @import './shell.css';
 @import './shell-auth.css';
 @import './shell-account.css';
