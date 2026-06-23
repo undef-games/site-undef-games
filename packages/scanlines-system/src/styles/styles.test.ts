@@ -19,4 +19,28 @@ describe('console surface styles', () => {
   it('console.css defines --console-row-border token', () => {
     expect(read('../react/console.css')).toMatch(/--console-row-border/)
   })
+  it('console.css contains .datatable kit selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.datatable/)
+  })
+  it('console.css contains .toolbar kit selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.toolbar/)
+  })
+  it('console.css contains .tabs__tab kit selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.tabs__tab/)
+  })
+  it('console.css contains .form-row kit selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.form-row/)
+  })
+  it('console.css contains .badge kit selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.badge/)
+  })
+  it('console.css contains .status-pill kit selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.status-pill/)
+  })
+  it('console.css contains .empty-state kit selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.empty-state/)
+  })
+  it('console.css contains .panel--console variant selector', () => {
+    expect(read('../react/console.css')).toMatch(/\.panel--console/)
+  })
 })
