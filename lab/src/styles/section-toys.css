@@ -1,4 +1,0 @@
-/* Single source of truth: pull the section-toy effects straight from the package
-   (split by effect under src/atmosphere/section-toys/). Avoids a drifting copy —
-   the lab now tracks whatever the package ships (dice, warp, taybols, …). */
-@import '../../node_modules/@undef-games/scanlines-system/src/atmosphere/section-toys.css';
