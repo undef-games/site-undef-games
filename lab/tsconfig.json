@@ -14,8 +14,8 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "@undef-games/scanlines-system": ["../packages/scanlines-system/src/index.ts"],
-      "@undef-games/scanlines-system/styles/site.css": ["../packages/scanlines-system/src/styles/site.css"],
+      "@undef-games/scanlines-system": ["../../scanlines-system/src/index.ts"],
+      "@undef-games/scanlines-system/styles/site.css": ["../../scanlines-system/src/styles/site.css"],
       "@provide-io/telemetry": ["./node_modules/@provide-io/telemetry"],
       "@provide-io/telemetry/react": ["./node_modules/@provide-io/telemetry/dist/react.d.ts"],
       "pixi.js": ["./node_modules/pixi.js/lib/index.d.ts"],

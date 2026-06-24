@@ -26,8 +26,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@undef-games/scanlines-system/styles/site.css': resolve(__dirname, '../packages/scanlines-system/src/atmosphere/site.css'),
-      '@undef-games/scanlines-system': resolve(__dirname, '../packages/scanlines-system/src/index.ts'),
+      '@undef-games/scanlines-system/styles/site.css': resolve(__dirname, '../../scanlines-system/src/atmosphere/site.css'),
+      '@undef-games/scanlines-system': resolve(__dirname, '../../scanlines-system/src/index.ts'),
       '@testing-library/jest-dom/vitest': resolve(__dirname, 'node_modules/@testing-library/jest-dom/vitest.js'),
       '@testing-library/react': resolve(__dirname, 'node_modules/@testing-library/react'),
       '@testing-library/user-event': resolve(__dirname, 'node_modules/@testing-library/user-event'),
@@ -39,27 +39,13 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/src/**/*.{test,spec}.{ts,tsx}', '../packages/scanlines-system/scripts/**/*.{test,spec}.mjs'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     server: {
       deps: {
-        // Force @provide-io/telemetry through Vite's resolver so extensionless
-        // internal imports (e.g. './config') resolve correctly in ESM test env.
         inline: ['@provide-io/telemetry'],
       },
-    },
-    coverage: {
-      provider: 'v8',
-      allowExternal: true,
-      include: [
-        '**/scanlines-system/src/tokens/log.ts',
-        '**/scanlines-system/src/react/telemetry.ts',
-        '**/scanlines-system/src/react/console/**',
-        '**/scanlines-system/src/react/kit/**',
-        '**/scanlines-system/src/surfaces/presets.ts',
-      ],
-      thresholds: { lines: 100, functions: 100, branches: 100, statements: 100 },
     },
   }
 })
