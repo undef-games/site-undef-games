@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 // guards against: the shell/header components emit these classNames but the CSS
 // rules were missing, so the chrome rendered unstyled (blue underlined brand,
 // no layout, white body). Unit tests are headless and can't catch that; this can.
-const consoleCss = readFileSync('packages/scanlines-system/src/react/console.css', 'utf8')
+const consoleCss = readFileSync('lab/node_modules/@undef-games/scanlines-system/src/react/console.css', 'utf8')
 
 // Markup mirrors ConsoleShell / ConsoleHeader / DataTable output. --fx-* tokens
 // are normally set by the theme boot at runtime; we pin a dark palette here so

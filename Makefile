@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e check-system-boundary typecheck-system sync-selector-contract
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -14,12 +14,6 @@ install-root: ## Install root tool dependencies
 
 install-lab: ## Install Vite lab dependencies
 	@npm --prefix lab ci --include=dev
-
-check-system-boundary: ## Fail on direct src imports or package -> lab coupling
-	@bash scripts/check_scanlines_system_boundary.sh
-
-typecheck-system: install-lab check-system-boundary ## Typecheck the shared scanlines system package
-	@./lab/node_modules/.bin/tsc --noEmit -p packages/scanlines-system/tsconfig.json
 
 build-hugo: stamp ## Build Hugo into public/
 	@rm -rf public/
@@ -39,10 +33,10 @@ serve: stamp ## Serve Hugo locally on http://127.0.0.1:1780
 clean: ## Remove build output
 	@rm -rf public lab/dist
 
-typecheck: typecheck-system ## Run lab + shared package TypeScript checks
+typecheck: ## Run lab TypeScript checks
 	@npm --prefix lab run typecheck
 
-test: check-system-boundary install-lab ## Run lab unit tests
+test: install-lab ## Run lab unit tests
 	@npm --prefix lab run test:run
 
 e2e: install-root build ## Run the current Playwright suite
@@ -56,5 +50,3 @@ deploy-preview: install-root build ## Build then deploy public/ to a Cloudflare 
 
 preview: deploy-preview ## Alias for deploy-preview
 
-sync-selector-contract: ## Copy the shared selector contract into auth/account vendor paths
-	@python scripts/sync_selector_contract.py

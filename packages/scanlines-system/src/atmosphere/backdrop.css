@@ -1,8 +1,0 @@
-.scanlines-backdrop {
-  min-height: 100svh;
-  background:
-    repeating-linear-gradient(0deg, rgb(var(--fx-muted-rgb, 244 244 240) / 0.05) 0 1px, transparent 1px 12px),
-    radial-gradient(circle at 78% 18%, rgb(var(--fx-signal-rgb, 216 255 53) / 0.10), transparent 34%),
-    var(--fx-bg, #050607);
-  color: var(--fx-text, #f4f4f0);
-}
