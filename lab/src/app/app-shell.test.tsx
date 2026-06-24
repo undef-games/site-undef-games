@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AppShell } from './app-shell'
 import { createDefaultFullThemeState, STORAGE_KEY } from '../store/persistence'
-import { PROMINENT_ENTRANCE_CONFIGS } from '../prominent/prominent-config'
-import { getProminentEntranceStorageKey } from '../prominent/prominent-storage'
+import { getProminentEntranceStorageKey } from '@undef-games/scanlines-system'
+import { LAB_BACK_ENTRANCE } from './lab-entrance-config'
 
 afterEach(() => {
   cleanup()
@@ -214,7 +214,7 @@ describe('AppShell', () => {
 
   it('resets saved prominent entrances from the lab rail and replays the back control intro', async () => {
     const user = userEvent.setup()
-    const storageKey = getProminentEntranceStorageKey(PROMINENT_ENTRANCE_CONFIGS.labBack)
+    const storageKey = getProminentEntranceStorageKey(LAB_BACK_ENTRANCE)
     window.localStorage.setItem(storageKey, 'true')
     const getBoundingClientRectSpy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
       if (this.getAttribute('aria-label') === 'static station identity') {

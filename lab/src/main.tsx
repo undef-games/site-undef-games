@@ -4,7 +4,7 @@ import '@undef-games/scanlines-system/styles/site.css'
 import App from './app/App'
 import './styles/controls.css'
 import './styles/quick-links.css'
-import './styles/prominent-entrance.css'
+import '@undef-games/scanlines-system/styles/entrance.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

@@ -1,8 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { EffectsControls } from '../station/effects-controls'
-import { PROMINENT_ENTRANCE_CONFIGS } from '../prominent/prominent-config'
-import { ProminentEntrance } from '../prominent/prominent-entrance'
-import { resetProminentEntrances } from '../prominent/prominent-storage'
+import {
+  ProminentEntrance,
+  PROMINENT_ENTRANCE_EFFECTS,
+  resetProminentEntrances,
+  type ProminentEntranceEffect,
+} from '@undef-games/scanlines-system'
+import { LAB_BACK_ENTRANCE } from './lab-entrance-config'
 import {
   EFFECTS_PRESETS,
   type EffectsPresetId,
@@ -65,6 +69,22 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const [prominentReplaySeed, setProminentReplaySeed] = useState(0)
   const [prominentOriginReady, setProminentOriginReady] = useState(false)
   const [prominentOrigin, setProminentOrigin] = useState({ bottom: '50vh', left: '50vw' })
+  // dev-only: ?entrance=<variant>&travel=<journey|contained> plays that entrance on the lab page (replays on refresh)
+  const devEntranceParam = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('entrance')
+  const devTravelParam = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('travel')
+  const devEntrance =
+    devEntranceParam && (PROMINENT_ENTRANCE_EFFECTS as readonly string[]).includes(devEntranceParam)
+      ? (devEntranceParam as ProminentEntranceEffect)
+      : null
+  const labEntranceConfig = devEntrance
+    ? {
+        ...LAB_BACK_ENTRANCE,
+        effect: devEntrance,
+        travel: devTravelParam === 'contained' ? ('contained' as const) : ('journey' as const),
+        replay: 'always' as const,
+        veil: true,
+      }
+    : LAB_BACK_ENTRANCE
   const [stationState, setStationState] = useState(() => createStationState({ signal: isSiteSurface ? 50 : 0 }))
   const [scrollDepth, setScrollDepth] = useState(0)
   const [activeChannel, setActiveChannel] = useState(STATION_CHANNELS[0])
@@ -177,7 +197,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
     setThemeState(createDefaultFullThemeState())
   }
   const resetProminent = () => {
-    resetProminentEntrances([PROMINENT_ENTRANCE_CONFIGS.labBack])
+    resetProminentEntrances([LAB_BACK_ENTRANCE])
     setProminentReplaySeed((current) => current + 1)
   }
 
@@ -442,8 +462,8 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
       {!isSiteSurface && (
         <ProminentEntrance
           key={`lab-back:${prominentReplaySeed}`}
-          config={PROMINENT_ENTRANCE_CONFIGS.labBack}
-          enabled={prominentOriginReady}
+          config={labEntranceConfig}
+          enabled={prominentOriginReady || Boolean(devEntrance)}
           activeClassName="home-quick-link--intro"
         >
           <a
