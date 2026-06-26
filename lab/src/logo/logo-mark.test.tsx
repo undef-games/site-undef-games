@@ -101,9 +101,10 @@ describe('LogoMark — define-the-game glyph', () => {
     const { container } = render(<LogoMark concept={defineConcept} phase={0} progress={0} />)
     const circles = container.querySelectorAll('circle')
     expect(circles).toHaveLength(3)
-    // at progress 0 all dots are unfilled (r=3)
+    // at progress 0 all dots are unfilled (r=3, fill=foreground)
     Array.from(circles).forEach((c) => {
       expect(c.getAttribute('r')).toBe('3')
+      expect(c.getAttribute('fill')).toBe(defineConcept.colorTokens.foreground)
     })
   })
 
@@ -177,10 +178,16 @@ describe('LogoMark — command-console glyph', () => {
   })
 
   it('renders the short bottom path at phase 0 and 1', () => {
-    const { container } = render(<LogoMark concept={consoleConcept} phase={0} progress={0} />)
+    const { container, rerender } = render(<LogoMark concept={consoleConcept} phase={0} progress={0} />)
     const paths = container.querySelectorAll('path')
     const bottomPath = Array.from(paths).find((p) => p.getAttribute('d')?.includes('M64 88'))
     expect(bottomPath).toBeTruthy()
+
+    rerender(<LogoMark concept={consoleConcept} phase={1} progress={0} />)
+    const paths1 = container.querySelectorAll('path')
+    const bottomPath1 = Array.from(paths1).find((p) => p.getAttribute('d')?.includes('M64 88'))
+    expect(bottomPath1).toBeTruthy()
+    expect(bottomPath1!.getAttribute('d')).toBe('M64 88h20')
   })
 
   it('renders the arrow path at phase 2', () => {
@@ -192,12 +199,22 @@ describe('LogoMark — command-console glyph', () => {
 })
 
 describe('LogoMark — rule-board glyph', () => {
-  it('renders 9 tile rects', () => {
+  it('renders 9 tile rects with active and inactive opacities', () => {
     const { container } = render(<LogoMark concept={boardConcept} phase={0} progress={0} />)
     // The border rect from rule-board is absent; but we need to count only tile rects
     // rule-board has no border rect, just 9 tile rects
-    const rects = container.querySelectorAll('rect')
+    const rects = Array.from(container.querySelectorAll('rect'))
     expect(rects).toHaveLength(9)
+    // center tile (index 4) is active at progress 0
+    const active = rects.filter((r) => r.getAttribute('opacity') === '1')
+    expect(active).toHaveLength(1)
+    expect(active[0].getAttribute('fill')).toBe(boardConcept.colorTokens.accent)
+    // all other tiles are inactive with dimmed opacity
+    const inactive = rects.filter((r) => r.getAttribute('opacity') !== '1')
+    expect(inactive).toHaveLength(8)
+    inactive.forEach((r) => {
+      expect(r.getAttribute('opacity')).toBe('0.42')
+    })
   })
 
   it('highlights only the center tile at progress 0', () => {

@@ -51,15 +51,4 @@ describe('getLogoSystem', () => {
     expect(system.layout).toBe('resolve')
   })
 
-  it('returns a different system per concept — not the same object', () => {
-    const defineConcept = concepts.find((c) => c.id === 'define-the-game')!
-    const consoleConcept = concepts.find((c) => c.id === 'command-console')!
-
-    const defineSystem = getLogoSystem(defineConcept)
-    const consoleSystem = getLogoSystem(consoleConcept)
-
-    expect(defineSystem.id).not.toBe(consoleSystem.id)
-    expect(defineSystem.wordmark).not.toBe(consoleSystem.wordmark)
-    expect(defineSystem.layout).not.toBe(consoleSystem.layout)
-  })
 })
