@@ -55,7 +55,6 @@ export default defineConfig({
         '**/*.{test,spec}.{ts,tsx}',
         // Canvas/Pixi shells — covered by the /lab/ scene-smoke e2e:
         'src/app/app-shell.tsx',
-        'src/station/station-signal-scene.tsx',
         // Bootstrap / mount-only shells (no logic):
         'src/main.tsx',
         'src/site-main.tsx',

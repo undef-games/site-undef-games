@@ -42,7 +42,7 @@ import {
 } from '@undef-games/scanlines-system'
 import { LAB_BACK_ENTRANCE } from './lab-entrance-config'
 import { StationControls } from '../station/station-controls'
-import { StationSignalScene } from '../station/station-signal-scene'
+import { StationSignalScene } from '@undef-games/scanlines-system'
 import { attachButtonPressFeedback } from '../ui/button-press-feedback'
 import { LAB_HERO_COPY, LAB_PROJECTS, LAB_SECTIONS } from './site-copy'
 
