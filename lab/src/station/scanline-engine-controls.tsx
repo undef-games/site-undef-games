@@ -6,7 +6,7 @@ import {
   type ScanlineLayerMoveDirection,
   type ScanlineLayerPatch,
   type ScanlinePattern,
-} from './scanline-engine'
+} from '@undef-games/scanlines-system'
 
 const BASE_PATTERN_OPTIONS: { label: string; value: ScanlineEngineState['basePattern'] }[] = [
   { label: 'Straight', value: 'straight' },

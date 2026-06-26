@@ -10,7 +10,7 @@ import {
   removeScanlineLayer,
   updateScanlineLayer,
   type ScanlineEngineState,
-} from './scanline-engine'
+} from '@undef-games/scanlines-system'
 import { ScanlineEngineControls } from './scanline-engine-controls'
 
 afterEach(() => {

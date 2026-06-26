@@ -1,51 +1,48 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { EffectsControls } from '../station/effects-controls'
 import {
-  ProminentEntrance,
-  PROMINENT_ENTRANCE_EFFECTS,
-  resetProminentEntrances,
-  type ProminentEntranceEffect,
-} from '@undef-games/scanlines-system'
-import { LAB_BACK_ENTRANCE } from './lab-entrance-config'
-import {
-  EFFECTS_PRESETS,
-  type EffectsPresetId,
-  type EffectsSettings,
-  type EffectsTone,
-} from '../station/effects-config'
-import { createEffectsStyle } from '../station/effects-style'
-import { StationControls } from '../station/station-controls'
-import { StationGlyph, StationIdentity } from '../station/station-identity'
-import {
   addScanlineLayer,
   duplicateScanlineLayer,
   moveScanlineLayer,
   removeScanlineLayer,
   updateScanlineLayer as updateScanlineEngineLayerState,
-  type ScanlineEngineState,
-  type ScanlineLayerMoveDirection,
-  type ScanlineLayerPatch,
-} from '../station/scanline-engine'
-import { StationSignalScene } from '../station/station-signal-scene'
-import { createStationState, detuneSignal, getStationStatus, resetSignal, tuneSignal } from '../station/station-state'
-import {
+  clearThemeState,
+  createDefaultFullThemeState,
+  createEffectsStyle,
+  createStationState,
+  detuneSignal,
+  EFFECTS_PRESETS,
+  getActiveThemeSettings,
+  getStationStatus,
+  ProminentEntrance,
+  PROMINENT_ENTRANCE_EFFECTS,
+  readFullThemeState,
+  resetProminentEntrances,
+  resetSignal,
+  STATION_CHANNELS,
+  tuneSignal,
+  writeFullThemeState,
   ChannelSelector,
   PacketDrift,
   SectionToy,
   SignalScope,
-  STATION_CHANNELS,
+  StationGlyph,
+  StationIdentity,
+  type EffectsPresetId,
+  type EffectsSettings,
+  type EffectsTone,
+  type FullThemeState,
+  type ProminentEntranceEffect,
+  type ScanlineEngineState,
+  type ScanlineLayerId,
+  type ScanlineLayerMoveDirection,
+  type ScanlineLayerPatch,
   type SectionEffectId,
   type SectionToyEffect,
-} from '../station/station-toys'
-import {
-  clearThemeState,
-  createDefaultFullThemeState,
-  getActiveThemeSettings,
-  readFullThemeState,
-  writeFullThemeState,
-  type FullThemeState,
-  type ScanlineLayerId,
-} from '../store/persistence'
+} from '@undef-games/scanlines-system'
+import { LAB_BACK_ENTRANCE } from './lab-entrance-config'
+import { StationControls } from '../station/station-controls'
+import { StationSignalScene } from '../station/station-signal-scene'
 import { attachButtonPressFeedback } from '../ui/button-press-feedback'
 import { LAB_HERO_COPY, LAB_PROJECTS, LAB_SECTIONS } from './site-copy'
 

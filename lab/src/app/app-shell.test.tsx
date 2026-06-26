@@ -2,7 +2,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AppShell } from './app-shell'
-import { createDefaultFullThemeState, STORAGE_KEY } from '../store/persistence'
+import { createDefaultFullThemeState, STORAGE_KEY } from '@undef-games/scanlines-system'
 import { getProminentEntranceStorageKey } from '@undef-games/scanlines-system'
 import { LAB_BACK_ENTRANCE } from './lab-entrance-config'
 

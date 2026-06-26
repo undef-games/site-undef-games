@@ -1,4 +1,4 @@
-import { getStationStatus, type StationState } from './station-state'
+import { getStationStatus, type StationState } from '@undef-games/scanlines-system'
 
 export function StationControls({
   state,

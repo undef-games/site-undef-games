@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { getSignalFieldPlan, shouldTrackPointerType, StationSignalScene } from './station-signal-scene'
-import { createStationState } from './station-state'
+import { createStationState } from '@undef-games/scanlines-system'
 
 afterEach(() => cleanup())
 

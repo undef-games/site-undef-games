@@ -1,9 +1,13 @@
 import { useEffect, useRef } from 'react'
 import type { Application, Graphics } from 'pixi.js'
-import { BASELINE_EFFECTS, type EffectsSettings } from './effects-config'
-import { hexToPixiColor } from './effects-style'
-import { getStationStatus, type StationState } from './station-state'
-import type { ScanlineEngineState } from './scanline-engine'
+import {
+  BASELINE_EFFECTS,
+  getStationStatus,
+  hexToPixiColor,
+  type EffectsSettings,
+  type ScanlineEngineState,
+  type StationState,
+} from '@undef-games/scanlines-system'
 
 export type ChannelMode = 'baseline' | 'game' | 'noise' | 'lock'
 

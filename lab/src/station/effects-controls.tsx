@@ -1,9 +1,18 @@
-import type { EffectsPresetId, EffectsSettings, EffectsTone } from './effects-config'
-import { EFFECTS_PRESETS } from './effects-config'
+import {
+  EFFECTS_PRESETS,
+  type EffectsPresetId,
+  type EffectsSettings,
+  type EffectsTone,
+  type ScanlineEngineState,
+  type ScanlineLayerId,
+  type ScanlineLayerMoveDirection,
+  type ScanlineLayerPatch,
+  type ScanlineLayers,
+  type SectionEffectId,
+  type SectionEffects,
+  type SectionToyEffect,
+} from '@undef-games/scanlines-system'
 import { ScanlineEngineControls } from './scanline-engine-controls'
-import type { ScanlineEngineState, ScanlineLayerMoveDirection, ScanlineLayerPatch } from './scanline-engine'
-import type { SectionEffectId, SectionEffects, SectionToyEffect } from './station-toys'
-import type { ScanlineLayerId, ScanlineLayers } from '../store/persistence'
 
 type EffectsControlKey = keyof EffectsSettings
 
