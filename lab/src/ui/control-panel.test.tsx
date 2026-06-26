@@ -55,6 +55,7 @@ describe('ControlPanel — shell', () => {
     )
     await user.click(screen.getByRole('button', { name: 'Reset' }))
     expect(onReset).toHaveBeenCalledTimes(1)
+    expect(onReset).toHaveBeenCalledWith(expect.any(Object))
   })
 
   it('renders the phase track with correct active index', () => {
@@ -568,6 +569,9 @@ describe('BoardControls (rule-board)', () => {
     const readout = screen.getByLabelText('board route')
     const tiles = within(readout).getAllByText(/^\d+$/)
     expect(tiles).toHaveLength(16)
+    // baseState.boardPath = [boardRoute[0]] = [5]; tile 5 is at index 4, tile 1 (index 0) is not active
+    expect(tiles[4]).toHaveAttribute('data-active', 'true')
+    expect(tiles[0]).toHaveAttribute('data-active', 'false')
   })
 
   it('marks tiles in boardPath as active and others as inactive', () => {

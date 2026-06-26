@@ -22,9 +22,14 @@ describe('attachButtonPressFeedback', () => {
   })
 
   it('sets pressState to "down" on pointerdown on a button inside the container', () => {
-    container.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, target: button }))
-    // Simulate target via direct dispatch on button (bubbles up)
     button.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    expect(button.dataset.pressState).toBe('down')
+  })
+
+  it('sets pressState to "down" when pointerdown fires on a child element inside the button (event delegation via closest)', () => {
+    const child = document.createElement('span')
+    button.appendChild(child)
+    child.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
     expect(button.dataset.pressState).toBe('down')
   })
 
