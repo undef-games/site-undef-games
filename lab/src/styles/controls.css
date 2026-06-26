@@ -46,23 +46,19 @@
     color 120ms ease;
 }
 
-.control-buttons button {
+.control-buttons button:not(.scanlines-button) {
   border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.22);
   background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.84);
   color: var(--fx-text-on-dark, #f4f4f0);
 }
 
-.control-buttons button:hover {
+.control-buttons button:not(.scanlines-button):hover {
   border-color: var(--fx-signal, #d8ff35);
   color: var(--fx-signal, #d8ff35);
 }
 
-.station-shell[data-tone='light'] .control-buttons button {
+.station-shell[data-tone='light'] .control-buttons button:not(.scanlines-button) {
   background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
-  color: var(--fx-text-on-dark, #f4f4f0);
-}
-
-.station-shell[data-tone='light'] .control-buttons .scanlines-button {
   color: var(--fx-text-on-dark, #f4f4f0);
 }
 
@@ -80,8 +76,7 @@
   color: var(--fx-text-on-dark, #f4f4f0);
 }
 
-.station-shell[data-tone='light'] .control-buttons button:hover,
-.station-shell[data-tone='light'] .control-buttons .scanlines-button:hover,
+.station-shell[data-tone='light'] .control-buttons button:not(.scanlines-button):hover,
 .station-shell[data-tone='light'] .theme-mode-control button:hover,
 .station-shell[data-tone='light'] .theme-mode-control button[aria-pressed='true'],
 .station-shell[data-tone='light'] .preset-select-control select:focus,
@@ -707,14 +702,14 @@
   color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.82);
 }
 
-.scanline-engine-row-actions button {
+.scanline-engine-row-actions button:not(.scanlines-button) {
   border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
   background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.32);
   color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.82);
 }
 
 .scanline-engine-add:hover,
-.scanline-engine-row-actions button:hover {
+.scanline-engine-row-actions button:not(.scanlines-button):hover {
   border-color: var(--fx-signal, #d8ff35);
   color: var(--fx-signal, #d8ff35);
 }
@@ -811,8 +806,7 @@
 }
 
 .station-shell[data-tone='light'] .scanline-engine-add,
-.station-shell[data-tone='light'] .scanline-engine-row-actions button,
-.station-shell[data-tone='light'] .scanline-engine-row-actions .scanlines-button,
+.station-shell[data-tone='light'] .scanline-engine-row-actions button:not(.scanlines-button),
 .station-shell[data-tone='light'] .scanline-engine-base-pattern select,
 .station-shell[data-tone='light'] .scanline-engine-control-grid select,
 .station-shell[data-tone='light'] .scanline-engine-control-grid input[type='number'] {
