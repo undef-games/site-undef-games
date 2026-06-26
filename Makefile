@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test typecheck e2e
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test test-assets typecheck e2e
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -38,6 +38,10 @@ typecheck: ## Run lab TypeScript checks
 
 test: install-lab ## Run lab unit tests
 	@npm --prefix lab run test:run
+
+# Run the hugo theme TS asset unit tests with 100% coverage gate (root vitest)
+test-assets: install-root ## Run hugo asset unit tests
+	@npm run coverage
 
 e2e: install-root build ## Run the current Playwright suite
 	@./node_modules/.bin/playwright test
