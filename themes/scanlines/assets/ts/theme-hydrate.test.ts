@@ -63,6 +63,7 @@ it('toggles dark -> light', async () => {
   await import('./theme-hydrate')
   document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!.click()
   expect(writeThemeState).toHaveBeenCalledWith({ activeTone: 'light' })
+  expect(applyThemeState).toHaveBeenCalledWith({ activeTone: 'light' })
 })
 
 it('falls back to the default theme state when none is stored', async () => {
@@ -92,12 +93,13 @@ it('does not throw when the toggle button is absent', async () => {
   document.body.innerHTML = ''                      // no [data-theme-toggle]
   setReadyState('complete')
   await expect(import('./theme-hydrate')).resolves.toBeDefined()
+  expect(applyStoredTheme).toHaveBeenCalledTimes(1)
 })
 
 it('re-applies the stored theme on a storage event', async () => {
   setReadyState('complete')
   await import('./theme-hydrate')
-  applyStoredTheme.mockClear()
+  applyStoredTheme.mockClear() // reset import-time call so the assertion isolates the storage-event call
   window.dispatchEvent(new Event('storage'))
   expect(applyStoredTheme).toHaveBeenCalledTimes(1)
 })
