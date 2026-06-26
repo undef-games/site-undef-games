@@ -1,5 +1,6 @@
 import {
   EFFECTS_PRESETS,
+  ScanlinesButton,
   type EffectsPresetId,
   type EffectsSettings,
   type EffectsTone,
@@ -208,20 +209,22 @@ export function EffectsControls({
       <div className="theme-preset-grid" aria-label="theme presets">
         {renderPresetSelect('dark', darkPresetId)}
         {renderPresetSelect('light', lightPresetId)}
-        <button
+        <ScanlinesButton
           className="reset-theme-button"
           type="button"
+          variant="danger"
           onClick={onResetTheme}
         >
           Reset theme
-        </button>
-        <button
+        </ScanlinesButton>
+        <ScanlinesButton
           className="reset-prominent-button"
           type="button"
+          variant="danger"
           onClick={onResetProminent}
         >
           Reset intros
-        </button>
+        </ScanlinesButton>
       </div>
 
       <div className="palette-controls" aria-label="palette controls">

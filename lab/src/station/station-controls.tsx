@@ -1,4 +1,4 @@
-import { getStationStatus, type StationState } from '@undef-games/scanlines-system'
+import { ScanlinesButton, getStationStatus, type StationState } from '@undef-games/scanlines-system'
 
 export function StationControls({
   state,
@@ -28,9 +28,9 @@ export function StationControls({
         <button type="button" onClick={onDetune}>
           Detune
         </button>
-        <button type="button" onClick={onReset}>
+        <ScanlinesButton type="button" variant="danger" onClick={onReset}>
           Reset
-        </button>
+        </ScanlinesButton>
       </div>
       <p className="lock-readout">{status.lock ? 'station lockup armed' : 'dead channel scan'}</p>
     </section>
