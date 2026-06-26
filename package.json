@@ -12,13 +12,15 @@
     "test": "vitest run",
     "coverage": "vitest run --coverage",
     "test:lab": "make test",
-    "typecheck:lab": "make typecheck"
+    "typecheck:lab": "make typecheck",
+    "typecheck:assets": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
     "@vitest/coverage-v8": "^4.1.9",
     "http-server": "^14.1.1",
     "jsdom": "^29.1.1",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.9",
     "wrangler": "^4.104.0"
   }

@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test test-assets typecheck e2e
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test test-assets typecheck typecheck-assets e2e
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -35,6 +35,10 @@ clean: ## Remove build output
 
 typecheck: ## Run lab TypeScript checks
 	@npm --prefix lab run typecheck
+
+# Typecheck the hugo theme TS assets against their own owned config (root tsc)
+typecheck-assets: install-root ## Run hugo asset TypeScript checks
+	@npm run typecheck:assets
 
 test: install-lab ## Run lab unit tests
 	@npm --prefix lab run test:run

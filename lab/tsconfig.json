@@ -30,6 +30,6 @@
     "jsx": "react-jsx",
     "types": ["node", "vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["src", "tests", "../themes/scanlines/assets/ts"],
+  "include": ["src", "tests"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
