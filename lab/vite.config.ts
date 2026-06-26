@@ -48,5 +48,24 @@ export default defineConfig({
         inline: ['@provide-io/telemetry'],
       },
     },
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        '**/*.{test,spec}.{ts,tsx}',
+        // Canvas/Pixi shells — covered by the /lab/ scene-smoke e2e:
+        'src/app/app-shell.tsx',
+        'src/station/station-signal-scene.tsx',
+        // Bootstrap / mount-only shells (no logic):
+        'src/main.tsx',
+        'src/site-main.tsx',
+        'src/app/App.tsx',
+        // Type-only / test infra:
+        'src/concepts/types.ts',
+        'src/vite-env.d.ts',
+        'src/test/setup.ts',
+      ],
+      thresholds: { lines: 100, functions: 100, branches: 100, statements: 100 },
+    },
   }
 })
