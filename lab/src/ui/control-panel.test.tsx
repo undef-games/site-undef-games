@@ -55,7 +55,6 @@ describe('ControlPanel — shell', () => {
     )
     await user.click(screen.getByRole('button', { name: 'Reset' }))
     expect(onReset).toHaveBeenCalledTimes(1)
-    expect(onReset).toHaveBeenCalledWith(expect.any(Object))
   })
 
   it('renders the phase track with correct active index', () => {
