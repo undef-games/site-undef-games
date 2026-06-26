@@ -4,6 +4,7 @@ dist
 public/
 lab/dist/
 lab/coverage/
+/coverage/
 data/build.json
 playwright-report/
 test-results/

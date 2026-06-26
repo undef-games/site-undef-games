@@ -1,4 +1,5 @@
 import { ScanlinesButton, getStationStatus, type StationState } from '@undef-games/scanlines-system'
+import { CONTROL_VARIANTS } from '../ui/control-variants'
 
 export function StationControls({
   state,
@@ -22,13 +23,13 @@ export function StationControls({
         </div>
       </div>
       <div className="control-buttons">
-        <button type="button" onClick={onTune}>
+        <ScanlinesButton type="button" variant={CONTROL_VARIANTS.tune} onClick={onTune}>
           Tune signal
-        </button>
-        <button type="button" onClick={onDetune}>
+        </ScanlinesButton>
+        <ScanlinesButton type="button" variant={CONTROL_VARIANTS.detune} onClick={onDetune}>
           Detune
-        </button>
-        <ScanlinesButton type="button" variant="danger" onClick={onReset}>
+        </ScanlinesButton>
+        <ScanlinesButton type="button" variant={CONTROL_VARIANTS.signalReset} onClick={onReset}>
           Reset
         </ScanlinesButton>
       </div>

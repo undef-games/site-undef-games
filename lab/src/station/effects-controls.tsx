@@ -13,6 +13,7 @@ import {
   type SectionEffects,
   type SectionToyEffect,
 } from '@undef-games/scanlines-system'
+import { CONTROL_VARIANTS } from '../ui/control-variants'
 import { ScanlineEngineControls } from './scanline-engine-controls'
 
 type EffectsControlKey = keyof EffectsSettings
@@ -212,7 +213,7 @@ export function EffectsControls({
         <ScanlinesButton
           className="reset-theme-button"
           type="button"
-          variant="danger"
+          variant={CONTROL_VARIANTS.themeReset}
           onClick={onResetTheme}
         >
           Reset theme
@@ -220,7 +221,7 @@ export function EffectsControls({
         <ScanlinesButton
           className="reset-prominent-button"
           type="button"
-          variant="danger"
+          variant={CONTROL_VARIANTS.prominentReset}
           onClick={onResetProminent}
         >
           Reset intros

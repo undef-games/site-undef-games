@@ -1,5 +1,6 @@
 import {
   MAX_SCANLINE_ENGINE_LAYERS,
+  ScanlinesButton,
   type ScanlineBlendMode,
   type ScanlineEngineState,
   type ScanlineLayer,
@@ -7,6 +8,7 @@ import {
   type ScanlineLayerPatch,
   type ScanlinePattern,
 } from '@undef-games/scanlines-system'
+import { CONTROL_VARIANTS } from '../ui/control-variants'
 
 const BASE_PATTERN_OPTIONS: { label: string; value: ScanlineEngineState['basePattern'] }[] = [
   { label: 'Straight', value: 'straight' },
@@ -82,9 +84,9 @@ export function ScanlineEngineControls({
             {layerCount} / {MAX_SCANLINE_ENGINE_LAYERS} layers
           </p>
         </div>
-        <button type="button" className="scanline-engine-add" onClick={onAddLayer} disabled={!canAddLayer}>
+        <ScanlinesButton type="button" className="scanline-engine-add" variant={CONTROL_VARIANTS.addLayer} onClick={onAddLayer} disabled={!canAddLayer}>
           Add scanline layer
-        </button>
+        </ScanlinesButton>
       </div>
 
       <label className="scanline-engine-base-pattern">
@@ -111,25 +113,26 @@ export function ScanlineEngineControls({
             </div>
 
             <div className="scanline-engine-row-actions">
-              <button type="button" onClick={() => onDuplicateLayer(layer.id)}>
+              <ScanlinesButton type="button" variant={CONTROL_VARIANTS.duplicateLayer} onClick={() => onDuplicateLayer(layer.id)}>
                 Duplicate
-              </button>
-              <button type="button" onClick={() => onUpdateLayer(layer.id, { enabled: !layer.enabled })}>
+              </ScanlinesButton>
+              <ScanlinesButton type="button" variant={CONTROL_VARIANTS.toggleLayer} onClick={() => onUpdateLayer(layer.id, { enabled: !layer.enabled })}>
                 {layer.enabled ? 'Mute' : 'Unmute'}
-              </button>
-              <button type="button" onClick={() => onRemoveLayer(layer.id)}>
+              </ScanlinesButton>
+              <ScanlinesButton type="button" variant={CONTROL_VARIANTS.removeLayer} onClick={() => onRemoveLayer(layer.id)}>
                 Delete
-              </button>
-              <button type="button" onClick={() => onMoveLayer(layer.id, 'up')} disabled={index === 0}>
+              </ScanlinesButton>
+              <ScanlinesButton type="button" variant={CONTROL_VARIANTS.moveLayer} onClick={() => onMoveLayer(layer.id, 'up')} disabled={index === 0}>
                 Move up
-              </button>
-              <button
+              </ScanlinesButton>
+              <ScanlinesButton
                 type="button"
+                variant={CONTROL_VARIANTS.moveLayer}
                 onClick={() => onMoveLayer(layer.id, 'down')}
                 disabled={index === engine.layers.length - 1}
               >
                 Move down
-              </button>
+              </ScanlinesButton>
             </div>
 
             <div className="scanline-engine-control-grid">

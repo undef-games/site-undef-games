@@ -32,12 +32,10 @@
   gap: 8px;
 }
 
-.control-buttons button {
+.control-buttons button,
+.control-buttons .scanlines-button {
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.22);
-  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.84);
-  color: var(--fx-text-on-dark, #f4f4f0);
   font: inherit;
   transition:
     transform 120ms ease,
@@ -48,6 +46,12 @@
     color 120ms ease;
 }
 
+.control-buttons button {
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.22);
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.84);
+  color: var(--fx-text-on-dark, #f4f4f0);
+}
+
 .control-buttons button:hover {
   border-color: var(--fx-signal, #d8ff35);
   color: var(--fx-signal, #d8ff35);
@@ -55,6 +59,10 @@
 
 .station-shell[data-tone='light'] .control-buttons button {
   background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
+  color: var(--fx-text-on-dark, #f4f4f0);
+}
+
+.station-shell[data-tone='light'] .control-buttons .scanlines-button {
   color: var(--fx-text-on-dark, #f4f4f0);
 }
 
@@ -73,6 +81,7 @@
 }
 
 .station-shell[data-tone='light'] .control-buttons button:hover,
+.station-shell[data-tone='light'] .control-buttons .scanlines-button:hover,
 .station-shell[data-tone='light'] .theme-mode-control button:hover,
 .station-shell[data-tone='light'] .theme-mode-control button[aria-pressed='true'],
 .station-shell[data-tone='light'] .preset-select-control select:focus,
@@ -684,14 +693,24 @@
 }
 
 .scanline-engine-add,
-.scanline-engine-row-actions button {
+.scanline-engine-row-actions button,
+.scanline-engine-row-actions .scanlines-button {
   min-height: 34px;
-  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
   border-radius: 0;
-  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.32);
-  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.82);
   font: 900 10px/1 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
   text-transform: uppercase;
+}
+
+.scanline-engine-add {
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.32);
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.82);
+}
+
+.scanline-engine-row-actions button {
+  border: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.2);
+  background: rgb(var(--fx-bg-rgb, 5 6 7) / 0.32);
+  color: rgb(var(--fx-muted-rgb, 244 244 240) / 0.82);
 }
 
 .scanline-engine-add:hover,
@@ -701,7 +720,8 @@
 }
 
 .scanline-engine-add:disabled,
-.scanline-engine-row-actions button:disabled {
+.scanline-engine-row-actions button:disabled,
+.scanline-engine-row-actions .scanlines-button:disabled {
   opacity: 0.42;
   cursor: not-allowed;
 }
@@ -778,7 +798,8 @@
   gap: 6px;
 }
 
-.scanline-engine-row-actions button {
+.scanline-engine-row-actions button,
+.scanline-engine-row-actions .scanlines-button {
   min-height: 30px;
   padding: 0 8px;
 }
@@ -791,6 +812,7 @@
 
 .station-shell[data-tone='light'] .scanline-engine-add,
 .station-shell[data-tone='light'] .scanline-engine-row-actions button,
+.station-shell[data-tone='light'] .scanline-engine-row-actions .scanlines-button,
 .station-shell[data-tone='light'] .scanline-engine-base-pattern select,
 .station-shell[data-tone='light'] .scanline-engine-control-grid select,
 .station-shell[data-tone='light'] .scanline-engine-control-grid input[type='number'] {

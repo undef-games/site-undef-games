@@ -1,3 +1,4 @@
+import { ScanlinesButton } from '@undef-games/scanlines-system'
 import type { LogoConcept } from '../concepts/types'
 import {
   boardRoute,
@@ -8,6 +9,7 @@ import {
   type LogoPlayState,
 } from '../logo/logo-play-state'
 import { getLogoSystem } from '../logo/logo-system'
+import { CONTROL_VARIANTS } from './control-variants'
 
 export function ControlPanel({
   concept,
@@ -38,9 +40,9 @@ export function ControlPanel({
           <h2>Instrument</h2>
           <p>{activePhase}</p>
         </div>
-        <button className="ghost-button" type="button" onClick={onReset}>
+        <ScanlinesButton className="ghost-button" type="button" variant={CONTROL_VARIANTS.prototypeReset} onClick={onReset}>
           Reset
-        </button>
+        </ScanlinesButton>
       </div>
       <div className="phase-track" aria-label="prototype phase">
         {system.phases.map((label, index) => (
@@ -69,10 +71,10 @@ function DefineControls({ playState, onAdvance }: { playState: LogoPlayState; on
       <p className="state-line">Rules: {playState.defineRules.length ? playState.defineRules.join(' / ') : 'undefined'}</p>
       <div className="action-grid">
         {defineRules.map((rule, index) => (
-          <button key={rule} type="button" disabled={playState.defineRules.includes(rule)} onClick={onAdvance}>
+          <ScanlinesButton key={rule} type="button" variant={CONTROL_VARIANTS.prototypeAdvance} disabled={playState.defineRules.includes(rule)} onClick={onAdvance}>
             Define {rule}
             <span>{playState.defineRules.includes(rule) ? 'locked' : index === playState.defineRules.length ? 'next' : 'waiting'}</span>
-          </button>
+          </ScanlinesButton>
         ))}
       </div>
     </div>
@@ -111,13 +113,13 @@ function ConsoleControls({
         <input value={commandInput} onChange={(event) => onCommandInput(event.target.value)} placeholder={nextCommand ?? 'game compiled'} />
       </label>
       <div className="button-row">
-        <button type="button" onClick={() => onRunCommand()}>
+        <ScanlinesButton type="button" variant={CONTROL_VARIANTS.runCommand} onClick={() => onRunCommand()}>
           Run command
-        </button>
+        </ScanlinesButton>
         {nextCommand && (
-          <button type="button" onClick={() => onRunCommand(nextCommand)}>
+          <ScanlinesButton type="button" variant={CONTROL_VARIANTS.runCommand} onClick={() => onRunCommand(nextCommand)}>
             Type {nextCommand}
-          </button>
+          </ScanlinesButton>
         )}
       </div>
     </div>
@@ -150,9 +152,9 @@ function BoardControls({
           )
         })}
       </div>
-      <button type="button" disabled={!nextTile} onClick={onAdvance}>
+      <ScanlinesButton type="button" variant={CONTROL_VARIANTS.prototypeAdvance} disabled={!nextTile} onClick={onAdvance}>
         {actionLabel}
-      </button>
+      </ScanlinesButton>
     </div>
   )
 }
