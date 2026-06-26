@@ -1,5 +1,7 @@
 # undef-logos hugo TS assets Coverage Implementation Plan
 
+**Status:** ✅ Complete — hugo assets 100% gated (new root vitest; package mocked); `make test-assets` target added; merged to `undef-logos` main @ `3aadba0`, pushed.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Stand up a root vitest setup (none exists) and unit-gate the two hugo theme TS assets (`site.ts`, `theme-hydrate.ts`) at 100%, with the package mocked.

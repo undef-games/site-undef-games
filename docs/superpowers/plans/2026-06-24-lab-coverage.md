@@ -1,5 +1,7 @@
 # undef-logos/lab Coverage Implementation Plan
 
+**Status:** ✅ Complete — lab 100% gated (9 station re-export shims de-duped → import the package directly); merged to `undef-logos` main @ `c063f04`, pushed.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Bring `undef-logos/lab` to 100% gated unit coverage (no gate today) after de-duping the station re-export layer.

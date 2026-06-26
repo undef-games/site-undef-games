@@ -1,5 +1,7 @@
 # Scanlines-System Repo Extraction Implementation Plan
 
+**Status:** ✅ Complete (prior session) — package extracted to its own private repo; all consumers repointed (sibling `file:` link); merged + pushed.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Move `packages/scanlines-system` out of undef-logos into its own private repo `undef-games/scanlines-system`, with every consumer repointed and every pre-existing test still green.
