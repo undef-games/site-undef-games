@@ -54,6 +54,9 @@ it('toggles light -> dark, persists, applies, and dispatches the event', async (
   expect(writeThemeState).toHaveBeenCalledWith({ activeTone: 'dark' })
   expect(applyThemeState).toHaveBeenCalledWith({ activeTone: 'dark' })
   expect(onChange).toHaveBeenCalledTimes(1)
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!
+  expect(button.getAttribute('aria-label')).toBe('Switch to light mode') // now dark -> next action is light
+  expect(button.getAttribute('aria-pressed')).toBe('true')
 })
 
 it('toggles dark -> light', async () => {
@@ -64,6 +67,9 @@ it('toggles dark -> light', async () => {
   document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!.click()
   expect(writeThemeState).toHaveBeenCalledWith({ activeTone: 'light' })
   expect(applyThemeState).toHaveBeenCalledWith({ activeTone: 'light' })
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!
+  expect(button.getAttribute('aria-label')).toBe('Switch to dark mode') // now light -> next action is dark
+  expect(button.getAttribute('aria-pressed')).toBe('false')
 })
 
 it('falls back to the default theme state when none is stored', async () => {
@@ -72,7 +78,7 @@ it('falls back to the default theme state when none is stored', async () => {
   setReadyState('complete')
   await import('./theme-hydrate')
   document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!.click()
-  expect(createDefaultThemeState).toHaveBeenCalledTimes(1)
+  expect(createDefaultThemeState).toHaveBeenCalled() // used by the on-load label sync and by toggle
   // default is dark -> next is light:
   expect(writeThemeState).toHaveBeenCalledWith({ activeTone: 'light' })
 })
@@ -102,4 +108,15 @@ it('re-applies the stored theme on a storage event', async () => {
   applyStoredTheme.mockClear() // reset import-time call so the assertion isolates the storage-event call
   window.dispatchEvent(new Event('storage'))
   expect(applyStoredTheme).toHaveBeenCalledTimes(1)
+})
+
+it('reflects the stored tone in the toggle label on load, before any click', async () => {
+  readThemeState.mockReturnValue({ activeTone: 'light' })
+  document.body.innerHTML = '<button data-theme-toggle aria-label="Switch to light mode" aria-pressed="true"></button>'
+  setReadyState('complete')
+  await import('./theme-hydrate')
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!
+  // stored tone is light, so the action is "switch to dark" and it is not the dark-pressed state
+  expect(button.getAttribute('aria-label')).toBe('Switch to dark mode')
+  expect(button.getAttribute('aria-pressed')).toBe('false')
 })
