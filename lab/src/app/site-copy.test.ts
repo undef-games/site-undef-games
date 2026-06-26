@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { readSiteSurfaceCopy, type SiteSurfaceCopy } from '@undef-games/scanlines-system'
+import { LAB_HERO_COPY, LAB_PROJECTS, LAB_SECTIONS } from './site-copy'
 
 const VALID_SITE_SURFACE_COPY: SiteSurfaceCopy = {
   hero: {
@@ -159,5 +160,30 @@ describe('site copy loader', () => {
     mountSiteCopyScript(payload)
 
     expect(readSiteSurfaceCopy()).toBeNull()
+  })
+})
+
+describe('lab site copy constants', () => {
+  it('hero copy has the expected primary and secondary actions', () => {
+    expect(LAB_HERO_COPY.primaryAction.href).toBe('https://warp.undef.games')
+    expect(LAB_HERO_COPY.primaryAction.label).toBe('Explore WARP')
+    expect(LAB_HERO_COPY.secondaryAction.href).toBe('#projects')
+    expect(LAB_HERO_COPY.secondaryAction.label).toBe('View projects')
+  })
+
+  it('projects list has three entries with distinct class names', () => {
+    expect(LAB_PROJECTS).toHaveLength(3)
+    const classNames = LAB_PROJECTS.map((p) => p.className)
+    expect(classNames).toEqual(['product-link--warp', 'product-link--dice', 'product-link--taybols'])
+  })
+
+  it('sections contain expected kicker text for all named sections', () => {
+    expect(LAB_SECTIONS.signal.kicker).toBe('Interactive field')
+    expect(LAB_SECTIONS.projects.kicker).toBe('Live routes')
+    expect(LAB_SECTIONS.warp.kicker).toBe('Flagship route')
+    expect(LAB_SECTIONS.dice.kicker).toBe('Table tools')
+    expect(LAB_SECTIONS.taybols.kicker).toBe('Small experiments')
+    expect(LAB_SECTIONS.identity.kicker).toBe('Company baseline')
+    expect(LAB_SECTIONS.closing.kicker).toBe('undef.games')
   })
 })
