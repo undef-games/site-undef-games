@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   advanceConcept,
+  boardRoute,
   createInitialLogoPlayState,
   getConceptPhase,
   getConceptProgress,
@@ -103,7 +104,7 @@ describe('logo play state', () => {
     expect(afterConsoleReset.boardPath).toEqual(state.boardPath)
 
     const afterBoardReset = resetConcept(state, 'rule-board')
-    expect(afterBoardReset.boardPath).toEqual([5])
+    expect(afterBoardReset.boardPath).toEqual([boardRoute[0]])
     expect(afterBoardReset.boardIllegalMove).toBe(false)
     expect(afterBoardReset.consoleHistory).toEqual(state.consoleHistory)
   })

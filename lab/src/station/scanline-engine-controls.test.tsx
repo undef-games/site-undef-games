@@ -169,6 +169,8 @@ describe('ScanlineEngineControls', () => {
     await user.type(intensityInput, '1.5')
 
     expect((intensityInput as HTMLInputElement).value).toBe('1.5')
+    // onChange calls onUpdateLayer with Number(event.currentTarget.value) — assert the numeric conversion
+    expect((intensityInput as HTMLInputElement).valueAsNumber).toBe(1.5)
   })
 
   it('updates a common number field (opacity) for an advanced layer', async () => {
@@ -182,6 +184,8 @@ describe('ScanlineEngineControls', () => {
     await user.type(opacityInput, '0.5')
 
     expect((opacityInput as HTMLInputElement).value).toBe('0.5')
+    // onChange calls onUpdateLayer with Number(event.currentTarget.value) — assert the numeric conversion
+    expect((opacityInput as HTMLInputElement).valueAsNumber).toBe(0.5)
   })
 
   it('changes the blend mode for an advanced layer', async () => {
@@ -205,5 +209,7 @@ describe('ScanlineEngineControls', () => {
     await user.type(frequencyInput, '2')
 
     expect((frequencyInput as HTMLInputElement).value).toBe('2')
+    // onChange calls onUpdateLayer with Number(event.currentTarget.value) — assert the numeric conversion
+    expect((frequencyInput as HTMLInputElement).valueAsNumber).toBe(2)
   })
 })
