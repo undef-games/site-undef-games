@@ -55,5 +55,5 @@ All gates green both repos (package 496 tests / 100%, lab 274 / 100%, both typec
 - [x] Reconcile the lab's divergent **`station-signal-scene.tsx`** — done; lab now consumes the shared package scene (`c691f6d` / `8d569b6` / `75190a6`). Note: it was **not** cosmetic-only — the lab copy had drifted behind production (missing trace rendering) and differed on touch handling.
 
 **Open / optional (none blocking):**
-- [ ] Housekeeping: an **orphaned Octowright browser window** may still be open (its MCP dropped repeatedly mid-session) — close manually or it clears on reconnect.
+- [x] Housekeeping: the orphaned Octowright window cleared on reconnect — `browser_list` is empty.
 - [ ] If redeploying: prod stamp is now `75190a6` (undef-logos) / `c691f6d` (scanlines-system); nothing user-facing pending.
