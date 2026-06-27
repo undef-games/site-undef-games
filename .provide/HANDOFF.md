@@ -31,6 +31,16 @@ A multi-thread continuation session driven by the standing policy: **all code 10
 - **undef.games is live, deployed @ `450b401`** (the theme-toggle fix). The one newer commit `8ecd929` (undici fix) is **dev-only and not in the shipped bundle** → prod is functionally current; a redeploy would only bump the build-stamp SHA (deliberately skipped).
 - All five SDD plan docs stamped `✅ Complete`. SDD progress ledgers live at `.superpowers/sdd/progress.md` in each repo (gitignored scratch).
 
+## Update — 2026-06-26 (follow-up): optional backlog cleared
+
+The three optional items below were completed, reviewed, pushed, and deployed in a follow-up session. **New current state:** `scanlines-system` main @ **`c691f6d`**, `undef-logos` main @ **`75190a6`** (both pushed; local `main` branches refreshed). **undef.games redeployed and verified live** (deploy alias `37fbc281.undef-logos.pages.dev`).
+
+1. **Hugo asset typecheck — owned gate.** The two `themes/scanlines/assets/ts` files were already typechecked, but only *coincidentally* (the lab `tsconfig.json` listed them in its `include`; deleting that line would silently un-gate them). Gave them their own gate: a root `tsconfig.json` scoped to the assets (package via path alias, CSS side-effect import covered by an ambient `*.css` declaration), a `typecheck:assets` script + `make typecheck-assets` target, `typescript` added to root devDeps, and the assets removed from the lab `include` for single ownership. Proven to fail on a deliberate type error. `undef-logos` @ `4040c9b`. (Dev-only — no runtime change.)
+2. **Site CTA variants.** The hero primary/secondary actions + the closing CTA now use the shared `scanlines-button--primary` / `--ghost` classes, surface-tuned under `.station-shell--site` so they stay bold/large (the control-panel palette is deliberately quiet). The base `.scanlines-button` now resets anchor underlines. **Section links stay bespoke** — their per-section accent fill isn't modelled by the flat variant palette. Verified pixel-faithful dark + light via headless screenshots. `scanlines-system` @ `50bb8a8`.
+3. **Station scene — single shared source.** The lab ran its own *stale* copy (missing the package's blend-mode trace rendering); the package copy had dropped the touch-scroll guard. Consolidated onto the package scene: extracted `shouldTrackPointerType` into a **gated** `pointer-tracking.ts` (+ test) and restored the guard in `onPointerMove`; dropped the scene's byte-identical duplicate of `getSignalFieldPlan`/`ChannelMode`/`SignalFieldPlan` (now imported from the gated `signal-field-plan.ts`, so no pure logic hides in the excluded shell); exported `StationSignalScene` from the package index; repointed the lab import and deleted the lab copy + its test (removed the now-stale coverage-exclude line). The lab now previews the same scene that ships. `scanlines-system` @ `c691f6d`; `undef-logos` @ `8d569b6` + `75190a6`. Verified live: scene mounts (Pixi canvas), touch pointermove → inactive / mouse → active.
+
+All gates green both repos (package 496 tests / 100%, lab 274 / 100%, both typechecks, check:dist). Fresh-eyes review returned no defects (its lone item was a non-breaking prop-contract check — `StationSignalScene` had **zero prior public consumers** since the index export is new, confirmed by a cross-repo grep).
+
 ## Detailed checklist for next session
 
 **Key facts (read first):**
@@ -39,9 +49,11 @@ A multi-thread continuation session driven by the standing policy: **all code 10
 - Standing policies (see `~/.claude/.../memory/`): **100% gated coverage**; **deps on latest, fail-forward, discuss incompatibilities** (`testing-and-dependency-policy`). The lab boots at CH 00 / signal 0 (sandbox) vs home CH 13 / signal 50 — "lab scanlines slow" is **by-design**, not a bug (`lab-vs-home-signal-defaults`).
 - Git: no rollbacks; no AI mention in commit messages; sign with `git -c commit.gpgsign=false`.
 
+**Done (see the 2026-06-26 follow-up section above):**
+- [x] Extend button variants to the site's **CTA links** — done via shared `scanlines-button--*` classes, surface-tuned (`50bb8a8`).
+- [x] Add a root `tsconfig` so the **hugo TS assets get `tsc`-typechecked** — done as an owned gate (`4040c9b`).
+- [x] Reconcile the lab's divergent **`station-signal-scene.tsx`** — done; lab now consumes the shared package scene (`c691f6d` / `8d569b6` / `75190a6`). Note: it was **not** cosmetic-only — the lab copy had drifted behind production (missing trace rendering) and differed on touch handling.
+
 **Open / optional (none blocking):**
-- [ ] (optional) Extend button variants to the site's **CTA links** — they're `<a>`, not `<button>`, so `ScanlinesButton` doesn't apply directly; would need a shared variant class or a link variant.
-- [ ] (optional) Add a root `tsconfig` so the **hugo TS assets get `tsc`-typechecked** (today they're transpiled + unit-gated, but not type-checked).
-- [ ] (optional) Reconcile the lab's divergent **`station-signal-scene.tsx`** (325 lines) vs the package scene (387) — the lab kept its own variant; scanline speed math is byte-identical, so this is cosmetic/maintenance only.
 - [ ] Housekeeping: an **orphaned Octowright browser window** may still be open (its MCP dropped repeatedly mid-session) — close manually or it clears on reconnect.
-- [ ] If redeploying: prod stamp is `450b401`; nothing user-facing pending.
+- [ ] If redeploying: prod stamp is now `75190a6` (undef-logos) / `c691f6d` (scanlines-system); nothing user-facing pending.
