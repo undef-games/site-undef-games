@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test test-assets typecheck typecheck-assets e2e
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test test-assets typecheck typecheck-assets e2e sync-scanlines check-scanlines
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -8,6 +8,12 @@ help: ## Show this help
 
 stamp: ## Refresh data/build.json with current SHA + timestamp
 	@bash scripts/stamp_build.sh
+
+sync-scanlines: ## Vendor the canonical scanlines Hugo theme
+	@node ../scanlines-system/scripts/sync-scanlines.mjs --hugo --target .
+
+check-scanlines: ## Fail if the vendored theme drifted from canonical
+	@node ../scanlines-system/scripts/sync-scanlines.mjs --hugo --check --target .
 
 install-root: ## Install root tool dependencies
 	@npm ci

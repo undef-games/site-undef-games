@@ -14,6 +14,50 @@ enableRobotsTXT = true
   lab = "/lab/"
   login_url = "https://account.undef.games/"
   tagline = "Systems, toys, and game-shaped experiments tuned out of undefined space."
+  theme_variant = "undef"
+  brand_mark = "UG"
+  show_footer_on_home = true
+  [[params.nav]]
+    label = "Games"
+    href  = "/games/"
+  [[params.nav]]
+    label = "Logs"
+    href  = "/logs/"
+  [[params.nav]]
+    label = "About"
+    href  = "/about/"
+  [params.cta]
+    label = "Log in"
+    href  = "https://account.undef.games/"
+  [params.footer_org]
+    name = "undef games"
+    blurb = "Game tools and systems for shared play, online and off. Operated by MindTenet™ LLC."
+    copyright = "© 2026 MindTenet™ LLC · Undef Games™ is a trademark of MindTenet LLC."
+  [[params.footer_columns]]
+    title = "Studio"
+    [[params.footer_columns.links]]
+      label = "Games"
+      href  = "/games/"
+    [[params.footer_columns.links]]
+      label = "Logs"
+      href  = "/logs/"
+    [[params.footer_columns.links]]
+      label = "About"
+      href  = "/about/"
+    [[params.footer_columns.links]]
+      label = "Log in"
+      href  = "https://account.undef.games/"
+  [[params.footer_columns]]
+    title = "Legal"
+    [[params.footer_columns.links]]
+      label = "Privacy"
+      href  = "/privacy/"
+    [[params.footer_columns.links]]
+      label = "Refunds"
+      href  = "/refund/"
+    [[params.footer_columns.links]]
+      label = "Terms"
+      href  = "/terms/"
 
 [server]
   port = 1780
