@@ -15,9 +15,10 @@
       <path d="M17.8 15.6a7 7 0 0 1-9.4-9.4 7.4 7.4 0 1 0 9.4 9.4Z" />
     </svg>
   </button>
+  {{ with site.Params.lab }}
   <a
     class="lab-quick-link"
-    href="{{ site.Params.lab }}"
+    href="{{ . }}"
     aria-label="Open lab"
     {{ partial "testid.html" (dict "value" "site-lab-link") | safeHTMLAttr }}
   >
@@ -26,4 +27,5 @@
       <path d="M7.8 15h8.4" />
     </svg>
   </a>
+  {{ end }}
 </div>

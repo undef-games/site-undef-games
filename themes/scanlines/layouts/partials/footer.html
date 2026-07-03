@@ -1,5 +1,5 @@
 <footer class="scan-footer" style="display:block;padding-top:40px;">
-  <div style="width:min(100%,var(--scan-header-width));margin:0 auto;display:grid;grid-template-columns:2fr repeat({{ len site.Params.footer_columns }},1fr);gap:28px;align-items:start;">
+  <div style="width:min(100%,var(--scan-header-width));margin:0 auto;display:grid;grid-template-columns:2fr{{ if gt (len site.Params.footer_columns) 0 }} repeat({{ len site.Params.footer_columns }},1fr){{ end }};gap:28px;align-items:start;">
     <div>
       <p style="color:var(--scan-text);font:900 14px/1 var(--scan-font-mono);margin:0 0 10px;">{{ site.Params.footer_org.name }}</p>
       <p style="color:var(--scan-muted);font:400 13px/1.6 var(--scan-font-mono);max-width:34ch;margin:0;">{{ site.Params.footer_org.blurb }}</p>
