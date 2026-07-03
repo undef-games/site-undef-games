@@ -18,4 +18,6 @@
   {{ if .IsHome -}}
     <link rel="stylesheet" href="/lab/assets/style.css">
   {{- end }}
+  {{ range site.Params.extra_css }}<link rel="stylesheet" href="{{ . }}">
+  {{ end }}
 </head>

@@ -6,7 +6,7 @@
       aria-label="{{ site.Params.site_name }} home"
       {{ partial "testid.html" (dict "value" "site-brand-home") | safeHTMLAttr }}
     >
-      <span class="site-header__mark" aria-hidden="true">{{ site.Params.brand_mark }}</span>
+      {{ with site.Params.brand_mark }}<span class="site-header__mark" aria-hidden="true">{{ . }}</span>{{ end }}
       <span>{{ site.Params.site_name }}</span>
     </a>
     <nav class="site-header__nav" aria-label="Primary navigation"

@@ -1,11 +1,11 @@
 {
-  "sourceSha": "18b4abf44d642f2864bd4943fe035fdbc10e4b9e",
+  "sourceSha": "9f04c01e8ebea5c627b5b83190fe6f439c747e79",
   "files": {
     "layouts/_default/baseof.html": "87c3c45979e23fb203bc86a16d2fde6bc6c1d012142260cf7c77404608c6f4de",
     "layouts/_default/single.html": "9f012f7830527130c70387aea6bc8c9e2b681ecc1cd4e653f56c8921e7286f62",
     "layouts/index.html": "e3476b0556f711fdf3944c2c74dc6ba2123702ee095acc5524aa7a99140e5a67",
-    "layouts/partials/head.html": "fd8134b39bf682e4dcd3c12d72bbe91fa68dff6d44e13b94e85501999c0075b2",
-    "layouts/partials/header.html": "fe742e21541e7b04d52e96bffe4e8bff199b8bbc7c3ba770f6e80a8deebed6b1",
+    "layouts/partials/head.html": "84b6ee85977145a06ac26248403c948dd177c7e063fbcf3b1c4799541d98e520",
+    "layouts/partials/header.html": "67493a9b462fd5102dcc17bb403d88b203ce6c69602b4c5dd99c4adedf7a0444",
     "layouts/partials/footer.html": "54bddaef670b1c5e480f0f1b10d7250855aff11d3ec2eece8da0b7d36607e187",
     "layouts/partials/hero.html": "24592c00a5371416ec8794c3a016a74c8d0d3f6fcc743a3ea1643cc8a39b606e",
     "layouts/partials/identity.html": "d5159188a2d9159b04ef9c78ec03725ed95f552c38beb7694c451f42c34379a9",
