@@ -58,6 +58,9 @@ enableRobotsTXT = true
     [[params.footer_columns.links]]
       label = "Terms"
       href  = "/terms/"
+    [[params.footer_columns.links]]
+      label = "Copyright / DMCA"
+      href  = "/dmca/"
 
 [server]
   port = 1780
