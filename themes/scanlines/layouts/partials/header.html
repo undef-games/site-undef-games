@@ -6,20 +6,23 @@
       aria-label="{{ site.Params.site_name }} home"
       {{ partial "testid.html" (dict "value" "site-brand-home") | safeHTMLAttr }}
     >
-      <span class="site-header__mark" aria-hidden="true">UG</span>
+      {{ with site.Params.brand_mark }}<span class="site-header__mark" aria-hidden="true">{{ . }}</span>{{ end }}
       <span>{{ site.Params.site_name }}</span>
     </a>
-    <nav class="site-header__nav" aria-label="Primary navigation">
-      <a href="/games/" {{ if eq .RelPermalink "/games/" }}aria-current="page"{{ end }}>Games</a>
-      <a href="/logs/" {{ if eq .RelPermalink "/logs/" }}aria-current="page"{{ end }}>Logs</a>
-      <a href="/about/" {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>About</a>
-    </nav>
-    <a
-      class="site-header__login"
-      href="{{ site.Params.login_url }}"
-      {{ partial "testid.html" (dict "value" "site-login-link") | safeHTMLAttr }}
+    <nav class="site-header__nav" aria-label="Primary navigation"
+      {{ partial "testid.html" (dict "value" "site-nav") | safeHTMLAttr }}
     >
-      Log in
-    </a>
+      {{ range site.Params.nav }}
+        <a href="{{ .href }}"
+          {{ if eq $.RelPermalink .href }}aria-current="page"{{ end }}
+          {{ partial "testid.html" (dict "value" (printf "site-nav-%s" (urlize .label))) | safeHTMLAttr }}
+        >{{ .label }}</a>
+      {{ end }}
+    </nav>
+    {{ with site.Params.cta }}
+      <a class="site-header__login" href="{{ .href }}"
+        {{ partial "testid.html" (dict "value" "site-cta") | safeHTMLAttr }}
+      >{{ .label }}</a>
+    {{ end }}
   </div>
 </header>

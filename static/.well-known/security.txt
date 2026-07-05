@@ -1,0 +1,6 @@
+# undef games — security contact (RFC 9116)
+Contact: mailto:security@undef.games
+Policy: https://undef.games/security/
+Preferred-Languages: en
+Canonical: https://undef.games/.well-known/security.txt
+Expires: 2027-06-28T00:00:00.000Z

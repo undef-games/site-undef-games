@@ -1,6 +1,26 @@
-<footer class="scan-footer">
-  <p>undef.games</p>
-  {{ with hugo.Data.build }}
-    <small>{{ .version }}</small>
-  {{ end }}
+<footer class="scan-footer" style="display:block;padding-top:40px;">
+  <div style="width:min(100%,var(--scan-header-width));margin:0 auto;display:grid;grid-template-columns:2fr{{ if gt (len site.Params.footer_columns) 0 }} repeat({{ len site.Params.footer_columns }},1fr){{ end }};gap:28px;align-items:start;">
+    <div>
+      <p style="color:var(--scan-text);font:900 14px/1 var(--scan-font-mono);margin:0 0 10px;">{{ site.Params.footer_org.name }}</p>
+      <p style="color:var(--scan-muted);font:400 13px/1.6 var(--scan-font-mono);max-width:34ch;margin:0;">{{ site.Params.footer_org.blurb }}</p>
+    </div>
+    {{ range site.Params.footer_columns }}
+      <div>
+        <p style="color:var(--scan-signal);font:900 11px/1 var(--scan-font-mono);letter-spacing:0.12em;text-transform:uppercase;margin:0 0 12px;">{{ .title }}</p>
+        <ul style="list-style:none;padding:0;margin:0;line-height:2;">
+          {{ range .links }}
+            <li><a href="{{ .href }}" style="color:var(--scan-text);text-decoration:none;">{{ .label }}</a></li>
+          {{ end }}
+        </ul>
+      </div>
+    {{ end }}
+  </div>
+  <div style="width:min(100%,var(--scan-header-width));margin:24px auto 0;border-top:1px solid var(--scan-line);padding-top:18px;color:var(--scan-muted);font:400 11px/1.7 var(--scan-font-mono);">
+    <p style="margin:0;">{{ site.Params.footer_org.copyright }}</p>
+    {{ if site.Params.footer_legal }}
+      <p style="margin:8px 0 0;">
+        {{ range $i, $l := site.Params.footer_legal }}{{ if $i }} · {{ end }}<a href="{{ $l.href }}" style="color:var(--scan-muted);text-decoration:none;">{{ $l.label }}</a>{{ end }}
+      </p>
+    {{ end }}
+  </div>
 </footer>

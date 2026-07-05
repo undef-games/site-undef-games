@@ -1,0 +1,15 @@
+/* Per-site token overrides. Base tokens come from scanlines.css/chrome.css.
+   Only the accent + phosphor tint differ per family member. */
+.scan-variant--undef {
+  /* inherits base scanlines tokens unchanged */
+}
+.scan-variant--phosphor {
+  --scan-signal: #6cff8a;      /* green phosphor accent (TradeWars) */
+  --scan-text: #d8ffe4;
+  --fx-signal-rgb: 108 255 138;
+}
+.scan-variant--eis {
+  --scan-signal: #48d6ff;      /* cyan accent (EIS) */
+  --scan-text: #dbf4ff;
+  --fx-signal-rgb: 72 214 255;
+}
