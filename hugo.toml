@@ -53,14 +53,36 @@ enableRobotsTXT = true
       label = "Privacy"
       href  = "/privacy/"
     [[params.footer_columns.links]]
-      label = "Refunds"
-      href  = "/refund/"
-    [[params.footer_columns.links]]
       label = "Terms"
       href  = "/terms/"
     [[params.footer_columns.links]]
+      label = "Refunds"
+      href  = "/refund/"
+    [[params.footer_columns.links]]
+      label = "Cookies"
+      href  = "/cookies/"
+    [[params.footer_columns.links]]
+      label = "Acceptable Use"
+      href  = "/acceptable-use/"
+    [[params.footer_columns.links]]
+      label = "EULA"
+      href  = "/eula/"
+    [[params.footer_columns.links]]
       label = "Copyright / DMCA"
       href  = "/dmca/"
+  # fine-print / business-facing legal row under the copyright line
+  [[params.footer_legal]]
+    label = "Creator Agreement"
+    href  = "/creator-agreement/"
+  [[params.footer_legal]]
+    label = "Security"
+    href  = "/security/"
+  [[params.footer_legal]]
+    label = "Data Processing (DPA)"
+    href  = "/dpa/"
+  [[params.footer_legal]]
+    label = "Subprocessors"
+    href  = "/subprocessors/"
 
 [server]
   port = 1780
