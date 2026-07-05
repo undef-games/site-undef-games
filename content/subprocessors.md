@@ -12,12 +12,12 @@ below ("subprocessors") to help deliver the Services. This list supplements our
 
 | Subprocessor | Purpose | Primary location |
 |---|---|---|
-| **Cloudflare, Inc.** | Hosting, CDN, edge compute, and storage (including D1 and R2) for the sites, accounts, and content | United States (global edge) |
+| **Cloudflare, Inc.** | Hosting, CDN, edge compute, storage (D1, R2), analytics, and email routing/forwarding for our domains | United States (global edge) |
 | **Stripe, Inc.** | Payment processing, subscriptions, tax calculation, and creator payouts (Stripe Connect) | United States |
-| **Resend** | Transactional and account email delivery | United States |
 | **Discord, GitHub, Google** | Optional third-party sign-in, only if you choose to connect them | United States |
-<!-- TODO: confirm this list matches production (email provider, analytics, any
-     support/notification tools) before relying on it. -->
+<!-- TODO: if/when a dedicated transactional-email provider (for account
+     verification, notifications) is used, add it here. Confirm any analytics or
+     support/notification tools before relying on this list. -->
 
 ## Changes
 
