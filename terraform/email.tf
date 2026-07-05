@@ -1,43 +1,48 @@
-# Cloudflare Email Routing for the legal/contact addresses referenced on the site
-# (support@, copyright@, security@). Email routing is already live on this zone
-# (MX = route*.mx.cloudflare.net); these resources bring it under Terraform.
-# IMPORTANT: import the existing settings, destination, and rules before applying —
-# see terraform/README.md ("Email routing — import before apply").
+# Cloudflare Email Routing for the legal/contact addresses on undef.games.
+# Routing is already enabled on the zone (MX = route*.mx.cloudflare.net); we manage
+# only these three rules and leave the rest (no-reply, personal, catch-all) alone.
+#
+#   support@   -> already exists, routed to the `undef-support` Worker: IMPORT it.
+#   copyright@ -> had NO rule (would bounce): created as a forward.
+#   security@  -> had NO rule (would bounce): created as a forward.
+#
+# See terraform/README.md for the import command + token scopes.
 
-# Ensure Email Routing is enabled for the zone.
-resource "cloudflare_email_routing_settings" "undef" {
-  zone_id = data.cloudflare_zone.root.id
+locals {
+  email_rules = {
+    support = {
+      to     = "support@${var.apex_domain}"
+      type   = "worker"
+      target = "undef-support"
+    }
+    copyright = {
+      to     = "copyright@${var.apex_domain}"
+      type   = "forward"
+      target = var.email_forward_to
+    }
+    security = {
+      to     = "security@${var.apex_domain}"
+      type   = "forward"
+      target = var.email_forward_to
+    }
+  }
 }
 
-# The verified destination address that mail is forwarded to (account-level).
-# Creating this fresh triggers a Cloudflare verification email; when importing an
-# already-verified destination, no verification is needed.
-resource "cloudflare_email_routing_address" "forward_to" {
-  account_id = var.cloudflare_account_id
-  email      = var.email_forward_to
-}
-
-# One forwarding rule per legal/contact local-part -> the destination above.
 resource "cloudflare_email_routing_rule" "legal" {
-  for_each = toset(var.routed_local_parts)
+  for_each = local.email_rules
 
   zone_id = data.cloudflare_zone.root.id
-  name    = "${each.key}@${var.apex_domain} -> ${var.email_forward_to}"
+  name    = "${each.value.to} (${each.value.type})"
   enabled = true
 
   matchers = [{
     type  = "literal"
     field = "to"
-    value = "${each.key}@${var.apex_domain}"
+    value = each.value.to
   }]
 
   actions = [{
-    type  = "forward"
-    value = [var.email_forward_to]
+    type  = each.value.type
+    value = [each.value.target]
   }]
-
-  depends_on = [
-    cloudflare_email_routing_settings.undef,
-    cloudflare_email_routing_address.forward_to,
-  ]
 }
