@@ -51,3 +51,14 @@ variable "site_root_dir" {
   type        = string
   default     = "/"
 }
+
+variable "email_forward_to" {
+  description = "Verified destination inbox that support@/copyright@/security@ forward to. Must already be a verified Cloudflare Email Routing destination for a clean import."
+  type        = string
+}
+
+variable "routed_local_parts" {
+  description = "Local-parts (before @apex_domain) to route to the destination inbox."
+  type        = list(string)
+  default     = ["support", "copyright", "security"]
+}
