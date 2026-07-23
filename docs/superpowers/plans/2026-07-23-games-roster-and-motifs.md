@@ -337,16 +337,47 @@ In `site-app.tsx`, delete the six hardcoded `<section className="landing-section
 
 Note `sectionEffects` is `Record<string, SectionToyEffect>` after Task 3; until then the index access needs the `as` cast shown.
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [ ] **Step 4: Update the canonical Hugo template to the new shape**
+
+`../scanlines-system/hugo/scanlines/layouts/index.html` still emits the old
+object shape at its `$sections := dict …` block. No current consumer uses it —
+`site-undef-games` gains a project-level override in Task 8, and
+`site-tradewars-com`, `site-eisonline-com`, and `undef-bbs` already override
+`layouts/index.html` and emit no `site-copy-data` blob at all. Leaving it
+emitting an incompatible shape would silently blank the next site that adopts
+it, so convert it to the array form with `with` guards so absent keys are
+skipped:
+
+```go-html-template
+  {{ $sections := slice }}
+  {{ with hugo.Data.site.home.signal }}
+    {{ $sections = $sections | append (dict "id" "signal" "kicker" .kicker "title" .title "body" .copy) }}
+  {{ end }}
+  {{ with hugo.Data.site.home.products_intro }}
+    {{ $sections = $sections | append (dict "id" "projects" "kicker" .kicker "title" .title) }}
+  {{ end }}
+  {{ with hugo.Data.site.home.identity }}
+    {{ $sections = $sections | append (dict "id" "identity" "kicker" .kicker "title" .title "body" .copy) }}
+  {{ end }}
+  {{ with hugo.Data.site.home.closing }}
+    {{ $sections = $sections | append (dict "id" "closing" "kicker" .kicker "title" .title "action" .action) }}
+  {{ end }}
+```
+
+Drop the `warp`, `dice`, and `taybols` dicts entirely — they were undef.games
+product names living in a shared theme, which is the root problem this change
+exists to fix.
+
+- [ ] **Step 5: Run tests to verify they pass**
 
 Run: `cd ../scanlines-system && npm run test:run`
 Expected: PASS — full suite, including the existing station tests.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 cd ../scanlines-system
-git add src/atmosphere/site/site-app.tsx src/atmosphere/site/site-app.test.tsx
+git add src/atmosphere/site/site-app.tsx src/atmosphere/site/site-app.test.tsx hugo/scanlines/layouts/index.html
 git commit -m "feat(site): render landing sections from the supplied array
 
 Removes the per-product JSX blocks so the shared surface no longer names
