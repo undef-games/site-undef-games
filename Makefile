@@ -1,4 +1,4 @@
-.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test test-assets typecheck typecheck-assets e2e sync-scanlines check-scanlines
+.PHONY: help install-root install-lab stamp build-hugo build-lab build serve clean deploy deploy-preview preview test test-assets typecheck typecheck-assets e2e sync-scanlines check-scanlines gen-site-copy check-generated
 .NOTPARALLEL: clean build
 
 SHELL := /bin/bash
@@ -14,6 +14,12 @@ sync-scanlines: ## Vendor the canonical scanlines Hugo theme
 
 check-scanlines: ## Fail if the vendored theme drifted from canonical
 	@node ../scanlines-system/scripts/sync-scanlines.mjs --hugo --check --target .
+
+gen-site-copy: ## Regenerate lab/src/app/site-copy.ts from data/site/games.json
+	@node scripts/gen-site-copy.mjs
+
+check-generated: ## Fail if generated files are stale
+	@bash ci/check-generated.sh
 
 install-root: ## Install root tool dependencies
 	@npm ci

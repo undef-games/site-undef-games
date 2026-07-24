@@ -34,48 +34,55 @@ const VALID_SITE_SURFACE_COPY: SiteSurfaceCopy = {
       tag: 'TAYBOLS',
     },
   ],
-  sections: {
-    signal: {
+  sections: [
+    {
+      id: 'signal',
       kicker: 'Interactive field',
       title: 'Responsive by design, not by decoration.',
       body: 'The scanline field stays alive under the cursor and the page so the site feels active without hiding the products behind abstract motion.',
     },
-    projects: {
+    {
+      id: 'projects',
       kicker: 'Live routes',
       title: 'Projects built to be used, watched, and played with.',
     },
-    warp: {
+    {
+      id: 'warp',
       kicker: 'Runtime platform',
       title: 'TradeWars: WARP Agent Runtime Platform',
       body: 'A live alpha route for agents, automation, and operator surfaces in the TradeWars world.',
       href: 'https://warp.undef.games/',
       linkLabel: 'Explore WARP',
     },
-    dice: {
+    {
+      id: 'dice',
       kicker: 'Dice tools',
       title: 'Undef Dice',
       body: 'Fast table-ready dice tools for shared sessions, quick rulings, and repeat play.',
       href: 'https://undefdice.com/',
       linkLabel: 'Open Undef Dice',
     },
-    taybols: {
+    {
+      id: 'taybols',
       kicker: 'Small experiments',
       title: 'Taybols',
       body: 'A smaller route for odd tools, playful systems, and experiments worth testing in public.',
       href: 'https://taybols.undef.games/',
       linkLabel: 'Visit Taybols',
     },
-    identity: {
+    {
+      id: 'identity',
       kicker: 'Identity baseline',
       title: 'Good systems should make shared play easier to reach.',
       body: 'We build the technical parts seriously so the experience on the other side can stay welcoming, legible, and fun.',
     },
-    closing: {
+    {
+      id: 'closing',
       kicker: 'Next route',
       title: 'Follow the live work, then step into the build that fits you.',
       action: 'Back to top',
     },
-  },
+  ],
 }
 
 function createValidPayload() {
@@ -156,7 +163,9 @@ describe('site copy loader', () => {
 
   it('returns null when a nested identity section entry is malformed', () => {
     const payload = createValidPayload()
-    payload.sections.identity.body = 7 as never
+    const identitySection = payload.sections.find((section) => section.id === 'identity')
+    if (!identitySection) throw new Error('expected an identity section in the fixture')
+    identitySection.body = 7 as never
     mountSiteCopyScript(payload)
 
     expect(readSiteSurfaceCopy()).toBeNull()
@@ -171,10 +180,21 @@ describe('lab site copy constants', () => {
     expect(LAB_HERO_COPY.secondaryAction.label).toBe('View projects')
   })
 
-  it('projects list has three entries with distinct class names', () => {
-    expect(LAB_PROJECTS).toHaveLength(3)
+  it('projects list has ten entries with distinct class names', () => {
+    expect(LAB_PROJECTS).toHaveLength(10)
     const classNames = LAB_PROJECTS.map((p) => p.className)
-    expect(classNames).toEqual(['product-link--warp', 'product-link--dice', 'product-link--taybols'])
+    expect(classNames).toEqual([
+      'product-link--warp',
+      'product-link--dice',
+      'product-link--taybols',
+      'product-link--grove',
+      'product-link--haiku',
+      'product-link--becoming',
+      'product-link--proverb',
+      'product-link--stoke',
+      'product-link--currents',
+      'product-link--amor',
+    ])
   })
 
   it('sections contain expected kicker text for all named sections', () => {
@@ -182,7 +202,9 @@ describe('lab site copy constants', () => {
     expect(LAB_SECTIONS.projects.kicker).toBe('Live routes')
     expect(LAB_SECTIONS.warp.kicker).toBe('Flagship route')
     expect(LAB_SECTIONS.dice.kicker).toBe('Table tools')
-    expect(LAB_SECTIONS.taybols.kicker).toBe('Small experiments')
+    expect(LAB_SECTIONS.taybols.kicker).toBe('Tabletop tables')
+    expect(LAB_SECTIONS.grove.kicker).toBe('Repo weather')
+    expect(LAB_SECTIONS.haiku.kicker).toBe('Three lines')
     expect(LAB_SECTIONS.identity.kicker).toBe('Company baseline')
     expect(LAB_SECTIONS.closing.kicker).toBe('undef.games')
   })
