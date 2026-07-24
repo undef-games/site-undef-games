@@ -4,10 +4,10 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   test: {
     environment: 'jsdom',
-    include: ['themes/scanlines/assets/ts/**/*.test.ts'],
+    include: ['themes/scanlines/assets/ts/**/*.test.ts', 'scripts/**/*.test.ts'],
     coverage: {
       provider: 'v8',
-      include: ['themes/scanlines/assets/ts/**/*.ts'],
+      include: ['themes/scanlines/assets/ts/**/*.ts', 'scripts/**/*.ts'],
       exclude: ['**/*.test.ts'],
       thresholds: { lines: 100, functions: 100, branches: 100, statements: 100 },
     },

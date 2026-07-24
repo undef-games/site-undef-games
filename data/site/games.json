@@ -1,0 +1,119 @@
+{
+  "games": [
+    {
+      "tag": "warp",
+      "tier": "flagship",
+      "label": "WARP: Warp Agent Runtime Portal",
+      "href": "https://warp.undef.games",
+      "description": "Your portal into a TradeWars universe: a live alpha agent platform with automation, operator tooling, and agent-to-agent coordination, all while wrapped around one of the most influential pre-internet online games.",
+      "motif": "warp",
+      "variant": "signal",
+      "section": {
+        "kicker": "Flagship route",
+        "title": "WARP: Warp Agent Runtime Portal.",
+        "copy": "WARP is your portal into a TradeWars universe: a live alpha platform for running, automating, and operating agents, with agent-to-agent (A2A) coordination, a live operator console with real-time takeover, and multi-account fleet orchestration — all while wrapped around one of the most influential pre-internet online games.",
+        "link_label": "Explore WARP"
+      }
+    },
+    {
+      "tag": "dice",
+      "tier": "flagship",
+      "label": "Undef Dice",
+      "href": "https://undefdice.com",
+      "description": "Dice and table tools for shared play at the table and on the network.",
+      "motif": "dice",
+      "variant": "system",
+      "section": {
+        "kicker": "Table tools",
+        "title": "Undef Dice keeps shared play moving.",
+        "copy": "Fast dice and lightweight utilities for groups who want clearer game moments online and off.",
+        "link_label": "Open Undef Dice"
+      }
+    },
+    {
+      "tag": "taybols",
+      "tier": "flagship",
+      "label": "Taybols",
+      "href": "https://taybols.com",
+      "description": "Random tables for tabletop play. Roll for NPCs, encounters, and rumors, build your own, or import a whole book from a PDF.",
+      "motif": "taybols",
+      "variant": "signal",
+      "section": {
+        "kicker": "Tabletop tables",
+        "title": "Taybols rolls the random tables your game needs.",
+        "copy": "Roll weighted tables for NPCs, encounters, moods, and rumors, or drop in a PDF to turn a sourcebook into rollable tables. Everything stays on your device, with no account and no sync.",
+        "link_label": "Open Taybols"
+      }
+    },
+    {
+      "tag": "grove",
+      "tier": "flagship",
+      "label": "Grove",
+      "href": "https://grove.undef.games",
+      "description": "Browser-based git history visualizer — directories as a force-directed tree, files orbiting as colored dots, contributors gliding between them. No install.",
+      "motif": "grove",
+      "variant": "system",
+      "section": {
+        "kicker": "Repo weather",
+        "title": "Grove plays a repository back as a living tree.",
+        "copy": "Point it at any git history and watch directories spread into a force-directed tree while files orbit as colored dots and contributors glide between them firing beams. No install, no backend — a live demo the moment the page loads, and a drag-anywhere timeline to scrub the whole history.",
+        "link_label": "Open Grove"
+      }
+    },
+    {
+      "tag": "haiku",
+      "tier": "flagship",
+      "label": "haiku.to",
+      "href": "https://haiku.to",
+      "description": "Write haiku, watch them fall, remix what other people leave behind.",
+      "motif": "haiku",
+      "variant": "signal",
+      "section": {
+        "kicker": "Three lines",
+        "title": "haiku.to turns three lines into a shared feed.",
+        "copy": "Write a haiku, watch it fall through the feed, and remix the ones other people leave behind. Compose in five-seven-five, follow a thread of variations, or let the day's verses drift past.",
+        "link_label": "Open haiku.to"
+      }
+    },
+    {
+      "tag": "becoming",
+      "tier": "listed",
+      "label": "becoming.to",
+      "href": "https://becoming.to",
+      "description": "One affirmation a day. You are already on your way.",
+      "motif": "becoming"
+    },
+    {
+      "tag": "proverb",
+      "tier": "listed",
+      "label": "proverb.to",
+      "href": "https://proverb.to",
+      "description": "One old saying a day. Draw the water and it rises.",
+      "motif": "proverb"
+    },
+    {
+      "tag": "stoke",
+      "tier": "listed",
+      "label": "stoke.to",
+      "href": "https://stoke.to",
+      "description": "One motivational quote a day. Stoke the fire.",
+      "motif": "stoke"
+    },
+    {
+      "tag": "currents",
+      "tier": "listed",
+      "label": "currents.to",
+      "href": "https://currents.to",
+      "description": "A daily ambient puzzle on a sumi-e canvas — one brushstroke to carve a riverbed. Same landscape for everyone.",
+      "motif": "currents"
+    },
+    {
+      "tag": "amor",
+      "tier": "listed",
+      "label": "amor.to",
+      "href": "https://amor.to",
+      "description": "A quiet place for two. Not a messaging app — a shared digital terrarium.",
+      "motif": "amor"
+    }
+  ]
+}
