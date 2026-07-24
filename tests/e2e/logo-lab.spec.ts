@@ -172,7 +172,7 @@ test('advertises concrete undef games projects', async ({ page }) => {
     /https:\/\/warp\.undef\.games\/?/,
   )
   await expect(projects.getByRole('link', { name: /Undef Dice/i })).toHaveAttribute('href', /https:\/\/undefdice\.com\/?/)
-  await expect(projects.getByRole('link', { name: /Taybols/i })).toHaveAttribute('href', /https:\/\/taybols\.undef\.games\/?/)
+  await expect(projects.getByRole('link', { name: /Taybols/i })).toHaveAttribute('href', /https:\/\/taybols\.com\/?/)
   await expect(page.getByRole('heading', { name: /good systems should make shared play easier to reach/i })).toBeVisible()
   await expect(
     page.getByText(/undef games builds the technical side of play so people can gather, operate, and have fun/i),

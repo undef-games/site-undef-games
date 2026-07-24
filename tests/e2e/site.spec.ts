@@ -17,7 +17,10 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
     'href',
     '/about/',
   )
-  await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
+  await expect(page.getByRole('banner').getByRole('link', { name: /log in/i })).toHaveAttribute(
+    'href',
+    'https://account.undef.games/',
+  )
   await expect(page.getByRole('link', { name: /open lab/i }).last()).toHaveAttribute('href', '/lab/')
   await expect(page.locator('.station-shell')).toHaveAttribute('data-surface', 'site')
   await expect(page.getByLabel('interactive station signal')).toHaveAttribute('data-renderer', 'pixijs')
@@ -37,7 +40,10 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
       /undef games builds the technical side of play so people can gather, operate, and have fun/i,
     ),
   ).toBeVisible()
-  const projects = page.getByLabel('undef games projects')
+  // The projects <section>'s accessible name is now the dynamic section title (data-driven by
+  // the games roster), not a static "undef games projects" label — scope to the product link
+  // list instead, which keeps a stable hardcoded aria-label.
+  const projects = page.getByLabel('undef games project links')
   await expect(projects.getByRole('link', { name: /WARP: Warp Agent Runtime Portal/i })).toHaveAttribute(
     'href',
     /https:\/\/warp\.undef\.games\/?/,
@@ -45,7 +51,7 @@ test('renders the Hugo scanlines landing page', async ({ page }) => {
   await expect(projects.getByRole('link', { name: /Undef Dice/i })).toHaveAttribute('href', /https:\/\/undefdice\.com\/?/)
   await expect(projects.getByRole('link', { name: /^taybols Taybols/i })).toHaveAttribute(
     'href',
-    /https:\/\/taybols\.undef\.games\/?/,
+    /https:\/\/taybols\.com\/?/,
   )
 })
 
@@ -59,9 +65,14 @@ test('serves separate Hugo pages with the scanlines header', async ({ page }) =>
 
     await expect(page.getByRole('banner')).toBeVisible()
     await expect(page.getByRole('heading', { name: route.heading })).toBeVisible()
-    await expect(page.getByRole('link', { name: /log in/i })).toHaveAttribute('href', 'https://account.undef.games/')
+    await expect(page.getByRole('banner').getByRole('link', { name: /log in/i })).toHaveAttribute(
+      'href',
+      'https://account.undef.games/',
+    )
     await expect(page.getByRole('link', { name: /open lab/i })).toHaveAttribute('href', '/lab/')
-    await expect(page.getByRole('contentinfo')).toContainText(/undef\.games/i)
+    // Footer copy no longer prints the bare "undef.games" domain (legal footer now leads with
+    // the "undef games" site name and an "Undef Games™" trademark line) — match current copy.
+    await expect(page.getByRole('contentinfo')).toContainText(/undef games/i)
     await expect(page.getByLabel('effects controls')).toHaveCount(0)
   }
 })
@@ -101,6 +112,8 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
         scanlineLayers: { crt: false, glitch: false, graph: false },
         sectionEffects: {
           dice: 'bars',
+          grove: 'grove',
+          haiku: 'haiku',
           identity: 'tumble',
           projects: 'tumble',
           signal: 'bars',
@@ -137,8 +150,10 @@ test('hydrates saved scanlines theme across Hugo pages', async ({ page }) => {
   await expect
     .poll(() => page.locator('.site-header__mark').evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(64, 85, 0)')
+  // The footer now carries several <p> tags (org blurb, column titles, copyright, legal links);
+  // scope to the first one (the org name), which is the only one styled with --scan-text.
   await expect
-    .poll(() => page.locator('.scan-footer p').evaluate((element) => getComputedStyle(element).color))
+    .poll(() => page.locator('.scan-footer p').first().evaluate((element) => getComputedStyle(element).color))
     .toBe('rgb(17, 19, 13)')
 
   const themeToggle = page.locator('[data-theme-toggle]')
@@ -166,7 +181,7 @@ test('keeps the site header responsive without pinning controls to wide viewport
   await page.goto('/')
 
   const brandBox = await page.locator('.site-header__brand').boundingBox()
-  const loginBox = await page.getByRole('link', { name: /log in/i }).boundingBox()
+  const loginBox = await page.getByRole('banner').getByRole('link', { name: /log in/i }).boundingBox()
   const navBox = await page.getByRole('navigation', { name: /primary/i }).boundingBox()
   const heroTextInset = await page.locator('.station-hero').evaluate((element) => {
     const rect = element.getBoundingClientRect()
@@ -186,7 +201,7 @@ test('keeps the site header responsive without pinning controls to wide viewport
 
   await expect(page.getByRole('banner')).toBeVisible()
   await expect(page.getByRole('navigation', { name: /primary/i })).toBeVisible()
-  await expect(page.getByRole('link', { name: /log in/i })).toBeVisible()
+  await expect(page.getByRole('banner').getByRole('link', { name: /log in/i })).toBeVisible()
   const headerBox = await page.getByRole('banner').boundingBox()
   const heroHeadingBox = await page.getByRole('heading', { name: /^undef games$/i }).boundingBox()
   const mobileCanvasTouchAction = await page
@@ -293,4 +308,37 @@ test('returns from the lab to the previous undef games page when available', asy
   await backLink.click()
 
   await expect(page).toHaveURL(/\/games\/$/)
+})
+
+test('renders all 10 games in the homepage projects section', async ({ page }) => {
+  await page.goto('/')
+
+  // "undef games projects" is the section's own (dynamic, title-derived) accessible name; the
+  // product list itself carries a stable hardcoded aria-label — see the roster-links assertions
+  // above for why this test targets that instead.
+  await expect(page.getByLabel('undef games project links').getByRole('link')).toHaveCount(10)
+})
+
+test('scrolls the full 10-game roster through the homepage marquee', async ({ page }) => {
+  await page.goto('/')
+
+  // The roster (10 games) is duplicated once for a seamless marquee loop, so 20 tiles render;
+  // the duplicate pass is aria-hidden.
+  await expect(page.locator('.landing-marquee__tile')).toHaveCount(20)
+  await expect(page.locator('.landing-marquee').getByText('amor.to').first()).toBeVisible()
+})
+
+test('renders the eight deep landing sections for the roster', async ({ page }) => {
+  await page.goto('/')
+
+  // signal, projects, warp, dice, taybols, grove, haiku, identity — the closing section renders
+  // as .landing-final, not .landing-section, so it is intentionally excluded from this count.
+  await expect(page.locator('.landing-section')).toHaveCount(8)
+})
+
+test('never renders a blank hydrated homepage (fail-closed loader regression guard)', async ({ page }) => {
+  await page.goto('/')
+
+  await expect(page.locator('.station-shell')).toBeVisible()
+  await expect(page.locator('#scanlines-root')).not.toBeEmpty()
 })
