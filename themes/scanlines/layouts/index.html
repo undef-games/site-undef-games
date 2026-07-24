@@ -13,48 +13,19 @@
       "tag" .tag
     ) }}
   {{ end }}
-  {{ $sections := dict
-    "signal" (dict
-      "kicker" hugo.Data.site.home.signal.kicker
-      "title" hugo.Data.site.home.signal.title
-      "body" hugo.Data.site.home.signal.copy
-    )
-    "projects" (dict
-      "kicker" $productsIntro.kicker
-      "title" $productsIntro.title
-    )
-    "warp" (dict
-      "kicker" hugo.Data.site.home.warp.kicker
-      "title" hugo.Data.site.home.warp.title
-      "body" hugo.Data.site.home.warp.copy
-      "href" hugo.Data.site.home.warp.href
-      "linkLabel" hugo.Data.site.home.warp.link_label
-    )
-    "dice" (dict
-      "kicker" hugo.Data.site.home.dice.kicker
-      "title" hugo.Data.site.home.dice.title
-      "body" hugo.Data.site.home.dice.copy
-      "href" hugo.Data.site.home.dice.href
-      "linkLabel" hugo.Data.site.home.dice.link_label
-    )
-    "taybols" (dict
-      "kicker" hugo.Data.site.home.taybols.kicker
-      "title" hugo.Data.site.home.taybols.title
-      "body" hugo.Data.site.home.taybols.copy
-      "href" hugo.Data.site.home.taybols.href
-      "linkLabel" hugo.Data.site.home.taybols.link_label
-    )
-    "identity" (dict
-      "kicker" $identity.kicker
-      "title" $identity.title
-      "body" $identity.copy
-    )
-    "closing" (dict
-      "kicker" hugo.Data.site.home.closing.kicker
-      "title" hugo.Data.site.home.closing.title
-      "action" hugo.Data.site.home.closing.action
-    )
-  }}
+  {{ $sections := slice }}
+  {{ with hugo.Data.site.home.signal }}
+    {{ $sections = $sections | append (dict "id" "signal" "kicker" .kicker "title" .title "body" .copy) }}
+  {{ end }}
+  {{ with hugo.Data.site.home.products_intro }}
+    {{ $sections = $sections | append (dict "id" "projects" "kicker" .kicker "title" .title) }}
+  {{ end }}
+  {{ with hugo.Data.site.home.identity }}
+    {{ $sections = $sections | append (dict "id" "identity" "kicker" .kicker "title" .title "body" .copy) }}
+  {{ end }}
+  {{ with hugo.Data.site.home.closing }}
+    {{ $sections = $sections | append (dict "id" "closing" "kicker" .kicker "title" .title "action" .action) }}
+  {{ end }}
   {{ $siteCopy := dict
     "hero" (dict
       "kicker" $hero.kicker
