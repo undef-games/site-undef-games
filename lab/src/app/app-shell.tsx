@@ -396,7 +396,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
           <p>{LAB_SECTIONS.signal.body}</p>
         </section>
 
-        <section className="landing-section landing-section--products" id="projects" aria-label="undef games projects">
+        <section className="landing-section landing-section--projects" id="projects" aria-label="undef games projects">
           <SectionToy variant="system" effect={sectionEffects.projects} />
           <p className="section-kicker">{LAB_SECTIONS.projects.kicker}</p>
           <h2>{LAB_SECTIONS.projects.title}</h2>

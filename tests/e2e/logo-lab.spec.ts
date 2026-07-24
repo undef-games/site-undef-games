@@ -562,7 +562,7 @@ test('switches section background effects independently', async ({ page }) => {
 
   const effects = page.getByLabel('effects controls')
   const signalToy = page.locator('.landing-section--signal .section-toy')
-  const projectsToy = page.locator('.landing-section--products .section-toy')
+  const projectsToy = page.locator('.landing-section--projects .section-toy')
   const warpToy = page.locator('.landing-section--warp .section-toy')
   const identityToy = page.locator('.landing-section--identity .section-toy')
   await expect(signalToy).toHaveClass(/section-toy--effect-bars/)
@@ -614,7 +614,7 @@ test('switches section background effects independently', async ({ page }) => {
 
   await effects.getByLabel('Projects background').selectOption('frames')
   await expect(projectsToy).toHaveClass(/section-toy--effect-frames/)
-  await expect.poll(() => page.locator('.landing-section--products .section-toy span').first().evaluate(readToyRect)).toMatchObject({
+  await expect.poll(() => page.locator('.landing-section--projects .section-toy span').first().evaluate(readToyRect)).toMatchObject({
     height: 78,
     width: 120,
   })
