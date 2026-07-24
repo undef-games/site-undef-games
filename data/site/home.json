@@ -13,26 +13,6 @@
     "kicker": "Live routes",
     "title": "Projects built to be used, watched, and played with."
   },
-  "products": [
-    {
-      "tag": "warp",
-      "label": "WARP: Warp Agent Runtime Portal",
-      "href": "https://warp.undef.games",
-      "description": "Your portal into a TradeWars universe: a live alpha agent platform with automation, operator tooling, and agent-to-agent coordination, all while wrapped around one of the most influential pre-internet online games."
-    },
-    {
-      "tag": "dice",
-      "label": "Undef Dice",
-      "href": "https://undefdice.com",
-      "description": "Dice and table tools for shared play at the table and on the network."
-    },
-    {
-      "tag": "taybols",
-      "label": "Taybols",
-      "href": "https://taybols.undef.games",
-      "description": "Random tables for tabletop play. Roll for NPCs, encounters, and rumors, build your own, or import a whole book from a PDF."
-    }
-  ],
   "identity": {
     "kicker": "Company baseline",
     "title": "Good systems should make shared play easier to reach.",
@@ -42,27 +22,6 @@
     "kicker": "Interactive field",
     "title": "Shared play needs strong systems underneath it.",
     "copy": "The work here spans products, tools, and experiments built for shared play online and off."
-  },
-  "warp": {
-    "kicker": "Flagship route",
-    "title": "WARP: Warp Agent Runtime Portal.",
-    "copy": "WARP is your portal into a TradeWars universe: a live alpha platform for running, automating, and operating agents, with agent-to-agent (A2A) coordination, a live operator console with real-time takeover, and multi-account fleet orchestration — all while wrapped around one of the most influential pre-internet online games.",
-    "link_label": "Explore WARP",
-    "href": "https://warp.undef.games"
-  },
-  "dice": {
-    "kicker": "Table tools",
-    "title": "Undef Dice keeps shared play moving.",
-    "copy": "Fast dice and lightweight utilities for groups who want clearer game moments online and off.",
-    "link_label": "Open Undef Dice",
-    "href": "https://undefdice.com"
-  },
-  "taybols": {
-    "kicker": "Tabletop tables",
-    "title": "Taybols rolls the random tables your game needs.",
-    "copy": "Roll weighted tables for NPCs, encounters, moods, and rumors, or drop in a PDF to turn a sourcebook into rollable tables. Everything stays on your device, with no account and no sync.",
-    "link_label": "Open Taybols",
-    "href": "https://taybols.undef.games"
   },
   "closing": {
     "kicker": "undef.games",

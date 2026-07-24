@@ -1,0 +1,69 @@
+{{ define "main" }}
+  {{ $hero := hugo.Data.site.home.hero }}
+  {{ $games := hugo.Data.site.games.games }}
+  {{ $flagships := where $games "tier" "flagship" }}
+
+  {{ $projectItems := slice }}
+  {{ $marquee := slice }}
+  {{ range $games }}
+    {{ $projectItems = $projectItems | append (dict
+      "className" (printf "product-link--%s" .tag)
+      "description" .description "href" .href "label" .label "tag" .tag) }}
+    {{ $marquee = $marquee | append (dict "href" .href "label" .label) }}
+  {{ end }}
+
+  {{ $sections := slice
+    (dict "id" "signal" "kicker" hugo.Data.site.home.signal.kicker
+          "title" hugo.Data.site.home.signal.title "body" hugo.Data.site.home.signal.copy)
+    (dict "id" "projects" "kicker" hugo.Data.site.home.products_intro.kicker
+          "title" hugo.Data.site.home.products_intro.title) }}
+  {{ range $flagships }}
+    {{ $sections = $sections | append (dict
+      "id" .tag "kicker" .section.kicker "title" .section.title "body" .section.copy
+      "href" .href "linkLabel" .section.link_label "motif" .motif "variant" .variant
+      "ariaLabel" .label) }}
+  {{ end }}
+  {{ $sections = $sections | append
+    (dict "id" "identity" "kicker" hugo.Data.site.home.identity.kicker
+          "title" hugo.Data.site.home.identity.title "body" hugo.Data.site.home.identity.copy)
+    (dict "id" "closing" "kicker" hugo.Data.site.home.closing.kicker
+          "title" hugo.Data.site.home.closing.title "action" hugo.Data.site.home.closing.action) }}
+
+  {{ $siteCopy := dict
+    "hero" (dict "kicker" $hero.kicker "title" $hero.title "support" $hero.copy
+      "primaryAction" (dict "href" $hero.primary_href "label" $hero.primary_label)
+      "secondaryAction" (dict "href" $hero.secondary_href "label" $hero.secondary_label)
+      "statusLabel" $hero.status_label)
+    "sections" $sections
+    "projects" $projectItems
+    "marquee" $marquee }}
+
+  <div id="scanlines-root">
+    <script id="site-copy-data" type="application/json">{{ $siteCopy | jsonify | safeJS }}</script>
+    <main class="scan-fallback" id="main-content">
+      <section class="scan-fallback__hero" aria-label="undef games landing page">
+        <p class="scan-fallback__kicker">{{ $hero.kicker }}</p>
+        <h1>{{ $hero.title }}</h1>
+        <p>{{ $hero.copy }}</p>
+        <nav class="scan-fallback__actions" aria-label="landing actions">
+          <a href="{{ $hero.primary_href }}">{{ $hero.primary_label }}</a>
+          <a href="{{ $hero.secondary_href }}">{{ $hero.secondary_label }}</a>
+        </nav>
+      </section>
+      <section class="scan-fallback__section" id="projects" aria-label="undef games projects">
+        <p class="scan-fallback__kicker">{{ hugo.Data.site.home.products_intro.kicker }}</p>
+        <h2>{{ hugo.Data.site.home.products_intro.title }}</h2>
+        <div class="scan-fallback__products">
+          {{ range $games }}
+            <a href="{{ .href }}"><span>{{ .tag }}</span><strong>{{ .label }}</strong><small>{{ .description }}</small></a>
+          {{ end }}
+        </div>
+      </section>
+      <section class="scan-fallback__section" aria-label="identity baseline">
+        <p class="scan-fallback__kicker">{{ hugo.Data.site.home.identity.kicker }}</p>
+        <h2>{{ hugo.Data.site.home.identity.title }}</h2>
+        <p>{{ hugo.Data.site.home.identity.copy }}</p>
+      </section>
+    </main>
+  </div>
+{{ end }}
