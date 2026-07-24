@@ -39,15 +39,86 @@
 
 .ug-games { list-style: none; margin: 0; padding: 0; }
 .ug-games__row { position: relative; overflow: hidden; border-bottom: 1px solid rgb(var(--fx-muted-rgb) / 0.12); }
-.ug-games__link { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1rem; text-decoration: none; position: relative; z-index: 2; }
+/* Bottom padding reserves a clear lane for the flyby so the mark never
+   crosses the description text. */
+.ug-games__link { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1rem 2rem; text-decoration: none; position: relative; z-index: 2; }
 .ug-games__link:hover { background: rgb(var(--fx-signal-rgb) / 0.06); }
 .ug-games__name { color: var(--fx-signal); letter-spacing: 0.08em; }
 .ug-games__desc { color: rgb(var(--fx-muted-rgb) / 0.7); }
-.ug-games__flyby { position: absolute; top: 50%; left: 0; margin-top: -0.95rem; z-index: 1; opacity: 0.5;
+.ug-games__flyby { position: absolute; top: auto; bottom: 0.25rem; left: 0; z-index: 3; opacity: 0.85;
   animation: ug-flyby linear infinite;
   animation-duration: calc(9s + (var(--row-index) % 4) * 2.5s);
   animation-delay: calc(var(--row-index) * -1.7s); }
+.ug-games__flyby .ug-motif { width: 1.4rem; height: 1.4rem; }
 @keyframes ug-flyby { from { transform: translateX(-3rem); } to { transform: translateX(100vw); } }
 @media (prefers-reduced-motion: reduce) {
-  .ug-games__flyby { animation: none; left: auto; right: 1rem; opacity: 0.35; }
+  .ug-games__flyby { animation: none; left: auto; right: 1rem; opacity: 0.5; }
+}
+
+/* ── Marquee motif glyphs ────────────────────────────────────────────────
+   The shared package renders a sized `.landing-marquee__glyph--<motif>` hook
+   and paints it with currentColor; the artwork lives here so undef.games
+   iconography stays out of the design system. Same ten marks as /games/. */
+.landing-marquee__glyph {
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.landing-marquee__glyph--warp {
+  -webkit-mask-image: var(--ug-glyph-warp);
+  mask-image: var(--ug-glyph-warp);
+}
+.landing-marquee__glyph--dice {
+  -webkit-mask-image: var(--ug-glyph-dice);
+  mask-image: var(--ug-glyph-dice);
+}
+.landing-marquee__glyph--taybols {
+  -webkit-mask-image: var(--ug-glyph-taybols);
+  mask-image: var(--ug-glyph-taybols);
+}
+.landing-marquee__glyph--grove {
+  -webkit-mask-image: var(--ug-glyph-grove);
+  mask-image: var(--ug-glyph-grove);
+}
+.landing-marquee__glyph--haiku {
+  -webkit-mask-image: var(--ug-glyph-haiku);
+  mask-image: var(--ug-glyph-haiku);
+}
+.landing-marquee__glyph--becoming {
+  -webkit-mask-image: var(--ug-glyph-becoming);
+  mask-image: var(--ug-glyph-becoming);
+}
+.landing-marquee__glyph--proverb {
+  -webkit-mask-image: var(--ug-glyph-proverb);
+  mask-image: var(--ug-glyph-proverb);
+}
+.landing-marquee__glyph--stoke {
+  -webkit-mask-image: var(--ug-glyph-stoke);
+  mask-image: var(--ug-glyph-stoke);
+}
+.landing-marquee__glyph--currents {
+  -webkit-mask-image: var(--ug-glyph-currents);
+  mask-image: var(--ug-glyph-currents);
+}
+.landing-marquee__glyph--amor {
+  -webkit-mask-image: var(--ug-glyph-amor);
+  mask-image: var(--ug-glyph-amor);
+}
+
+/* Glyph artwork. Regenerate with scripts/gen-glyphs.mjs if the marks change. */
+:root {
+  --ug-glyph-warp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 6 L23 15 L15 24 L7 15 Z'/%3E%3Cpath d='M2 11H8M2 19H8M28 11H22M28 19H22'/%3E%3C/svg%3E");
+  --ug-glyph-dice: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='6.5' y='6.5' width='17' height='17' rx='3.5'/%3E%3Ccircle cx='12' cy='12' r='2' fill='white' stroke='none'/%3E%3Ccircle cx='15' cy='15' r='2' fill='white' stroke='none'/%3E%3Ccircle cx='18' cy='18' r='2' fill='white' stroke='none'/%3E%3C/svg%3E");
+  --ug-glyph-taybols: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='6' width='20' height='18' rx='2.5'/%3E%3Cpath d='M10 12H19M10 16H21M10 20H15'/%3E%3C/svg%3E");
+  --ug-glyph-grove: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 26V17M15 17L9.5 11.5M15 17L20.5 11.5'/%3E%3Cpath d='M9.5 11.5L6.5 8M20.5 11.5L23.5 8'/%3E%3Ccircle cx='23.5' cy='7' r='2.4' fill='white' stroke='none'/%3E%3Ccircle cx='6.5' cy='7' r='2.2' fill='white' stroke='none'/%3E%3C/svg%3E");
+  --ug-glyph-haiku: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 10H16M7 15H23M7 20H16'/%3E%3C/svg%3E");
+  --ug-glyph-becoming: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 24H26'/%3E%3Cpath d='M8.5 24A6.5 6.5 0 0 1 21.5 24'/%3E%3Ccircle cx='15' cy='16' r='2.8' fill='white' stroke='none'/%3E%3C/svg%3E");
+  --ug-glyph-proverb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='15' cy='15' r='9'/%3E%3Cpath d='M15 3.5V6.5M26.5 15H23.5M15 26.5V23.5M3.5 15H6.5'/%3E%3Ccircle cx='15' cy='15' r='2.4' fill='white' stroke='none'/%3E%3C/svg%3E");
+  --ug-glyph-stoke: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 3V7.5M15 22.5V27M3 15H7.5M22.5 15H27M6.6 6.6L9.8 9.8M23.4 6.6L20.2 9.8M6.6 23.4L9.8 20.2M23.4 23.4L20.2 20.2'/%3E%3Ccircle cx='15' cy='15' r='3.4' fill='white' stroke='none'/%3E%3C/svg%3E");
+  --ug-glyph-currents: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20Q9 10 15 16T27 12'/%3E%3Ccircle cx='27' cy='12' r='2.2' fill='white' stroke='none'/%3E%3C/svg%3E");
+  --ug-glyph-amor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 6.5L21.5 15L15 23.5L8.5 15Z'/%3E%3Ccircle cx='8.5' cy='15' r='2.6' fill='white' stroke='none'/%3E%3Ccircle cx='21.5' cy='15' r='2.6' fill='white' stroke='none'/%3E%3C/svg%3E");
 }

@@ -328,6 +328,23 @@ test('scrolls the full 10-game roster through the homepage marquee', async ({ pa
   await expect(page.locator('.landing-marquee').getByText('amor.to').first()).toBeVisible()
 })
 
+test('gives every marquee tile its own motif glyph', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('.landing-marquee__glyph')).toHaveCount(20)
+
+  // One distinct mark per game, each actually painted (a missing mask would
+  // leave a bare square).
+  const marks = await page.evaluate(() => {
+    const glyphs = [...document.querySelectorAll('.landing-marquee__glyph')]
+    return {
+      distinct: new Set(glyphs.map((g) => [...g.classList].find((c) => c.includes('--')))).size,
+      unmasked: glyphs.filter((g) => getComputedStyle(g).maskImage === 'none').length,
+    }
+  })
+  expect(marks.distinct).toBe(10)
+  expect(marks.unmasked).toBe(0)
+})
+
 test('renders the eight deep landing sections for the roster', async ({ page }) => {
   await page.goto('/')
 

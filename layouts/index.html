@@ -9,7 +9,7 @@
     {{ $projectItems = $projectItems | append (dict
       "className" (printf "product-link--%s" .tag)
       "description" .description "href" .href "label" .label "tag" .tag) }}
-    {{ $marquee = $marquee | append (dict "href" .href "label" .label) }}
+    {{ $marquee = $marquee | append (dict "href" .href "label" .label "motif" .motif) }}
   {{ end }}
 
   {{ $sections := slice
