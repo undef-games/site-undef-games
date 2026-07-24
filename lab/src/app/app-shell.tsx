@@ -65,7 +65,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
   const [labBackHref, setLabBackHref] = useState('/')
   const [prominentReplaySeed, setProminentReplaySeed] = useState(0)
   const [prominentOriginReady, setProminentOriginReady] = useState(false)
-  const [prominentOrigin, setProminentOrigin] = useState({ bottom: '50vh', left: '50vw' })
+  const [prominentOrigin, setProminentOrigin] = useState<{ x: number; y: number } | null>(null)
   // dev-only: ?entrance=<variant>&travel=<journey|contained> plays that entrance on the lab page (replays on refresh)
   const devEntranceParam = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('entrance')
   const devTravelParam = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('travel')
@@ -214,10 +214,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
       const rect = broadcast.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
-      setProminentOrigin({
-        bottom: `${Math.max(0, window.innerHeight - centerY)}px`,
-        left: `${centerX}px`,
-      })
+      setProminentOrigin({ x: centerX, y: centerY })
       setProminentOriginReady(rect.width > 0 && rect.height > 0)
     }
 
@@ -302,11 +299,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
 
   const landingStyle = createEffectsStyle(effectsSettings, scrollDepth)
   const activeTone = themeState.activeTone
-  const shellStyle = {
-    ...landingStyle,
-    '--prominent-origin-bottom': prominentOrigin.bottom,
-    '--prominent-origin-left': prominentOrigin.left,
-  } as CSSProperties
+  const shellStyle = landingStyle as CSSProperties
 
   return (
     <div
@@ -461,6 +454,7 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
           key={`lab-back:${prominentReplaySeed}`}
           config={labEntranceConfig}
           enabled={prominentOriginReady || Boolean(devEntrance)}
+          origin={prominentOrigin ?? undefined}
           activeClassName="home-quick-link--intro"
         >
           <a

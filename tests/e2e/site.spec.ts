@@ -244,46 +244,76 @@ test('serves the interactive lab below /lab/', async ({ page }) => {
 })
 
 test('plays the prominent back control entrance once on first lab load', async ({ page }) => {
+  // The entrance lasts a few hundred ms, so sampling it from the test side races
+  // its own teardown. Snapshot the intro styles in-page the moment they appear.
+  await page.addInitScript(() => {
+    const store = window as unknown as { __introSnapshot?: unknown }
+    const capture = () => {
+      if (store.__introSnapshot) return
+      const element = document.querySelector('.home-quick-link--intro')
+      if (!element) return
+      const broadcast = document.querySelector('[aria-label="static station identity"]')
+      if (!broadcast) return
+      const style = getComputedStyle(element)
+      const borderStyle = getComputedStyle(element, '::before')
+      const introRect = element.getBoundingClientRect()
+      const broadcastRect = broadcast.getBoundingClientRect()
+      store.__introSnapshot = {
+        animationName: style.animationName,
+        animationDuration: style.animationDuration,
+        backdropFilter: style.backdropFilter,
+        clipPath: style.clipPath,
+        borderBackground: borderStyle.backgroundImage,
+        introWidth: introRect.width,
+        introHeight: introRect.height,
+        // how far the blown-up control sits from the box it flies out of
+        centerOffsetX: Math.abs(
+          introRect.x + introRect.width / 2 - (broadcastRect.x + broadcastRect.width / 2),
+        ),
+      }
+    }
+    const timer = window.setInterval(() => {
+      capture()
+      if (store.__introSnapshot) window.clearInterval(timer)
+    }, 16)
+  })
+
   await page.goto('/lab/')
   await page.evaluate(() => window.localStorage.removeItem('undef-prominent-back-seen'))
   await page.reload()
 
   const veil = page.locator('.prominent-control-veil')
   const backLink = page.getByRole('link', { name: '< Back' })
-  const broadcast = page.getByLabel('static station identity')
   await expect(veil).toBeVisible()
   await expect(backLink).toHaveAttribute('data-prominent-effect', 'geometric-genie')
   await expect(backLink).toHaveClass(/home-quick-link--intro/)
 
-  const introBox = await backLink.boundingBox()
-  const broadcastBox = await broadcast.boundingBox()
-  expect(introBox).not.toBeNull()
-  expect(broadcastBox).not.toBeNull()
-  expect(introBox!.width).toBeGreaterThan(360)
-  expect(introBox!.height).toBeGreaterThan(120)
-  expect(Math.abs(introBox!.x + introBox!.width / 2 - (broadcastBox!.x + broadcastBox!.width / 2))).toBeLessThan(90)
-
+  // Styles and geometry both come from the in-page snapshot for the same reason:
+  // it is taken while the entrance is on screen, not after it has settled.
   await expect
-    .poll(() =>
-      backLink.evaluate((element) => {
-        const style = getComputedStyle(element)
-        const borderStyle = getComputedStyle(element, '::before')
-        return {
-          animationName: style.animationName,
-          animationDuration: style.animationDuration,
-          backdropFilter: style.backdropFilter,
-          clipPath: style.clipPath,
-          borderBackground: borderStyle.backgroundImage,
-        }
-      }),
-    )
+    .poll(() => page.evaluate(() => (window as unknown as { __introSnapshot?: unknown }).__introSnapshot))
     .toMatchObject({
-      animationName: expect.stringContaining('back-geometric-genie'),
-      animationDuration: '0.48s',
+      animationName: expect.stringContaining('geometric-genie'),
+      // LAB_BACK_ENTRANCE.durationMs, applied through --prominent-dur
+      animationDuration: '0.64s',
       backdropFilter: expect.stringContaining('blur'),
       clipPath: expect.stringContaining('polygon'),
       borderBackground: expect.stringContaining('conic-gradient'),
     })
+
+  const intro = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          __introSnapshot?: { introWidth: number; introHeight: number; centerOffsetX: number }
+        }
+      ).__introSnapshot,
+  )
+  expect(intro).toBeTruthy()
+  expect(intro!.introWidth).toBeGreaterThan(360)
+  expect(intro!.introHeight).toBeGreaterThan(120)
+  // the blown-up control launches from the station identity, not the viewport centre
+  expect(intro!.centerOffsetX).toBeLessThan(90)
 
   await expect(veil).toHaveCount(0, { timeout: 4000 })
   await expect(backLink).not.toHaveClass(/home-quick-link--intro/)
