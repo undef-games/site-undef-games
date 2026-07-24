@@ -17,6 +17,7 @@ enableRobotsTXT = true
   theme_variant = "undef"
   brand_mark = "UG"
   show_footer_on_home = true
+  extra_css = ["/css/games.css"]
   [[params.nav]]
     label = "Games"
     href  = "/games/"

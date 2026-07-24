@@ -1,0 +1,23 @@
+{{ define "main" }}
+  {{ $games := hugo.Data.site.games.games }}
+  <main class="scan-page" id="main-content">
+    <section class="scan-page__hero" aria-labelledby="page-title">
+      <p class="scan-fallback__kicker">{{ .Params.kicker }}</p>
+      <h1 id="page-title">{{ .Title }}</h1>
+      {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+    </section>
+    <section class="scan-page__body">
+      <ul class="ug-games" aria-label="undef games roster">
+        {{ range $index, $game := $games }}
+          <li class="ug-games__row ug-games__row--{{ $game.tag }}" style="--row-index: {{ $index }}">
+            <span class="ug-games__flyby" aria-hidden="true">{{ partial "motif.html" $game.tag }}</span>
+            <a class="ug-games__link" href="{{ $game.href }}">
+              <strong class="ug-games__name">{{ $game.label }}</strong>
+              <small class="ug-games__desc">{{ $game.description }}</small>
+            </a>
+          </li>
+        {{ end }}
+      </ul>
+    </section>
+  </main>
+{{ end }}

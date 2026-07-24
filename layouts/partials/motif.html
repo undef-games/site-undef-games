@@ -1,0 +1,46 @@
+{{ $tag := . }}
+<svg class="ug-motif ug-motif--{{ $tag }}" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+  {{ if eq $tag "warp" }}
+    <path class="s" d="M15 6 L23 15 L15 24 L7 15 Z"/>
+    <path class="s ug-motif__streak" d="M2 11 H10 M2 15 H8 M2 19 H10"/>
+    <path class="s ug-motif__streak" d="M28 11 H20 M28 15 H22 M28 19 H20"/>
+  {{ else if eq $tag "dice" }}
+    <g class="ug-motif__cube">
+      <rect class="s" x="7" y="7" width="16" height="16" rx="2"/>
+      <circle class="f" cx="12" cy="12" r="1.6"/><circle class="f" cx="15" cy="15" r="1.6"/><circle class="f" cx="18" cy="18" r="1.6"/>
+    </g>
+  {{ else if eq $tag "taybols" }}
+    <rect class="s" x="5" y="5" width="20" height="20" rx="1.5" opacity=".55"/>
+    <path class="s ug-motif__rowline" d="M9 11 H18"/>
+    <path class="s ug-motif__rowline" d="M9 15 H21"/>
+    <path class="s ug-motif__rowline" d="M9 19 H14"/>
+  {{ else if eq $tag "grove" }}
+    <path class="s" d="M15 25 V17 M15 17 L9 11 M15 17 L21 11 M9 11 L6 7 M21 11 L24 7"/>
+    <g class="ug-motif__orbit"><circle class="f" cx="24" cy="7" r="2"/></g>
+    <g class="ug-motif__orbit ug-motif__orbit--slow"><circle class="f" cx="6" cy="7" r="1.6" opacity=".7"/></g>
+  {{ else if eq $tag "haiku" }}
+    <path class="s ug-motif__line" d="M6 10 H16"/>
+    <path class="s ug-motif__line" d="M6 15 H24"/>
+    <path class="s ug-motif__line" d="M6 20 H16"/>
+  {{ else if eq $tag "becoming" }}
+    <path class="s" d="M4 24 H26" opacity=".55"/>
+    <g class="ug-motif__sun"><path class="s" d="M8 24 A7 7 0 0 1 22 24"/><circle class="f" cx="15" cy="15" r="2.4"/></g>
+  {{ else if eq $tag "proverb" }}
+    <g class="ug-motif__ring">
+      <circle class="s" cx="15" cy="15" r="9" opacity=".6"/>
+      <path class="s" d="M15 4 V7 M26 15 H23 M15 26 V23 M4 15 H7 M22.8 7.2 L20.7 9.3 M22.8 22.8 L20.7 20.7 M7.2 22.8 L9.3 20.7 M7.2 7.2 L9.3 9.3"/>
+    </g>
+    <circle class="f" cx="15" cy="15" r="2"/>
+  {{ else if eq $tag "stoke" }}
+    <g class="ug-motif__spark"><path class="s" d="M15 3 V8 M15 22 V27 M3 15 H8 M22 15 H27 M6.5 6.5 L10 10 M23.5 6.5 L20 10 M6.5 23.5 L10 20 M23.5 23.5 L20 20"/></g>
+    <circle class="f" cx="15" cy="15" r="3"/>
+  {{ else if eq $tag "currents" }}
+    <path class="s" d="M3 20 Q9 10 15 16 T27 12" opacity=".3"/>
+    <path class="s ug-motif__wave" d="M3 20 Q9 10 15 16 T27 12"/>
+    <circle class="f" cx="27" cy="12" r="1.8"/>
+  {{ else if eq $tag "amor" }}
+    <path class="s" d="M15 7 L21 15 L15 23 L9 15 Z" opacity=".65"/>
+    <circle class="f ug-motif__touch ug-motif__touch--left" cx="9" cy="15" r="2.2"/>
+    <circle class="f ug-motif__touch ug-motif__touch--right" cx="21" cy="15" r="2.2"/>
+  {{ end }}
+</svg>
