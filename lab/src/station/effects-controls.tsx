@@ -115,6 +115,8 @@ const SECTION_EFFECT_CONTROLS: { id: SectionEffectId; label: string }[] = [
   { id: 'warp', label: 'WARP' },
   { id: 'dice', label: 'Dice' },
   { id: 'taybols', label: 'Taybols' },
+  { id: 'grove', label: 'Grove' },
+  { id: 'haiku', label: 'haiku.to' },
   { id: 'identity', label: 'Identity' },
 ]
 

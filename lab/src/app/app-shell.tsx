@@ -434,6 +434,26 @@ export function AppShell({ surface = 'lab' }: { surface?: AppShellSurface }) {
           </a>
         </section>
 
+        <section className="landing-section landing-section--grove" aria-label="Grove">
+          <SectionToy variant="system" effect={sectionEffects.grove} />
+          <p className="section-kicker">{LAB_SECTIONS.grove.kicker}</p>
+          <h2>{LAB_SECTIONS.grove.title}</h2>
+          <p>{LAB_SECTIONS.grove.body}</p>
+          <a className="section-link" href={LAB_SECTIONS.grove.href}>
+            {LAB_SECTIONS.grove.linkLabel}
+          </a>
+        </section>
+
+        <section className="landing-section landing-section--haiku" aria-label="haiku.to">
+          <SectionToy variant="signal" effect={sectionEffects.haiku} />
+          <p className="section-kicker">{LAB_SECTIONS.haiku.kicker}</p>
+          <h2>{LAB_SECTIONS.haiku.title}</h2>
+          <p>{LAB_SECTIONS.haiku.body}</p>
+          <a className="section-link" href={LAB_SECTIONS.haiku.href}>
+            {LAB_SECTIONS.haiku.linkLabel}
+          </a>
+        </section>
+
         <section className="landing-section landing-section--identity" id="identity" aria-label="identity baseline">
           <SectionToy variant="identity" effect={sectionEffects.identity} />
           <p className="section-kicker">{LAB_SECTIONS.identity.kicker}</p>

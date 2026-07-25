@@ -252,12 +252,24 @@ describe('EffectsControls — palette color controls', () => {
 // ─── Section background selects ────────────────────────────────────────────
 
 describe('EffectsControls — section background controls', () => {
-  it('renders a select for each of the 6 sections', () => {
+  it('renders a select for every section the landing page renders', () => {
     render(<EffectsControls {...makeProps()} />)
 
     const section = screen.getByLabelText('section background controls')
-    const selects = section.querySelectorAll('select')
-    expect(selects).toHaveLength(6)
+    const labels = [...section.querySelectorAll('select')].map((select) =>
+      select.getAttribute('aria-label'),
+    )
+    // signal + projects + the five flagship games + identity
+    expect(labels).toEqual([
+      'Signal background',
+      'Projects background',
+      'WARP background',
+      'Dice background',
+      'Taybols background',
+      'Grove background',
+      'haiku.to background',
+      'Identity background',
+    ])
   })
 
   it('shows the current effect value in the Signal select', () => {
