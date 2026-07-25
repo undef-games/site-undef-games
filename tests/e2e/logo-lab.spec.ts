@@ -869,6 +869,39 @@ async function readSavedTheme(page: Page) {
   return page.evaluate(() => JSON.parse(window.localStorage.getItem('undef-logos-theme') ?? '{}'))
 }
 
+test.describe('narrow viewport', () => {
+  test.use({ viewport: { width: 393, height: 852 } })
+
+  test('stacks the control rail below the hero instead of covering the page', async ({ page }) => {
+    await page.goto('/lab/')
+
+    const sidebar = page.locator('.station-sidebar')
+    await expect(sidebar).toBeVisible()
+
+    const layout = await page.evaluate(() => {
+      const rail = document.querySelector('.station-sidebar')!
+      const hero = document.querySelector('.station-broadcast')!
+      const railBox = rail.getBoundingClientRect()
+      const heroBox = hero.getBoundingClientRect()
+      return {
+        position: getComputedStyle(rail).position,
+        coversViewportFraction: railBox.width / window.innerWidth,
+        overlapsHero: railBox.top < heroBox.bottom - 1,
+        horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
+      }
+    })
+
+    // A fixed 360px rail on a phone hides the page behind it.
+    expect(layout.position).not.toBe('fixed')
+    expect(layout.overlapsHero).toBe(false)
+    expect(layout.horizontalOverflow).toBe(false)
+
+    // The controls are still reachable, and nothing is stranded off-screen.
+    await expect(page.getByRole('button', { name: /tune signal/i })).toBeVisible()
+    await expect(page.getByLabel('Signal background')).toBeVisible()
+  })
+})
+
 function readToyRect(element: Element) {
   const rect = element.getBoundingClientRect()
   return {

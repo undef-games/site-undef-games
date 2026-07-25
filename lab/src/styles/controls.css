@@ -237,6 +237,25 @@
   scrollbar-color: rgb(var(--fx-signal-rgb, 216 255 53) / 0.42) transparent;
 }
 
+/* The rail is a fixed right-hand column on wide screens. The design system's
+   responsive sheet already stacks it, but this file loads after that sheet and
+   at the same specificity, so the fixed rule won the cascade and a 360px panel
+   covered a phone viewport whole. It undoes itself here instead. */
+@media (max-width: 980px) {
+  .station-sidebar {
+    position: relative;
+    inset: auto;
+    width: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    padding: 18px;
+    border-left: 0;
+    border-top: 1px solid rgb(var(--fx-muted-rgb, 244 244 240) / 0.14);
+    box-shadow: none;
+  }
+}
+
 .station-controls,
 .channel-selector,
 .signal-scope,
