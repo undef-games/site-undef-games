@@ -11,26 +11,30 @@ test('tunes the static station identity to signal lock', async ({ page }) => {
   await expect.poll(() => signalScene.locator('canvas').evaluate(hasPaintedWebGlPixels)).toBe(true)
   const initialScanlines = Number(await signalScene.getAttribute('data-active-scanlines'))
   await expect(page.getByText(/NO SIGNAL/i).first()).toBeVisible()
+  // A fresh lab load renders the core DEFAULT_PALETTE (paletteText #f4f4f0), not the
+  // default preset's own colours — the preset supplies motion, the brand supplies colour.
+  // See scanlines-system theme-state.ts (defaultPresetState) and its "single core
+  // DEFAULT_PALETTE" test.
   await expect
     .poll(() => page.getByRole('button', { name: /tune signal/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgba(5, 8, 18, 0.84)',
-      borderColor: 'rgba(229, 237, 255, 0.22)',
+      backgroundColor: 'rgba(244, 244, 240, 0.12)',
+      borderColor: 'rgba(244, 244, 240, 0.38)',
       color: 'rgb(244, 244, 240)',
     })
   await expect
     .poll(() => page.getByRole('button', { name: /CH 00/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgba(75, 131, 255, 0.12)',
-      borderColor: 'rgb(75, 131, 255)',
-      color: 'rgb(75, 131, 255)',
+      backgroundColor: 'rgba(216, 255, 53, 0.12)',
+      borderColor: 'rgb(216, 255, 53)',
+      color: 'rgb(216, 255, 53)',
     })
   await expect
     .poll(() => page.getByRole('button', { name: /CH 13/i }).evaluate(readControlColors))
     .toMatchObject({
-      backgroundColor: 'rgb(5, 8, 18)',
-      borderColor: 'rgba(229, 237, 255, 0.2)',
-      color: 'rgba(229, 237, 255, 0.78)',
+      backgroundColor: 'rgb(5, 6, 7)',
+      borderColor: 'rgba(244, 244, 240, 0.2)',
+      color: 'rgba(244, 244, 240, 0.78)',
     })
 
   for (let index = 0; index < 4; index += 1) {
@@ -570,15 +574,16 @@ test('switches section background effects independently', async ({ page }) => {
   await expect(warpToy).toHaveClass(/section-toy--effect-warp/)
   await expect.poll(() => signalToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.7)
   await expect.poll(() => projectsToy.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThanOrEqual(0.38)
+  // Core DEFAULT_PALETTE on a fresh load: muted #f4f4f0, supports #d8ff35.
   await expect
     .poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyVisuals))
     .toMatchObject({
-      backgroundColor: 'rgba(229, 237, 255, 0.4)',
+      backgroundColor: 'rgba(244, 244, 240, 0.4)',
     })
   await expect
     .poll(() => page.locator('.landing-section--signal .section-toy span').nth(1).evaluate(readToyVisuals))
     .toMatchObject({
-      backgroundColor: 'rgba(53, 213, 255, 0.58)',
+      backgroundColor: 'rgba(216, 255, 53, 0.58)',
     })
   await expect(identityToy).toHaveClass(/section-toy--effect-tumble/)
 
@@ -595,7 +600,7 @@ test('switches section background effects independently', async ({ page }) => {
   await expect
     .poll(() => page.locator('.landing-section--signal .section-toy span').first().evaluate(readToyVisuals))
     .toMatchObject({
-      backgroundColor: 'rgba(229, 237, 255, 0.3)',
+      backgroundColor: 'rgba(244, 244, 240, 0.3)',
     })
 
   await effects.getByLabel('Signal background').selectOption('notes')

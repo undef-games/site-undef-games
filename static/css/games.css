@@ -122,3 +122,31 @@
   --ug-glyph-currents: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20Q9 10 15 16T27 12'/%3E%3Ccircle cx='27' cy='12' r='2.2' fill='white' stroke='none'/%3E%3C/svg%3E");
   --ug-glyph-amor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 6.5L21.5 15L15 23.5L8.5 15Z'/%3E%3Ccircle cx='8.5' cy='15' r='2.6' fill='white' stroke='none'/%3E%3Ccircle cx='21.5' cy='15' r='2.6' fill='white' stroke='none'/%3E%3C/svg%3E");
 }
+
+/* ── Per-game identity colour ────────────────────────────────────────────
+   The shared stylesheet tints cards and sections from --product-accent-rgb /
+   --section-accent-rgb, but only warp/dice/taybols ever set them and they were
+   sourced from palette tokens that the brand palette collapses to one value
+   (signal and all three supports are #d8ff35), so every game rendered the same.
+   A game's colour is identity rather than theme, so these are fixed: distinct
+   in both tones, and stable when the palette or preset changes. They are used
+   only as low-alpha gradient tints, never as text colour. */
+.product-link--warp,     .landing-section--warp,     .ug-games__row--warp,     .landing-marquee__glyph--warp     { --ug-accent-rgb: 216 255 53; }
+.product-link--dice,     .landing-section--dice,     .ug-games__row--dice,     .landing-marquee__glyph--dice     { --ug-accent-rgb: 53 213 255; }
+.product-link--taybols,  .landing-section--taybols,  .ug-games__row--taybols,  .landing-marquee__glyph--taybols  { --ug-accent-rgb: 255 156 61; }
+.product-link--grove,    .landing-section--grove,    .ug-games__row--grove,    .landing-marquee__glyph--grove    { --ug-accent-rgb: 84 255 122; }
+.product-link--haiku,    .landing-section--haiku,    .ug-games__row--haiku,    .landing-marquee__glyph--haiku    { --ug-accent-rgb: 155 109 255; }
+.product-link--becoming, .landing-section--becoming, .ug-games__row--becoming, .landing-marquee__glyph--becoming { --ug-accent-rgb: 255 207 82; }
+.product-link--proverb,  .landing-section--proverb,  .ug-games__row--proverb,  .landing-marquee__glyph--proverb  { --ug-accent-rgb: 88 217 255; }
+.product-link--stoke,    .landing-section--stoke,    .ug-games__row--stoke,    .landing-marquee__glyph--stoke    { --ug-accent-rgb: 255 123 74; }
+.product-link--currents, .landing-section--currents, .ug-games__row--currents, .landing-marquee__glyph--currents { --ug-accent-rgb: 75 131 255; }
+.product-link--amor,     .landing-section--amor,     .ug-games__row--amor,     .landing-marquee__glyph--amor     { --ug-accent-rgb: 255 79 227; }
+
+/* Feed the identity colour into the shared card and section tints. */
+[class*='product-link--'] { --product-accent-rgb: var(--ug-accent-rgb, var(--fx-signal-rgb, 216 255 53)); }
+[class*='landing-section--'] { --section-accent-rgb: var(--ug-accent-rgb, var(--fx-signal-rgb, 216 255 53)); }
+
+/* /games/ rows and marquee tiles carry the same colour on their mark. */
+.ug-games__row .ug-motif { color: rgb(var(--ug-accent-rgb, var(--fx-signal-rgb, 216 255 53))); }
+.ug-games__row .ug-games__name { color: rgb(var(--ug-accent-rgb, var(--fx-signal-rgb, 216 255 53))); }
+.landing-marquee__glyph { background: rgb(var(--ug-accent-rgb, var(--fx-signal-rgb, 216 255 53))); }
