@@ -57,9 +57,22 @@
   color: var(--fx-signal, #d8ff35);
 }
 
-.station-shell[data-tone='light'] .control-buttons button:not(.scanlines-button) {
+/* In light tone the control surfaces invert: dark chip, light text — the same
+   treatment the channel buttons and the selects below get. These buttons moved
+   to ScanlinesButton, so the old :not(.scanlines-button) guard stopped matching
+   them and they were left as pale chips in an otherwise dark control panel. */
+.station-shell[data-tone='light'] .control-buttons button {
   background: rgb(var(--fx-text-on-light-rgb, 17 19 13) / 0.82);
   color: var(--fx-text-on-dark, #f4f4f0);
+}
+
+/* The destructive control keeps its red cue. The chip is dark even in light
+   tone, so it takes the dark-surface danger foreground — the light-tone one is
+   a deep red that all but disappears against it. */
+.station-shell[data-tone='light'] .control-buttons .scanlines-button--danger {
+  --fx-btn-danger-fg: rgb(255 145 145 / 0.92);
+  border-color: rgb(255 145 145 / 0.5);
+  color: var(--fx-btn-danger-fg);
 }
 
 .station-shell[data-tone='light'] .preset-select-control select,
