@@ -14,7 +14,7 @@
     "build:theme-boot": "node ../../scanlines-system/scripts/build-theme-boot.mjs"
   },
   "dependencies": {
-    "@provide-io/telemetry": "^0.4.8",
+    "@provide-io/telemetry": "^0.5.3",
     "@undef-games/scanlines-system": "file:../../scanlines-system",
     "framer-motion": "12.41.0",
     "pixi.js": "8.19.0",
